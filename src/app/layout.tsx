@@ -4,9 +4,6 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
 import { CssBaseline } from "@mui/material";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
-
-const theme = createTheme(); // can be customized
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -16,11 +13,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </head>
       <body>
-        <ThemeProvider theme={theme}>
-          {/* normalize styles */}
-          <CssBaseline />
-          {children}
-        </ThemeProvider>
+        {/* normalize styles */}
+        <CssBaseline />
+        {children}
       </body>
     </html>
   );
