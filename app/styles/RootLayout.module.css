@@ -38,7 +38,7 @@
 
 .main {
   flex: 1;
-  padding: var(--padding);
+  padding: var(--padding2);
   overflow-y: auto;
 }
 
