@@ -53,7 +53,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   }, [categories]);
 
   const toggleCategory = useCallback((categoryId: string) => {
-    console.log("asdasdasdsad");
     setCategories((prev) => ({
       ...prev,
       [categoryId]: { ...prev[categoryId], open: !prev[categoryId].open },
@@ -86,7 +85,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <ListItemButton onClick={() => toggleCategory(category.id)}>
                       <ListItemIcon>{category.open ? <FolderOpenIcon /> : <FolderIcon />}</ListItemIcon>
                       <ListItemText primary={category.name} />
-                      <IconButton onClick={() => addProject(category.id)} size='small'>
+                      <IconButton 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addProject(category.id);
+                        }}
+                        size='small'>
                         <AddIcon fontSize='small' />
                       </IconButton>
                       {category.open ? <ExpandLess /> : <ExpandMore />}
