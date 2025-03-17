@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Task } from '../types/Task';
-import TaskForm from '../components/TaskForm';
-import styles from '../styles/MainPage.module.css';
+import TaskForm from '../components/TaskForm/TaskForm';
+import styles from './MainPage.module.css';
 import '../styles/globals.css';
 
 export default function Home() {

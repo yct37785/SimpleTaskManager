@@ -21,7 +21,7 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import Typography from '@mui/material/Typography';
 import { CssBaseline } from '@mui/material';
 import { Category, Project, createCategory, createProject } from './types/schemas';
-import styles from './styles/RootLayout.module.css';
+import styles from './RootLayout.module.css';
 import './styles/globals.css';
 
 /**

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Task } from '../types/Task';
-import styles from '../styles/TaskForm.module.css';
+import { Task } from '../../types/Task';
+import styles from './TaskForm.module.css';
 
 type Props = {
   onAddTask: (task: Task) => void;
