@@ -1,28 +1,29 @@
 {
-  "name": "simple-project-manager",
+  "name": "SimpleTaskManager",
   "version": "0.1.0",
-  "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.0",
-    "@fontsource/roboto": "^5.2.5",
-    "@hello-pangea/dnd": "^18.0.1",
-    "@mui/icons-material": "^6.4.7",
-    "@mui/material": "^6.4.7",
-    "next": "15.2.2",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "^19",
+    "react-dom": "^19",
+    "@toolpad/core": "0.13.0",
+    "@mui/material": "^6",
+    "@mui/material-nextjs": "^6",
+    "@mui/icons-material": "^6",
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
+    "next": "^15"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "typescript": "^5"
+    "typescript": "^5",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "^15",
+    "@types/node": "^20"
   }
 }
