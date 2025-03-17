@@ -20,11 +20,15 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import { CssBaseline } from '@mui/material';
 import { Category, Project, createCategory, createProject } from './types/schemas';
+import styles from './styles/RootLayout.module.css';
+import './styles/globals.css';
 
+/**
+ * root layout
+ */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [categories, setCategories] = useState<Record<string, Category>>({});
 
-  // add a new category
   const addCategory = () => {
     const name = prompt('Enter category name:');
     if (name) {
@@ -33,7 +37,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     }
   };
 
-  // add a new project
   const addProject = (categoryId: string) => {
     const name = prompt(`Enter project name for category '${categories[categoryId].name}':`);
     if (name) {
@@ -48,7 +51,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     }
   };
 
-  // toggle category expansion
   const toggleCategory = (categoryId: string) => {
     setCategories((prev) => ({
       ...prev,
@@ -64,13 +66,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <CssBaseline />
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-          <div style={{ display: 'flex', height: '100vh' }}>
+          <div className={styles.layout}>
             {/* sidebar */}
-            <aside style={{ width: '300px', backgroundColor: '#f8f9fa', overflowY: 'auto', padding: '16px' }}>
-              <h2 style={{ marginBottom: '10px' }}>Tasks</h2>
+            <aside className={styles.sidebar}>
+              <h2 className={styles.categoryHeader}>Tasks</h2>
 
               <List subheader={<ListSubheader>Categories</ListSubheader>}>
-                {/* add category btn */}
+                {/* add category */}
                 <ListItemButton onClick={addCategory}>
                   <ListItemIcon><AddIcon color='primary' /></ListItemIcon>
                   <ListItemText primary='Add Category' />
@@ -88,16 +90,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                       {category.open ? <ExpandLess /> : <ExpandMore />}
                     </ListItemButton>
 
-                    {/* render projects inside category */}
+                    {/* render projects */}
                     <Collapse in={category.open} timeout='auto' unmountOnExit>
-                      <List component='div' disablePadding style={{ paddingLeft: '16px', backgroundColor: '#ffffff' }}>
+                      <List component='div' disablePadding className={styles.list}>
                         {Object.keys(category.projects).length === 0 ? (
-                          <ListItemText style={{ paddingLeft: '20px', fontStyle: 'italic', color: '#888' }}>
+                          <ListItemText className={styles.noProjects}>
                             No projects yet
                           </ListItemText>
                         ) : (
                           Object.values(category.projects).map((project) => (
-                            <ListItemButton key={project.id} style={{ paddingLeft: '32px' }}>
+                            <ListItemButton key={project.id} className={styles.listItem}>
                               <ListItemIcon><InsertDriveFileIcon /></ListItemIcon>
                               <Link href={`/${category.name}/${project.name}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                                 <ListItemText primary={project.name} />
@@ -113,7 +115,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </aside>
 
             {/* main content */}
-            <main style={{ flex: 1, padding: '20px', overflowY: 'auto' }}>
+            <main className={styles.main}>
               {children}
             </main>
           </div>
