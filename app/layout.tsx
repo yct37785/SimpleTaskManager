@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import {
@@ -29,34 +29,36 @@ import './styles/globals.css';
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [categories, setCategories] = useState<Record<string, Category>>({});
 
-  const addCategory = () => {
+  const addCategory = useCallback(() => {
     const name = prompt('Enter category name:');
-    if (name) {
-      const newCategory = createCategory(name);
-      setCategories((prev) => ({ ...prev, [newCategory.id]: newCategory }));
-    }
-  };
+    if (!name) return;
 
-  const addProject = (categoryId: string) => {
+    const newCategory = createCategory(name);
+    setCategories((prev) => ({ ...prev, [newCategory.id]: newCategory }));
+  }, []);
+
+  const addProject = useCallback((categoryId: string) => {
     const name = prompt(`Enter project name for category '${categories[categoryId].name}':`);
-    if (name) {
-      const newProject = createProject(name);
-      setCategories((prev) => ({
-        ...prev,
-        [categoryId]: {
-          ...prev[categoryId],
-          projects: { ...prev[categoryId].projects, [newProject.id]: newProject },
-        },
-      }));
-    }
-  };
+    if (!name) return;
 
-  const toggleCategory = (categoryId: string) => {
+    const newProject = createProject(name);
+    setCategories((prev) => ({
+      ...prev,
+      [categoryId]: {
+        ...prev[categoryId],
+        projects: { ...prev[categoryId].projects, [newProject.id]: newProject },
+        open: true, // always keep category open when adding a project
+      },
+    }));
+  }, [categories]);
+
+  const toggleCategory = useCallback((categoryId: string) => {
+    console.log("asdasdasdsad");
     setCategories((prev) => ({
       ...prev,
       [categoryId]: { ...prev[categoryId], open: !prev[categoryId].open },
     }));
-  };
+  }, []);
 
   return (
     <html lang='en'>
