@@ -4,13 +4,13 @@ import { useState } from 'react';
 import { useParams } from 'next/navigation';
 // components
 import { DragDropContext } from '@hello-pangea/dnd';
-import { Task } from '../../../types/Task';
-import TaskForm from '../../../components/TaskForm/TaskForm';
-import TaskColumn from '../../../components/TaskColumn/TaskColumn';
+import { Task } from '@schemas/Task';
+import TaskForm from '@components/TaskForm/TaskForm';
+import TaskColumn from '@components/TaskColumn/TaskColumn';
 import TaskPageAppBar from './TaskPageAppBar';
 // styles
 import styles from './page.module.css';
-import '../../../styles/globals.css';
+import '@styles/globals.css';
 
 export default function SprintPage() {
   // params

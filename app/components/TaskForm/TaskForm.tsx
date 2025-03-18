@@ -2,7 +2,7 @@
 
 // components
 import { useState } from 'react';
-import { Task } from '../../types/Task';
+import { Task } from '@schemas/Task';
 import { Typography } from '@mui/material';
 // styles
 import styles from './TaskForm.module.css';

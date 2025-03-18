@@ -4,7 +4,7 @@ import { useState } from 'react';
 // components
 import { AppBar, Box, Toolbar, Divider, Typography, Button, IconButton } from '@mui/material';
 // styles
-import '../../../styles/globals.css';
+import '@styles/globals.css';
 
 export default function TaskPageAppBar({ project, sprint }: { project: string; sprint: string }) {
   return (

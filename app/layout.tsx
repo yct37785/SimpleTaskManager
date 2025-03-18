@@ -13,10 +13,10 @@ import {
   ExpandLess, 
   ExpandMore 
 } from '@mui/icons-material';
-import { Project, createSprint, createProject } from './types/schemas';
+import { Project, createSprint, createProject } from '@schemas/schemas';
 // styles
 import styles from './layout.module.css';
-import './styles/globals.css';
+import '@styles/globals.css';
 
 /**
  * root layout
