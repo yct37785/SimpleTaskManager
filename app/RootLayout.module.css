@@ -24,14 +24,14 @@
   margin-top: var(--padding2);
 }
 
-.categoryList {
+.projectList {
   flex-grow: 1;
   overflow-y: auto;
   height: calc(100vh - var(--header-height) - var(--padding));
   padding-bottom: var(--padding);
 }
 
-.categoryListInner {
+.projectListInner {
   width: calc(var(--sidebar-width) - var(--scrollbar-width));
   background-color: var(--background-light);
 }
@@ -51,7 +51,7 @@
   padding-left: calc(var(--padding) * 2);
 }
 
-.noProjects {
+.noSprints {
   padding-left: calc(var(--padding) + 4px);
   font-style: italic;
   color: var(--text-muted);

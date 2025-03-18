@@ -20,7 +20,7 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Typography from '@mui/material/Typography';
 import { CssBaseline } from '@mui/material';
-import { Category, Project, createCategory, createProject } from './types/schemas';
+import { Project, createSprint, createProject } from './types/schemas';
 import styles from './RootLayout.module.css';
 import './styles/globals.css';
 
@@ -28,37 +28,37 @@ import './styles/globals.css';
  * root layout
  */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const [categories, setCategories] = useState<Record<string, Category>>({});
+  const [projects, setProjects] = useState<Record<string, Project>>({});
 
-  const addCategory = useCallback(() => {
-    const name = prompt('Enter category name:');
+  const addProject = useCallback(() => {
+    const name = prompt('Enter project name:');
     if (!name) return;
 
-    const newCategory = createCategory(name);
-    setCategories((prev) => ({ ...prev, [newCategory.id]: newCategory }));
+    const newProject = createProject(name);
+    setProjects((prev) => ({ ...prev, [newProject.id]: newProject }));
   }, []);
 
-  const addProject = useCallback((categoryId: string) => {
-    const name = prompt(`Enter project name for category '${categories[categoryId].name}':`);
+  const addSprint = useCallback((projectId: string) => {
+    const name = prompt(`Enter sprint name for project '${projects[projectId].name}':`);
     if (!name) return;
 
     for (let i = 0; i < 20; ++i) {
-      const newProject = createProject(name);
-      setCategories((prev) => ({
+      const newSprint = createSprint(name);
+      setProjects((prev) => ({
         ...prev,
-        [categoryId]: {
-          ...prev[categoryId],
-          projects: { ...prev[categoryId].projects, [newProject.id]: newProject },
+        [projectId]: {
+          ...prev[projectId],
+          sprints: { ...prev[projectId].sprints, [newSprint.id]: newSprint },
           open: true, // always keep category open when adding a project
         },
       }));
     }
-  }, [categories]);
+  }, [projects]);
 
-  const toggleCategory = useCallback((categoryId: string) => {
-    setCategories((prev) => ({
+  const toggleProject = useCallback((projectId: string) => {
+    setProjects((prev) => ({
       ...prev,
-      [categoryId]: { ...prev[categoryId], open: !prev[categoryId].open },
+      [projectId]: { ...prev[projectId], open: !prev[projectId].open },
     }));
   }, []);
 
@@ -77,46 +77,46 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {/* fixed header */}
               <div className={styles.sidebarHeader}>
                 <div className={styles.sidebarHeaderTop}>
-                  <Typography variant='h5' gutterBottom>Tasks</Typography>
+                  <Typography variant='h5' gutterBottom>Projects</Typography>
                 </div>
-                <ListItemButton onClick={addCategory}>
+                <ListItemButton onClick={addProject}>
                   <ListItemIcon><AddIcon color='primary' /></ListItemIcon>
-                  <ListItemText primary='Add Category' />
+                  <ListItemText primary='Add Project' />
                 </ListItemButton>
               </div>
 
-              {/* scrollale list */}
-              <List className={styles.categoryList}>
-                <div className={styles.categoryListInner}>
-                  {Object.values(categories).map((category) => (
-                    <div key={category.id}>
-                      <ListItemButton onClick={() => toggleCategory(category.id)}>
-                        <ListItemIcon>{category.open ? <FolderOpenIcon /> : <FolderIcon />}</ListItemIcon>
-                        <ListItemText primary={category.name} />
+              {/* projects list */}
+              <List className={styles.projectList}>
+                <div className={styles.projectListInner}>
+                  {Object.values(projects).map((proj) => (
+                    <div key={proj.id}>
+                      <ListItemButton onClick={() => toggleProject(proj.id)}>
+                        <ListItemIcon>{proj.open ? <FolderOpenIcon /> : <FolderIcon />}</ListItemIcon>
+                        <ListItemText primary={proj.name} />
                         <IconButton
                           onClick={(e) => {
                             e.stopPropagation();
-                            addProject(category.id);
+                            addSprint(proj.id);
                           }}
                           size='small'>
                           <AddIcon fontSize='small' />
                         </IconButton>
-                        {category.open ? <ExpandLess /> : <ExpandMore />}
+                        {proj.open ? <ExpandLess /> : <ExpandMore />}
                       </ListItemButton>
 
-                      {/* render projects */}
-                      <Collapse in={category.open} timeout='auto' unmountOnExit>
+                      {/* render sprints */}
+                      <Collapse in={proj.open} timeout='auto' unmountOnExit>
                         <List component='div' disablePadding className={styles.list}>
-                          {Object.keys(category.projects).length === 0 ? (
-                            <ListItemText className={styles.noProjects}>
-                              No projects yet
+                          {Object.keys(proj.sprints).length === 0 ? (
+                            <ListItemText className={styles.noSprints}>
+                              No sprints yet
                             </ListItemText>
                           ) : (
-                            Object.values(category.projects).map((project) => (
-                              <ListItemButton key={project.id} className={styles.listItem}>
+                            Object.values(proj.sprints).map((sprint) => (
+                              <ListItemButton key={sprint.id} className={styles.listItem}>
                                 <ListItemIcon><InsertDriveFileIcon /></ListItemIcon>
-                                <Link href={`/${category.name}/${project.name}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                                  <ListItemText primary={project.name} />
+                                <Link href={`/${proj.name}/${sprint.name}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                  <ListItemText primary={sprint.name} />
                                 </Link>
                               </ListItemButton>
                             ))
