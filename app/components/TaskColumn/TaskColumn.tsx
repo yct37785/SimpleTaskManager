@@ -13,16 +13,18 @@ type Props = {
 
 export default function TaskColumn({ title, status, tasks }: Props) {
   return (
-    <Droppable droppableId={status}>
-      {(provided) => (
-        <div ref={provided.innerRef} {...provided.droppableProps} className={styles.column}>
-          <h2>{title}</h2>
-          {tasks.map((task, index) => (
-            <TaskCard key={task.id} task={task} index={index} />
-          ))}
-          {provided.placeholder}
-        </div>
-      )}
-    </Droppable>
+    <div>
+      <h2>{title}</h2>
+      <Droppable droppableId={status}>
+        {(provided) => (
+          <div ref={provided.innerRef} {...provided.droppableProps} className={styles.column}>
+            {tasks.map((task, index) => (
+              <TaskCard key={task.id} task={task} index={index} />
+            ))}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
+    </div>
   );
 };
