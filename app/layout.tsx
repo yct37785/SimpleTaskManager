@@ -42,17 +42,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     const name = prompt(`Enter sprint name for project '${projects[projectId].name}':`);
     if (!name) return;
 
-    for (let i = 0; i < 20; ++i) {
-      const newSprint = createSprint(name);
-      setProjects((prev) => ({
-        ...prev,
-        [projectId]: {
-          ...prev[projectId],
-          sprints: { ...prev[projectId].sprints, [newSprint.id]: newSprint },
-          open: true, // always keep category open when adding a project
-        },
-      }));
-    }
+    const newSprint = createSprint(name);
+    setProjects((prev) => ({
+      ...prev,
+      [projectId]: {
+        ...prev[projectId],
+        sprints: { ...prev[projectId].sprints, [newSprint.id]: newSprint },
+        open: true, // always keep category open when adding a project
+      },
+    }));
   }, [projects]);
 
   const toggleProject = useCallback((projectId: string) => {
