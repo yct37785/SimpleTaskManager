@@ -1,7 +1,9 @@
 "use client";
 
+// components
 import { Draggable } from "@hello-pangea/dnd";
 import { Task } from "../../types/Task";
+// styles
 import styles from "./TaskCard.module.css";
 
 type Props = {

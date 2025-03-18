@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+// components
 import Link from 'next/link';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import {
@@ -10,7 +11,6 @@ import {
   ListItemText,
   IconButton,
   Collapse,
-  ListSubheader,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import FolderIcon from '@mui/icons-material/Folder';
@@ -21,7 +21,8 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import Typography from '@mui/material/Typography';
 import { CssBaseline } from '@mui/material';
 import { Project, createSprint, createProject } from './types/schemas';
-import styles from './RootLayout.module.css';
+// styles
+import styles from './layout.module.css';
 import './styles/globals.css';
 
 /**

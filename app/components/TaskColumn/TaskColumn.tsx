@@ -1,8 +1,10 @@
 "use client";
 
+// components
 import { Droppable } from "@hello-pangea/dnd";
 import { Task } from "../../types/Task";
 import TaskCard from "../TaskCard/TaskCard";
+// styles
 import styles from "./TaskColumn.module.css";
 
 type Props = {
