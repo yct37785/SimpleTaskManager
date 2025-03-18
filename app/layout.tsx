@@ -4,22 +4,15 @@ import { useState, useCallback } from 'react';
 // components
 import Link from 'next/link';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
-import {
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  IconButton,
-  Collapse,
-} from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import FolderIcon from '@mui/icons-material/Folder';
-import FolderOpenIcon from '@mui/icons-material/FolderOpen';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
-import Typography from '@mui/material/Typography';
-import { CssBaseline } from '@mui/material';
+import { List, ListItemButton, ListItemIcon, ListItemText, IconButton, Collapse, Typography, CssBaseline } from '@mui/material';
+import { 
+  Add as AddIcon, 
+  Folder as FolderIcon, 
+  FolderOpen as FolderOpenIcon, 
+  InsertDriveFile as InsertDriveFileIcon, 
+  ExpandLess, 
+  ExpandMore 
+} from '@mui/icons-material';
 import { Project, createSprint, createProject } from './types/schemas';
 // styles
 import styles from './layout.module.css';
@@ -76,7 +69,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {/* fixed header */}
               <div className={styles.sidebarHeader}>
                 <div className={styles.sidebarHeaderTop}>
-                  <Typography variant='h5' gutterBottom>Projects</Typography>
+                  <Typography variant='h6' color='var(--theme-color)' gutterBottom>TASK MANAGER</Typography>
                 </div>
                 <ListItemButton onClick={addProject}>
                   <ListItemIcon><AddIcon color='primary' /></ListItemIcon>

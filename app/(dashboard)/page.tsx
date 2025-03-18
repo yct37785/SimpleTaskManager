@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import Typography from '@mui/material/Typography';
+import { Typography } from '@mui/material';
 import '../styles/globals.css';
 
 export default function Home() {
