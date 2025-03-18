@@ -112,12 +112,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                             </ListItemText>
                           ) : (
                             Object.values(proj.sprints).map((sprint) => (
-                              <ListItemButton key={sprint.id} className={styles.listItem}>
-                                <ListItemIcon><InsertDriveFileIcon /></ListItemIcon>
-                                <Link href={`/${proj.name}/${sprint.name}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                              <Link href={`/${proj.name}/${sprint.name}`} passHref legacyBehavior key={sprint.id}>
+                                <ListItemButton className={styles.listItem}>
+                                  <ListItemIcon><InsertDriveFileIcon /></ListItemIcon>
                                   <ListItemText primary={sprint.name} />
-                                </Link>
-                              </ListItemButton>
+                                </ListItemButton>
+                              </Link>
                             ))
                           )}
                         </List>

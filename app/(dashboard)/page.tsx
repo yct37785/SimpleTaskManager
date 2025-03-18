@@ -6,7 +6,7 @@ import '../styles/globals.css';
 
 export default function Home() {
   return (
-    <main>
+    <main style={{ padding: 'var(--padding2)' }}>
       <Typography variant='h5' gutterBottom>main page</Typography>
     </main>
   );
