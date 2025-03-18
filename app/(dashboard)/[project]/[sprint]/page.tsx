@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useParams } from 'next/navigation';
 // components
 import { DragDropContext } from '@hello-pangea/dnd';
 import { Task } from '../../../types/Task';
@@ -12,6 +13,11 @@ import styles from './page.module.css';
 import '../../../styles/globals.css';
 
 export default function SprintPage() {
+  // params
+  const params = useParams();
+  const project = params.project as string;
+  const sprint = params.sprint as string;
+  // state
   const [tasks, setTasks] = useState<Task[]>([]);
 
   // add new task
@@ -34,7 +40,7 @@ export default function SprintPage() {
 
   return (
     <main>
-      <TaskPageAppBar />
+      <TaskPageAppBar project={project} sprint={sprint} />
       <DragDropContext onDragEnd={onDragEnd}>
         <div className={styles.taskContainer}>
           <TaskColumn title='TODO' status='TODO' tasks={tasks.filter(task => task.status === 'TODO')} />

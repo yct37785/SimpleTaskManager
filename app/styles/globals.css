@@ -12,6 +12,7 @@
   --background-white: #ffffff;
   --background-green: #0cfc34;
   --text-muted: #888;
+  --text-label: #818181;
   /* allowance for scrollbar */
   --scrollbar-width: 16px;
 }

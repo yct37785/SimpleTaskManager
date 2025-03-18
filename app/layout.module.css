@@ -47,11 +47,11 @@
 }
 
 .listItem {
-  padding-left: calc(var(--padding) * 2);
+  padding-left: var(--padding2);
 }
 
 .noSprints {
-  padding-left: calc(var(--padding) + 4px);
+  padding-left: var(--padding2);
   font-style: italic;
   color: var(--text-muted);
 }
