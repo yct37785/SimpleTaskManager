@@ -1,18 +1,4 @@
-.column {
-  width: 250px;
-  min-height: 400px;
-  padding: 10px;
-  border: 2px dashed #ccc;
-  background-color: white;
-  border-radius: 5px;
-}
-
-.task {
-  padding: 10px;
-  margin-bottom: 10px;
-  background-color: #007bff;
-  color: white;
-  border-radius: 5px;
-  cursor: grab;
-  text-align: center;
+.taskContainer {
+  display: flex;
+  gap: 20px;
 }

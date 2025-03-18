@@ -1,0 +1,9 @@
+.column {
+  width: 300px;
+  min-height: 400px;
+  padding: 10px;
+  border: 2px dashed #ccc;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  text-align: center;
+}

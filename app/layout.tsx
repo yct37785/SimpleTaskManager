@@ -42,15 +42,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     const name = prompt(`Enter project name for category '${categories[categoryId].name}':`);
     if (!name) return;
 
-    const newProject = createProject(name);
-    setCategories((prev) => ({
-      ...prev,
-      [categoryId]: {
-        ...prev[categoryId],
-        projects: { ...prev[categoryId].projects, [newProject.id]: newProject },
-        open: true, // always keep category open when adding a project
-      },
-    }));
+    for (let i = 0; i < 20; ++i) {
+      const newProject = createProject(name);
+      setCategories((prev) => ({
+        ...prev,
+        [categoryId]: {
+          ...prev[categoryId],
+          projects: { ...prev[categoryId].projects, [newProject.id]: newProject },
+          open: true, // always keep category open when adding a project
+        },
+      }));
+    }
   }, [categories]);
 
   const toggleCategory = useCallback((categoryId: string) => {

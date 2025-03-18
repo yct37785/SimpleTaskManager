@@ -1,21 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { Task } from '../types/Task';
-import TaskForm from '../components/TaskForm/TaskForm';
-import styles from './MainPage.module.css';
-import '../styles/globals.css';
+import { DragDropContext } from "@hello-pangea/dnd";
+import { Task } from "../types/Task";
+import TaskForm from "../components/TaskForm/TaskForm";
+import TaskColumn from "../components/TaskColumn/TaskColumn";
+import styles from "./MainPage.module.css";
+import "../styles/globals.css";
 
 export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
 
-  // Add new task
+  // add new task
   const addTask = (task: Task) => {
     setTasks([...tasks, task]);
   };
 
-  // Handle drag end
+  // handle drag end
   const onDragEnd = (result: any) => {
     if (!result.destination) return;
 
@@ -30,60 +31,14 @@ export default function Home() {
 
   return (
     <main>
-      <h1>Task Manager</h1>
       <TaskForm onAddTask={addTask} />
-      
-      <DragDropContext onDragEnd={onDragEnd}>
-        <div style={{ display: "flex", gap: "20px" }}>
-          {/* TODO COLUMN */}
-          <Droppable droppableId="TODO">
-            {(provided) => (
-              <div ref={provided.innerRef} {...provided.droppableProps} className="column">
-                <h2>TODO</h2>
-                {tasks.filter(task => task.status === "TODO").map((task, index) => (
-                  <Draggable key={task.id} draggableId={task.id} index={index}>
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        className="task"
-                      >
-                        {task.title}
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
 
-          {/* IN PROGRESS COLUMN */}
-          <Droppable droppableId="IN_PROGRESS">
-            {(provided) => (
-              <div ref={provided.innerRef} {...provided.droppableProps} className="column">
-                <h2>IN PROGRESS</h2>
-                {tasks.filter(task => task.status === "IN_PROGRESS").map((task, index) => (
-                  <Draggable key={task.id} draggableId={task.id} index={index}>
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        className="task"
-                      >
-                        {task.title}
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div className={styles.taskContainer}>
+          <TaskColumn title="TODO" status="TODO" tasks={tasks.filter(task => task.status === "TODO")} />
+          <TaskColumn title="IN PROGRESS" status="IN_PROGRESS" tasks={tasks.filter(task => task.status === "IN_PROGRESS")} />
         </div>
       </DragDropContext>
     </main>
   );
-}
+};

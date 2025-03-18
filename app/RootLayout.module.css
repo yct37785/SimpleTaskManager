@@ -20,8 +20,8 @@
 }
 
 .sidebarHeaderTop {
-  margin-left: var(--padding);
-  margin-top: var(--padding);
+  margin-left: var(--padding2);
+  margin-top: var(--padding2);
 }
 
 .categoryList {
