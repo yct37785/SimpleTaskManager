@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 // components
 import { DragDropContext } from '@hello-pangea/dnd';
 import { Box } from '@mui/material';
-import { Task } from '@schemas/Task';
+import { Task } from '@schemas/Schemas';
 import TaskForm from '@components/TaskForm/TaskForm';
 import TaskColumn from '@components/TaskColumn/TaskColumn';
 import TaskPageAppBar from './TaskPageAppBar';

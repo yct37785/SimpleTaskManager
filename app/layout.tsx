@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 // components
 import Link from 'next/link';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
@@ -13,13 +14,23 @@ import {
   ExpandLess,
   ExpandMore
 } from '@mui/icons-material';
-import { Project, createSprint, createProject } from '@schemas/schemas';
+import { Sprint, Project } from '@schemas/Schemas';
 
 /**
  * root layout
  */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [projects, setProjects] = useState<Record<string, Project>>({});
+
+  
+  const createSprint = (name: string): Sprint => {
+    return { id: uuidv4(), name };
+  };
+
+  const createProject = (name: string): Project => {
+    const id = uuidv4();
+    return { id, name, sprints: {}, open: false };
+  };
 
   const addProject = useCallback(() => {
     const name = prompt('Enter project name:');

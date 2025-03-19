@@ -1,22 +1,17 @@
-import { v4 as uuidv4 } from 'uuid';
+export type Task = {
+  id: string;
+  title: string;
+  status: 'TODO' | 'IN_PROGRESS';
+}
 
-export interface Sprint {
+export type Sprint = {
   id: string;
   name: string;
 }
 
-export interface Project {
+export type Project = {
   id: string;
   name: string;
   sprints: Record<string, Sprint>;
   open: boolean;
 }
-
-export const createSprint = (name: string): Sprint => {
-  return { id: uuidv4(), name };
-};
-
-export const createProject = (name: string): Project => {
-  const id = uuidv4();
-  return { id, name, sprints: {}, open: false };
-};

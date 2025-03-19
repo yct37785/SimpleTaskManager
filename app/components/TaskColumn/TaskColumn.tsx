@@ -3,7 +3,7 @@
 // components
 import { Droppable } from '@hello-pangea/dnd';
 import { Button, Box, Typography, Stack } from '@mui/material';
-import { Task } from '@schemas/Task';
+import { Task } from '@schemas/Schemas';
 import TaskCard from '../TaskCard/TaskCard';
 import { 
   Add as AddIcon
