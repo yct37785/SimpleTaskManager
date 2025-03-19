@@ -1,6 +1,6 @@
 .columnContainer {
   flex: 1;
-  padding: 10px;
+  padding: var(--padding);
   border: 2px dashed #ccc;
   background-color: #f8f9fa;
   border-radius: 5px;

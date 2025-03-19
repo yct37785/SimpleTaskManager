@@ -18,15 +18,16 @@ export default function SprintPage() {
   const project = params.project as string;
   const sprint = params.sprint as string;
   // state
+  const [openAddTask, setOpenAddTask] = useState(false);
   const [tasks, setTasks] = useState<Task[]>([]);
 
   // add new task
-  const addTask = (task: Task) => {
+  const addTask = (task: Task): void => {
     setTasks([...tasks, task]);
   };
 
   // handle drag end
-  const onDragEnd = (result: any) => {
+  const onDragEnd = (result: any): void => {
     if (!result.destination) return;
 
     const updatedTasks = [...tasks];
@@ -40,11 +41,24 @@ export default function SprintPage() {
 
   return (
     <main>
+      <TaskForm openAddTask={openAddTask} setOpenAddTask={setOpenAddTask} addTask={addTask} />
       <TaskPageAppBar project={project} sprint={sprint} />
       <DragDropContext onDragEnd={onDragEnd}>
         <div className={styles.taskContainer}>
-          <TaskColumn title='TODO' status='TODO' tasks={tasks.filter(task => task.status === 'TODO')} />
-          <TaskColumn title='IN PROGRESS' status='IN_PROGRESS' tasks={tasks.filter(task => task.status === 'IN_PROGRESS')} />
+          <TaskColumn
+            title='TODO'
+            status='TODO'
+            tasks={tasks.filter(task => task.status === 'TODO')}
+            openAddTask={openAddTask}
+            setOpenAddTask={setOpenAddTask}
+            addTask={addTask} />
+          <TaskColumn
+            title='IN_PROGRESS'
+            status='IN_PROGRESS'
+            tasks={tasks.filter(task => task.status === 'IN_PROGRESS')}
+            openAddTask={openAddTask}
+            setOpenAddTask={setOpenAddTask}
+            addTask={addTask} />
         </div>
       </DragDropContext>
     </main>

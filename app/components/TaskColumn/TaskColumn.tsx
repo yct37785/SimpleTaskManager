@@ -4,7 +4,7 @@
 import { Droppable } from '@hello-pangea/dnd';
 import { Task } from '@schemas/Task';
 import TaskCard from '../TaskCard/TaskCard';
-import { Button, Box } from '@mui/material';
+import { Button, Box, Typography, Stack } from '@mui/material';
 import { 
   Add as AddIcon
 } from '@mui/icons-material';
@@ -15,12 +15,15 @@ type Props = {
   title: string;
   status: 'TODO' | 'IN_PROGRESS';
   tasks: Task[];
+  openAddTask: boolean;
+  setOpenAddTask: (open: boolean) => void;
+  addTask: (task: Task) => void;
 };
 
-export default function TaskColumn({ title, status, tasks }: Props) {
+export default function TaskColumn({ title, status, tasks, openAddTask, setOpenAddTask, addTask }: Props) {
   return (
-    <Box>
-      <h2>{title}</h2>
+    <Stack spacing={2}>
+      <Typography variant='body1'>{title}</Typography>
       <Box className={styles.columnContainer}>
         <Droppable droppableId={status}>
           {(provided) => (
@@ -32,8 +35,8 @@ export default function TaskColumn({ title, status, tasks }: Props) {
             </Box>
           )}
         </Droppable>
-        <Button variant='outlined' startIcon={<AddIcon />}>new task</Button>
+        <Button variant='outlined' startIcon={<AddIcon />} onClick={() => setOpenAddTask(true)}>new task</Button>
       </Box>
-    </Box>
+    </Stack>
   );
 };
