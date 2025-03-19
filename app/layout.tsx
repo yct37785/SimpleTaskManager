@@ -79,7 +79,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
               {/* projects list */}
               <List sx={{ flex: 1, overflowY: 'auto', pb: 2 }}>
-                <div style={{ marginRight: 16 }}>
+                <Box sx={{ width: 284 }}>
                   {Object.values(projects).map((proj) => (
                     <div key={proj.id}>
                       <ListItemButton onClick={() => toggleProject(proj.id)}>
@@ -101,8 +101,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         <List sx={{ pl: 2, bgcolor: 'background.paper' }}>
                           {Object.keys(proj.sprints).length === 0 ? (
                             <Typography variant='body2' sx={{ pl: 2, fontStyle: 'italic', color: 'text.secondary' }}>
-                            No sprints yet
-                          </Typography>
+                              No sprints yet
+                            </Typography>
                           ) : (
                             Object.values(proj.sprints).map((sprint) => (
                               <Link href={`/${proj.name}/${sprint.name}`} passHref legacyBehavior key={sprint.id}>
@@ -117,7 +117,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                       </Collapse>
                     </div>
                   ))}
-                </div>
+                </Box>
               </List>
             </Box>
 
