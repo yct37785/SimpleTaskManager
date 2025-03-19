@@ -4,19 +4,16 @@ import { useState, useCallback } from 'react';
 // components
 import Link from 'next/link';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
-import { List, ListItemButton, ListItemIcon, ListItemText, IconButton, Collapse, Typography, CssBaseline } from '@mui/material';
-import { 
-  Add as AddIcon, 
-  Folder as FolderIcon, 
-  FolderOpen as FolderOpenIcon, 
-  InsertDriveFile as InsertDriveFileIcon, 
-  ExpandLess, 
-  ExpandMore 
+import { Stack, Box, List, ListItemButton, ListItemIcon, ListItemText, IconButton, Collapse, Typography, CssBaseline } from '@mui/material';
+import {
+  Add as AddIcon,
+  Folder as FolderIcon,
+  FolderOpen as FolderOpenIcon,
+  InsertDriveFile as InsertDriveFileIcon,
+  ExpandLess,
+  ExpandMore
 } from '@mui/icons-material';
 import { Project, createSprint, createProject } from '@schemas/schemas';
-// styles
-import styles from './layout.module.css';
-import '@styles/globals.css';
 
 /**
  * root layout
@@ -36,15 +33,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     const name = prompt(`Enter sprint name for project '${projects[projectId].name}':`);
     if (!name) return;
 
-    const newSprint = createSprint(name);
-    setProjects((prev) => ({
-      ...prev,
-      [projectId]: {
-        ...prev[projectId],
-        sprints: { ...prev[projectId].sprints, [newSprint.id]: newSprint },
-        open: true, // always keep category open when adding a project
-      },
-    }));
+    for (let i = 0; i < 20; ++i) {
+      const newSprint = createSprint(name);
+      setProjects((prev) => ({
+        ...prev,
+        [projectId]: {
+          ...prev[projectId],
+          sprints: { ...prev[projectId].sprints, [newSprint.id]: newSprint },
+          open: true, // always keep category open when adding a project
+        },
+      }));
+    }
   }, [projects]);
 
   const toggleProject = useCallback((projectId: string) => {
@@ -62,25 +61,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <CssBaseline />
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-          <div className={styles.layout}>
+          <Stack direction='row' sx={{ height: '100vh' }}>
 
             {/* sidebar */}
-            <aside className={styles.sidebar}>
-            
-              {/* fixed header */}
-              <div className={styles.sidebarHeader}>
-                <div className={styles.sidebarHeaderTop}>
-                  <Typography variant='h6' color='var(--theme-color)' gutterBottom>TASK MANAGER</Typography>
-                </div>
+            <Box sx={{ width: 300, bgcolor: '#f6f6f6', display: 'flex', flexDirection: 'column' }}>
+
+              {/* sidebar header */}
+              <Box sx={{ height: 100, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', px: 2, pt: 2 }}>
+                <Typography variant='h6' color='primary' gutterBottom>
+                  TASK MANAGER
+                </Typography>
                 <ListItemButton onClick={addProject}>
                   <ListItemIcon><AddIcon color='primary' /></ListItemIcon>
                   <ListItemText primary='Add Project' />
                 </ListItemButton>
-              </div>
+              </Box>
 
               {/* projects list */}
-              <List className={styles.projectList}>
-                <div className={styles.projectListInner}>
+              <List sx={{ flex: 1, overflowY: 'auto', pb: 2 }}>
+                <div style={{ marginRight: 16 }}>
                   {Object.values(projects).map((proj) => (
                     <div key={proj.id}>
                       <ListItemButton onClick={() => toggleProject(proj.id)}>
@@ -99,15 +98,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
                       {/* render sprints */}
                       <Collapse in={proj.open} timeout='auto' unmountOnExit>
-                        <List component='div' disablePadding className={styles.list}>
+                        <List sx={{ pl: 2, bgcolor: 'background.paper' }}>
                           {Object.keys(proj.sprints).length === 0 ? (
-                            <ListItemText className={styles.noSprints}>
-                              No sprints yet
-                            </ListItemText>
+                            <Typography variant='body2' sx={{ pl: 2, fontStyle: 'italic', color: 'text.secondary' }}>
+                            No sprints yet
+                          </Typography>
                           ) : (
                             Object.values(proj.sprints).map((sprint) => (
                               <Link href={`/${proj.name}/${sprint.name}`} passHref legacyBehavior key={sprint.id}>
-                                <ListItemButton className={styles.listItem}>
+                                <ListItemButton>
                                   <ListItemIcon><InsertDriveFileIcon /></ListItemIcon>
                                   <ListItemText primary={sprint.name} />
                                 </ListItemButton>
@@ -120,14 +119,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   ))}
                 </div>
               </List>
-            </aside>
+            </Box>
 
             {/* main content */}
-            <main className={styles.main}>
+            <Box sx={{ flex: 1, overflowY: 'auto' }}>
               {children}
-            </main>
+            </Box>
 
-          </div>
+          </Stack>
         </AppRouterCacheProvider>
       </body>
     </html>
