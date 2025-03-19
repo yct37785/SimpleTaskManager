@@ -1,13 +1,12 @@
 "use client";
 
-import { useState } from 'react';
-import { Typography } from '@mui/material';
-import '@styles/globals.css';
+// components
+import { Box, Typography } from '@mui/material';
 
 export default function Home() {
   return (
-    <main style={{ padding: 'var(--padding2)' }}>
+    <Box sx={{ p: 1 }}>
       <Typography variant='h5' gutterBottom>main page</Typography>
-    </main>
+    </Box>
   );
 };

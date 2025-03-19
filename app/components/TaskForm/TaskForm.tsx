@@ -1,12 +1,10 @@
 'use client';
 
-import * as React from 'react';
-import { useState } from 'react';
+import React from 'react';
+// components
 import { Task } from '@schemas/Task';
 import { 
-  Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, 
-  DialogTitle, Box 
-} from '@mui/material';
+  Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
 type Props = {
   openAddTask: boolean;

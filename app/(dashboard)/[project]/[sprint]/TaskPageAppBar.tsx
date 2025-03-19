@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 // components
 import { Box, Toolbar, Divider, Typography } from '@mui/material';
 
