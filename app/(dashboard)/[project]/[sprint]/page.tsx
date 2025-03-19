@@ -4,13 +4,11 @@ import { useState } from 'react';
 import { useParams } from 'next/navigation';
 // components
 import { DragDropContext } from '@hello-pangea/dnd';
+import { Box } from '@mui/material';
 import { Task } from '@schemas/Task';
 import TaskForm from '@components/TaskForm/TaskForm';
 import TaskColumn from '@components/TaskColumn/TaskColumn';
 import TaskPageAppBar from './TaskPageAppBar';
-// styles
-import styles from './page.module.css';
-import '@styles/globals.css';
 
 export default function SprintPage() {
   // params
@@ -44,7 +42,7 @@ export default function SprintPage() {
       <TaskForm openAddTask={openAddTask} setOpenAddTask={setOpenAddTask} addTask={addTask} />
       <TaskPageAppBar project={project} sprint={sprint} />
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className={styles.taskContainer}>
+        <Box sx={{ display: 'flex', gap: 2, p: 2 }}>
           <TaskColumn
             title='TODO'
             status='TODO'
@@ -53,13 +51,13 @@ export default function SprintPage() {
             setOpenAddTask={setOpenAddTask}
             addTask={addTask} />
           <TaskColumn
-            title='IN_PROGRESS'
+            title='IN PROGRESS'
             status='IN_PROGRESS'
             tasks={tasks.filter(task => task.status === 'IN_PROGRESS')}
             openAddTask={openAddTask}
             setOpenAddTask={setOpenAddTask}
             addTask={addTask} />
-        </div>
+        </Box>
       </DragDropContext>
     </main>
   );

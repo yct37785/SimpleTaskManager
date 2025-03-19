@@ -2,14 +2,12 @@
 
 // components
 import { Droppable } from '@hello-pangea/dnd';
+import { Button, Box, Typography, Stack } from '@mui/material';
 import { Task } from '@schemas/Task';
 import TaskCard from '../TaskCard/TaskCard';
-import { Button, Box, Typography, Stack } from '@mui/material';
 import { 
   Add as AddIcon
 } from '@mui/icons-material';
-// styles
-import styles from './TaskColumn.module.css';
 
 type Props = {
   title: string;
@@ -24,10 +22,17 @@ export default function TaskColumn({ title, status, tasks, openAddTask, setOpenA
   return (
     <Stack spacing={2}>
       <Typography variant='body1'>{title}</Typography>
-      <Box className={styles.columnContainer}>
+      <Box sx={{
+        flex: 1,
+        p: 2,
+        border: '2px dashed #ccc',
+        bgcolor: 'background.default',
+        borderRadius: 1,
+        textAlign: 'center'
+      }}>
         <Droppable droppableId={status}>
           {(provided) => (
-            <Box ref={provided.innerRef} {...provided.droppableProps} className={styles.column}>
+            <Box ref={provided.innerRef} {...provided.droppableProps} sx={{ width: 300, minHeight: 400, textAlign: 'center' }}>
               {tasks.map((task, index) => (
                 <TaskCard key={task.id} task={task} index={index} />
               ))}

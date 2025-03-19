@@ -1,12 +1,12 @@
 'use client';
 
-// components
 import * as React from 'react';
 import { useState } from 'react';
 import { Task } from '@schemas/Task';
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from '@mui/material';
-// styles
-import styles from './TaskForm.module.css';
+import { 
+  Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, 
+  DialogTitle, Box 
+} from '@mui/material';
 
 type Props = {
   openAddTask: boolean;
@@ -15,7 +15,6 @@ type Props = {
 };
 
 export default function TaskForm({ openAddTask, setOpenAddTask, addTask }: Props) {
-
   return (
     <Dialog
       open={openAddTask}
@@ -58,4 +57,4 @@ export default function TaskForm({ openAddTask, setOpenAddTask, addTask }: Props
       </DialogActions>
     </Dialog>
   );
-}
+};

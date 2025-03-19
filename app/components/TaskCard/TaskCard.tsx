@@ -2,9 +2,8 @@
 
 // components
 import { Draggable } from '@hello-pangea/dnd';
+import { Box } from '@mui/material';
 import { Task } from '@schemas/Task';
-// styles
-import styles from './TaskCard.module.css';
 
 type Props = {
   task: Task;
@@ -15,14 +14,22 @@ export default function TaskCard({ task, index }: Props) {
   return (
     <Draggable key={task.id} draggableId={task.id} index={index}>
       {(provided) => (
-        <div
+        <Box
+          sx={{
+            p: 1,
+            mb: 1,
+            bgcolor: 'primary.main',
+            color: 'white',
+            borderRadius: 1,
+            textAlign: 'center',
+            cursor: 'grab'
+          }}
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className={styles.task}
         >
           {task.title}
-        </div>
+        </Box>
       )}
     </Draggable>
   );
