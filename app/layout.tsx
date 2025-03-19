@@ -66,6 +66,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
             {/* sidebar */}
             <aside className={styles.sidebar}>
+            
               {/* fixed header */}
               <div className={styles.sidebarHeader}>
                 <div className={styles.sidebarHeaderTop}>

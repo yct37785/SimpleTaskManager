@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
 // components
-import { Draggable } from "@hello-pangea/dnd";
-import { Task } from "../../types/Task";
+import { Draggable } from '@hello-pangea/dnd';
+import { Task } from '@schemas/Task';
 // styles
-import styles from "./TaskCard.module.css";
+import styles from './TaskCard.module.css';
 
 type Props = {
   task: Task;
