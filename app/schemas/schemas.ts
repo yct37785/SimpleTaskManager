@@ -1,7 +1,7 @@
 export type Task = {
   id: string;
   title: string;
-  status: 'TODO' | 'IN_PROGRESS';
+  timestampAdded: number;
 }
 
 export type Sprint = {
@@ -14,4 +14,10 @@ export type Project = {
   name: string;
   sprints: Record<string, Sprint>;
   open: boolean;
+}
+
+export type Column = {
+  id: 'TODO' | 'IN_PROGRESS';
+  title: string;
+  tasks: Record<string, Task>;
 }

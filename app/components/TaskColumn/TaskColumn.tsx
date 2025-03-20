@@ -3,7 +3,7 @@
 // components
 import { Droppable } from '@hello-pangea/dnd';
 import { Button, Box, Typography, Stack } from '@mui/material';
-import { Task } from '@schemas/Schemas';
+import { Column } from '@schemas/Schemas';
 import TaskCard from '../TaskCard/TaskCard';
 import { 
   Add as AddIcon
@@ -11,14 +11,11 @@ import {
 
 type Props = {
   title: string;
-  status: 'TODO' | 'IN_PROGRESS';
-  tasks: Task[];
-  openAddTask: boolean;
+  column: Column;
   setOpenAddTask: (open: boolean) => void;
-  addTask: (task: Task) => void;
 };
 
-export default function TaskColumn({ title, status, tasks, openAddTask, setOpenAddTask, addTask }: Props) {
+export default function TaskColumn({ title, column, setOpenAddTask }: Props) {
   return (
     <Stack spacing={2}>
       <Typography variant='body1'>{title}</Typography>
@@ -33,7 +30,7 @@ export default function TaskColumn({ title, status, tasks, openAddTask, setOpenA
         <Droppable droppableId={status}>
           {(provided) => (
             <Box ref={provided.innerRef} {...provided.droppableProps} sx={{ width: 300, minHeight: 400, textAlign: 'center' }}>
-              {tasks.map((task, index) => (
+              {Object.values(column.tasks).map((task, index) => (
                 <TaskCard key={task.id} task={task} index={index} />
               ))}
               {provided.placeholder}

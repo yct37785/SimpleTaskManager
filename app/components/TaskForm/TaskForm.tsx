@@ -9,7 +9,7 @@ import {
 type Props = {
   openAddTask: boolean;
   setOpenAddTask: (open: boolean) => void;
-  addTask: (task: Task) => void;
+  addTask: (task: Task, columnId: 'TODO' | 'IN_PROGRESS') => void;
 };
 
 export default function TaskForm({ openAddTask, setOpenAddTask, addTask }: Props) {
