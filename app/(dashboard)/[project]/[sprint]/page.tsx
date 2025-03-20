@@ -74,20 +74,24 @@ export default function SprintPage() {
   };
 
   return (
-    <main>
-      <TaskForm openAddTask={openAddTask} setOpenAddTask={setOpenAddTask} addTask={addTask} />
+    <main style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+    <TaskForm openAddTask={openAddTask} setOpenAddTask={setOpenAddTask} addTask={addTask} />
+
+    {/* Fixed TaskPageAppBar */}
+    <Box sx={{ position: 'fixed', top: 0, left: 301, width: '100%', zIndex: 10, bgcolor: 'background.paper' }}>
       <TaskPageAppBar project={project} sprint={sprint} />
+    </Box>
+
+    {/* Scrollable DragDropContext */}
+    <Box sx={{ flex: 1, overflowX: 'auto', overflowY: 'hidden', mt: '64px' }}>
       <DragDropContext onDragEnd={onDragEnd}>
-        <Box sx={{ display: 'flex', gap: 2, p: 2 }}>
+        <Box sx={{ display: 'flex', gap: 2, p: 2, minHeight: '100%' }}> 
           {Object.values(columns).map((column) => (
-            <TaskColumn
-              key={column.id}
-              column={column}
-              setOpenAddTask={setOpenAddTask}
-            />
+            <TaskColumn key={column.id} column={column} setOpenAddTask={setOpenAddTask} />
           ))}
         </Box>
       </DragDropContext>
-    </main>
+    </Box>
+  </main>
   );
 };
