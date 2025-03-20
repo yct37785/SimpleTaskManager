@@ -6,10 +6,12 @@ import { v4 as uuidv4 } from 'uuid';
 // components
 import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import { Box } from '@mui/material';
-import { Task, Column, ColumnType } from '@schemas/schemas';
 import TaskForm from '@components/TaskForm/TaskForm';
 import TaskColumn from '@components/TaskColumn/TaskColumn';
 import TaskPageAppBar from './TaskPageAppBar';
+// defines
+import { Task, Column, ColumnType } from '@defines/schemas';
+import { SIDEBAR_WIDTH } from '@defines/consts';
 
 const createColumn = (type: ColumnType, title: string): Column => ({
   id: uuidv4(),
@@ -78,7 +80,7 @@ export default function SprintPage() {
     <TaskForm openAddTask={openAddTask} setOpenAddTask={setOpenAddTask} addTask={addTask} />
 
     {/* Fixed TaskPageAppBar */}
-    <Box sx={{ position: 'fixed', top: 0, left: 301, width: '100%', zIndex: 10, bgcolor: 'background.paper' }}>
+    <Box sx={{ position: 'fixed', top: 0, left: SIDEBAR_WIDTH, width: '100%', zIndex: 10, bgcolor: 'background.paper' }}>
       <TaskPageAppBar project={project} sprint={sprint} />
     </Box>
 

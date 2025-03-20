@@ -14,7 +14,9 @@ import {
   ExpandLess,
   ExpandMore
 } from '@mui/icons-material';
-import { Sprint, Project } from '@schemas/schemas';
+// defines
+import { Sprint, Project } from '@defines/schemas';
+import { SIDEBAR_WIDTH, SIDEBAR_HEADER_HEIGHT, SCROLLBAR_ALLOWANCE, SIDEBAR_BG } from '@defines/consts';
 
 /**
  * root layout
@@ -75,10 +77,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Stack direction='row' sx={{ height: '100vh' }}>
 
             {/* sidebar */}
-            <Box sx={{ width: 300, bgcolor: '#f6f6f6', display: 'flex', flexDirection: 'column' }}>
+            <Box sx={{ width: SIDEBAR_WIDTH, bgcolor: SIDEBAR_BG, display: 'flex', flexDirection: 'column' }}>
 
               {/* sidebar header */}
-              <Box sx={{ height: 100, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', px: 2, pt: 2 }}>
+              <Box sx={{ height: SIDEBAR_HEADER_HEIGHT, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', px: 2, pt: 2 }}>
                 <Typography variant='h6' color='primary' gutterBottom>
                   TASK MANAGER
                 </Typography>
@@ -90,7 +92,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
               {/* projects list */}
               <List sx={{ flex: 1, overflowY: 'auto', pb: 2 }}>
-                <Box sx={{ width: 284 }}>
+                <Box sx={{ width: SIDEBAR_WIDTH - SCROLLBAR_ALLOWANCE }}>
                   {Object.values(projects).map((proj) => (
                     <div key={proj.id}>
                       <ListItemButton onClick={() => toggleProject(proj.id)}>

@@ -3,7 +3,8 @@
 // components
 import { Draggable } from '@hello-pangea/dnd';
 import { Box } from '@mui/material';
-import { Task } from '@schemas/schemas';
+// defines
+import { Task } from '@defines/schemas';
 
 type Props = {
   task: Task;

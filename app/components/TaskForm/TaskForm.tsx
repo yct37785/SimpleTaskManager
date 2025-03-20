@@ -2,9 +2,10 @@
 
 import React from 'react';
 // components
-import { Task } from '@schemas/schemas';
 import { 
   Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+// defines
+import { Task } from '@defines/schemas';
 
 type Props = {
   openAddTask: boolean;
