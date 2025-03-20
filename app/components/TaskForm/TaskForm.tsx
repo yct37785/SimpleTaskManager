@@ -13,6 +13,9 @@ type Props = {
   addTask: (task: Task, columnId: 'TODO' | 'IN_PROGRESS') => void;
 };
 
+/**
+ * task form component
+ */
 export default function TaskForm({ openAddTask, setOpenAddTask, addTask }: Props) {
   return (
     <Dialog

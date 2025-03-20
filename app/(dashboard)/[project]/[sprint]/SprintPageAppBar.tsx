@@ -3,7 +3,10 @@
 // components
 import { Box, Toolbar, Divider, Typography } from '@mui/material';
 
-export default function TaskPageAppBar({ project, sprint }: { project: string; sprint: string }) {
+/**
+ * sprint dashboard app bar
+ */
+export default function SprintPageAppBar({ project, sprint }: { project: string; sprint: string }) {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Toolbar>

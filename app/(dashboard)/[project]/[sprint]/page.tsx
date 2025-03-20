@@ -8,7 +8,7 @@ import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import { Box } from '@mui/material';
 import TaskForm from '@components/TaskForm/TaskForm';
 import TaskColumn from '@components/TaskColumn/TaskColumn';
-import TaskPageAppBar from './TaskPageAppBar';
+import SprintPageAppBar from './SprintPageAppBar';
 // defines
 import { Task, Column, ColumnType } from '@defines/schemas';
 import { SIDEBAR_WIDTH } from '@defines/consts';
@@ -20,6 +20,9 @@ const createColumn = (type: ColumnType, title: string): Column => ({
   tasks: {},
 });
 
+/**
+ * sprint dashboard
+ */
 export default function SprintPage() {
   // params
   const params = useParams();
@@ -79,12 +82,12 @@ export default function SprintPage() {
     <main style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
     <TaskForm openAddTask={openAddTask} setOpenAddTask={setOpenAddTask} addTask={addTask} />
 
-    {/* Fixed TaskPageAppBar */}
+    {/* appbar */}
     <Box sx={{ position: 'fixed', top: 0, left: SIDEBAR_WIDTH, width: '100%', zIndex: 10, bgcolor: 'background.paper' }}>
-      <TaskPageAppBar project={project} sprint={sprint} />
+      <SprintPageAppBar project={project} sprint={sprint} />
     </Box>
 
-    {/* Scrollable DragDropContext */}
+    {/* dashboard */}
     <Box sx={{ flex: 1, overflowX: 'auto', overflowY: 'hidden', mt: '64px' }}>
       <DragDropContext onDragEnd={onDragEnd}>
         <Box sx={{ display: 'flex', gap: 2, p: 2, minHeight: '100%' }}> 

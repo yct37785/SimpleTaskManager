@@ -11,6 +11,9 @@ type Props = {
   index: number;
 };
 
+/**
+ * task card form
+ */
 export default function TaskCard({ task, index }: Props) {
   return (
     <Draggable key={task.id} draggableId={task.id} index={index}>

@@ -15,6 +15,9 @@ type Props = {
   setOpenAddTask: (open: boolean) => void;
 };
 
+/**
+ * task column component
+ */
 export default function TaskColumn({ column, setOpenAddTask }: Props) {
   return (
     <Stack spacing={2}>

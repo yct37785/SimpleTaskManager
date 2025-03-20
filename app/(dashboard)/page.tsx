@@ -3,6 +3,9 @@
 // components
 import { Box, Typography } from '@mui/material';
 
+/**
+ * home dashboard
+ */
 export default function Home() {
   return (
     <Box sx={{ p: 1 }}>
