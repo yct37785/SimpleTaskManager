@@ -10,15 +10,14 @@ import {
 } from '@mui/icons-material';
 
 type Props = {
-  title: string;
   column: Column;
   setOpenAddTask: (open: boolean) => void;
 };
 
-export default function TaskColumn({ title, column, setOpenAddTask }: Props) {
+export default function TaskColumn({ column, setOpenAddTask }: Props) {
   return (
     <Stack spacing={2}>
-      <Typography variant='body1'>{title}</Typography>
+      <Typography variant='body1'>{column.title}</Typography>
       <Box sx={{
         flex: 1,
         p: 2,
@@ -27,7 +26,7 @@ export default function TaskColumn({ title, column, setOpenAddTask }: Props) {
         borderRadius: 1,
         textAlign: 'center'
       }}>
-        <Droppable droppableId={status}>
+        <Droppable droppableId={column.id}>
           {(provided) => (
             <Box ref={provided.innerRef} {...provided.droppableProps} sx={{ width: 300, minHeight: 400, textAlign: 'center' }}>
               {Object.values(column.tasks).map((task, index) => (

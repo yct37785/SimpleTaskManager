@@ -82,7 +82,6 @@ export default function SprintPage() {
         {Object.values(columns).map((column) => (
             <TaskColumn
               key={column.id}
-              title={column.id}
               column={column}
               setOpenAddTask={setOpenAddTask}
             />
