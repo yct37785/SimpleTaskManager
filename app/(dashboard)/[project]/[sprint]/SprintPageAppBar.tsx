@@ -2,59 +2,43 @@
 
 import { useState } from 'react';
 // components
-import { Box, Toolbar, Divider, Typography, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { Box, Toolbar, Divider, Typography, ToggleButton, Tabs, Tab } from '@mui/material';
 import {
   Checklist as ChecklistIcon,
   Schema as SchemaIcon,
   CalendarMonth as CalendarIcon
 } from '@mui/icons-material';
 
+type Props = {
+  project: string;
+  sprint: string;
+  mode: number;
+  setMode: (mode: number) => void;
+};
+
 /**
  * sprint dashboard app bar
  */
-function ToggleButtons() {
-  const [alignment, setAlignment] = useState<string | null>('left');
+export default function SprintPageAppBar({ project, sprint, mode, setMode }: Props) {
 
-  const handleAlignment = (
-    event: React.MouseEvent<HTMLElement>,
-    newAlignment: string | null,
-  ) => {
-    setAlignment(newAlignment);
+  const handleModeChange = (event: React.SyntheticEvent, newValue: number) => {
+    setMode(newValue);
   };
 
   return (
-    <ToggleButtonGroup
-      value={alignment}
-      exclusive
-      onChange={handleAlignment}
-      aria-label="text alignment"
-    >
-      <ToggleButton value="left" aria-label="left aligned">
-        <ChecklistIcon />
-      </ToggleButton>
-      <ToggleButton value="center" aria-label="centered">
-        <SchemaIcon />
-      </ToggleButton>
-      <ToggleButton value="right" aria-label="right aligned">
-        <CalendarIcon />
-      </ToggleButton>
-    </ToggleButtonGroup>
-  );
-}
+    <Box sx={{ flex: 1, display: 'flex', alignItems: 'center' }}>
+      {/* project title */}
+      <Typography sx={{ position: 'absolute', ml: 3 }} variant='h6' color='text.secondary'>{project} - {sprint}</Typography>
 
-/**
- * sprint dashboard app bar
- */
-export default function SprintPageAppBar({ project, sprint }: { project: string; sprint: string }) {
-  return (
-    <Box sx={{ flexGrow: 1 }}>
-      <Toolbar sx={{ display: 'flex', alignItems: 'center' }}>
-        <Typography variant='h6' color='text.secondary'>{project} - {sprint}</Typography>
-        <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
-          <ToggleButtons />
-        </Box>
-      </Toolbar>
-      <Divider />
+      {/* tabs */}
+      <Box sx={{ flex: 1 }}>
+        <Tabs value={mode} onChange={handleModeChange} aria-label='sprint modes' centered>
+          <Tab icon={<ChecklistIcon />} />
+          <Tab icon={<SchemaIcon />} />
+          <Tab icon={<CalendarIcon />} />
+        </Tabs>
+        <Divider />
+      </Box>
     </Box>
   );
 };

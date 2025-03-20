@@ -11,7 +11,7 @@ import TaskColumn from '@components/TaskColumn/TaskColumn';
 import SprintPageAppBar from './SprintPageAppBar';
 // defines
 import { Task, Column, ColumnType } from '@defines/schemas';
-import { SIDEBAR_WIDTH } from '@defines/consts';
+import { SIDEBAR_WIDTH, SCROLLBAR_ALLOWANCE } from '@defines/consts';
 
 const createColumn = (type: ColumnType, title: string): Column => ({
   id: uuidv4(),
@@ -29,6 +29,7 @@ export default function SprintPage() {
   const project = params.project as string;
   const sprint = params.sprint as string;
   // state
+  const [mode, setMode] = useState(0); // 0 = List, 1 = Graph, 2 = Calendar
   const [openAddTask, setOpenAddTask] = useState(false);
   const [columns, setColumns] = useState<Record<string, Column>>({
     [ColumnType.TODO]: createColumn(ColumnType.TODO, 'TODO'),
@@ -80,23 +81,26 @@ export default function SprintPage() {
 
   return (
     <main style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-    <TaskForm openAddTask={openAddTask} setOpenAddTask={setOpenAddTask} addTask={addTask} />
+      <TaskForm openAddTask={openAddTask} setOpenAddTask={setOpenAddTask} addTask={addTask} />
 
-    {/* appbar */}
-    <Box sx={{ position: 'fixed', top: 0, left: SIDEBAR_WIDTH, width: '100%', zIndex: 10, bgcolor: 'background.paper' }}>
-      <SprintPageAppBar project={project} sprint={sprint} />
-    </Box>
+      {/* appbar */}
+      <Box sx={{
+        position: 'fixed', top: 0, left: SIDEBAR_WIDTH + 1, width: `calc(100% - ${SIDEBAR_WIDTH - 1}px)`,
+        zIndex: 10, bgcolor: 'background.paper'
+      }}>
+        <SprintPageAppBar project={project} sprint={sprint} mode={mode} setMode={setMode} />
+      </Box>
 
-    {/* dashboard */}
-    <Box sx={{ flex: 1, overflowX: 'auto', overflowY: 'hidden', mt: '64px' }}>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Box sx={{ display: 'flex', gap: 2, p: 2, minHeight: '100%' }}> 
-          {Object.values(columns).map((column) => (
-            <TaskColumn key={column.id} column={column} setOpenAddTask={setOpenAddTask} />
-          ))}
-        </Box>
-      </DragDropContext>
-    </Box>
-  </main>
+      {/* dashboard */}
+      <Box sx={{ overflowX: 'auto', overflowY: 'auto', mt: '64px' }}>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Box sx={{ display: 'flex', gap: 2, p: 2, minHeight: '100%' }}>
+            {Object.values(columns).map((column) => (
+              <TaskColumn key={column.id} column={column} setOpenAddTask={setOpenAddTask} />
+            ))}
+          </Box>
+        </DragDropContext>
+      </Box>
+    </main>
   );
 };
