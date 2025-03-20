@@ -2,7 +2,7 @@
 
 import React from 'react';
 // components
-import { Task } from '@schemas/Schemas';
+import { Task } from '@schemas/schemas';
 import { 
   Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 

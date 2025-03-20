@@ -14,7 +14,7 @@ import {
   ExpandLess,
   ExpandMore
 } from '@mui/icons-material';
-import { Sprint, Project } from '@schemas/Schemas';
+import { Sprint, Project } from '@schemas/schemas';
 
 /**
  * root layout

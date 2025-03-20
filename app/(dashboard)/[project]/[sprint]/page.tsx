@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 // components
 import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import { Box } from '@mui/material';
-import { Task, Column, ColumnType } from '@schemas/Schemas';
+import { Task, Column, ColumnType } from '@schemas/schemas';
 import TaskForm from '@components/TaskForm/TaskForm';
 import TaskColumn from '@components/TaskColumn/TaskColumn';
 import TaskPageAppBar from './TaskPageAppBar';
