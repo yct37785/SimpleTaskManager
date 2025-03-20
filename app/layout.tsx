@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 // components
 import Link from 'next/link';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
-import { Stack, Box, List, ListItemButton, ListItemIcon, ListItemText, IconButton, Collapse, Typography, CssBaseline } from '@mui/material';
+import { Stack, Box, List, ListItemButton, ListItemIcon, ListItemText, IconButton, Collapse, Typography, Divider, CssBaseline } from '@mui/material';
 import {
   Add as AddIcon,
   Folder as FolderIcon,
@@ -131,6 +131,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </Box>
               </List>
             </Box>
+            <Divider orientation='vertical' flexItem />
 
             {/* main content */}
             <Box sx={{ flex: 1, overflowY: 'auto' }}>

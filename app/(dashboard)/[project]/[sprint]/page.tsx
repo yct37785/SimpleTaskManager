@@ -79,7 +79,7 @@ export default function SprintPage() {
       <TaskPageAppBar project={project} sprint={sprint} />
       <DragDropContext onDragEnd={onDragEnd}>
         <Box sx={{ display: 'flex', gap: 2, p: 2 }}>
-        {Object.values(columns).map((column) => (
+          {Object.values(columns).map((column) => (
             <TaskColumn
               key={column.id}
               column={column}
