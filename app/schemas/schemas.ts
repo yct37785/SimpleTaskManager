@@ -16,8 +16,15 @@ export type Project = {
   open: boolean;
 }
 
+export enum ColumnType {
+  TODO = 'TODO',
+  IN_PROGRESS = 'IN_PROGRESS',
+  DONE = 'DONE'
+}
+
 export type Column = {
-  id: 'TODO' | 'IN_PROGRESS';
+  id: string;
+  type: ColumnType;
   title: string;
   tasks: Record<string, Task>;
 }
