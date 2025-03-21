@@ -53,18 +53,20 @@ export const ProjectProvider = ({ children }: { children: React.ReactNode }) => 
   });
 
   const addSprint = useCallback((projectId: string, name: string) => {
-    const newSprint = createSprint(name);
-    setProjects((prev) => ({
-      ...prev,
-      [projectId]: {
-        ...prev[projectId],
-        sprints: {
-          ...prev[projectId].sprints,
-          [newSprint.id]: newSprint,
+    for (let i = 0; i < 20; ++i) {
+      const newSprint = createSprint(name);
+      setProjects((prev) => ({
+        ...prev,
+        [projectId]: {
+          ...prev[projectId],
+          sprints: {
+            ...prev[projectId].sprints,
+            [newSprint.id]: newSprint,
+          },
+          open: true,
         },
-        open: true,
-      },
-    }));
+      }));
+    }
   }, []);
 
   /**

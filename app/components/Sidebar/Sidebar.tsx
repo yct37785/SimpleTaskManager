@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 // components
 import Link from 'next/link';
-import { Box, List, ListItemButton, ListItemIcon, ListItemText, IconButton, Collapse, Typography, TextField } from '@mui/material';
+import { Box, List, ListItemButton, ListItemIcon, ListItemText, IconButton, Collapse, Typography, TextField, Divider } from '@mui/material';
 import {
   Add as AddIcon,
   Folder as FolderIcon,
@@ -15,7 +15,7 @@ import {
 // contexts
 import { useProjects } from '@contexts/ProjectContext';
 // defines
-import { SIDEBAR_WIDTH, SIDEBAR_HEADER_HEIGHT, SCROLLBAR_ALLOWANCE, SIDEBAR_BG } from '@defines/consts';
+import { SIDEBAR_WIDTH, TASK_PAGE_APPBAR_HEIGHT, SCROLLBAR_ALLOWANCE, SIDEBAR_BG } from '@defines/consts';
 import { Project } from '@defines/schemas';
 
 /**
@@ -153,10 +153,13 @@ export default function Sidebar() {
     <Box sx={{ width: SIDEBAR_WIDTH, bgcolor: SIDEBAR_BG, display: 'flex', flexDirection: 'column' }}>
 
       {/* sidebar header */}
-      <Box sx={{ height: SIDEBAR_HEADER_HEIGHT, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', px: 2, pt: 2 }}>
-        <Typography variant='h6' color='primary' sx={{ fontWeight: 600, textAlign: 'left' }} gutterBottom>
-          TASK MANAGER
-        </Typography>
+      <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+        <Box sx={{ height: TASK_PAGE_APPBAR_HEIGHT }}>
+          <Typography variant='h6' color='primary' sx={{ fontWeight: 600, textAlign: 'left', mt: 1, ml: 2 }} gutterBottom>
+            TASK MANAGER
+          </Typography>
+        </Box>
+        <Divider />
         <ListItemButton onClick={() => setProjectInputVisible(true)}>
           <ListItemIcon><AddIcon color='primary' /></ListItemIcon>
           <ListItemText primary='Add Project' />

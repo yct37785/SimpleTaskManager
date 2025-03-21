@@ -6,9 +6,7 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { Stack, Box, Divider, CssBaseline } from '@mui/material';
 import Sidebar from '@components/Sidebar/Sidebar';
 // contexts
-import { ProjectProvider, useProjects } from '@contexts/ProjectContext';
-// defines
-import { SIDEBAR_WIDTH, SIDEBAR_HEADER_HEIGHT, SCROLLBAR_ALLOWANCE, SIDEBAR_BG } from '@defines/consts';
+import { ProjectProvider } from '@contexts/ProjectContext';
 
 /**
  * root layout
