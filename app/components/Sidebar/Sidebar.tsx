@@ -91,7 +91,7 @@ function SprintList({ proj, sprintInputForProject, sprintName, setSprintName, ha
       )}
       {/* display sprints */}
       {Object.keys(proj.sprints).length > 0 ? (
-        <List sx={{ pl: 2 }}>
+        <List sx={{ pl: 2 }} disablePadding>
           {Object.values(proj.sprints).map((sprint) => (
             <Link
               key={sprint.id}
