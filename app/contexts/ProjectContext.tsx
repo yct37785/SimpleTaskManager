@@ -6,8 +6,8 @@ import { Project, Sprint } from '@defines/schemas';
 
 type ProjectContextType = {
   projects: Record<string, Project>;
-  addProject: () => void;
-  addSprint: (projectId: string) => void;
+  addProject: (name: string) => void;
+  addSprint: (projectId: string, name: string) => void;
   toggleProject: (projectId: string) => void;
 };
 
@@ -25,43 +25,51 @@ export const useProjects = () => {
   return context;
 };
 
+/**
+ * project provider
+ */
 export const ProjectProvider = ({ children }: { children: React.ReactNode }) => {
   const [projects, setProjects] = useState<Record<string, Project>>({});
-
-  const createSprint = (name: string): Sprint => ({
-    id: uuidv4(),
-    name,
-  });
-
+  
+  /**
+   * project
+   */
   const createProject = (name: string): Project => {
     const id = uuidv4();
     return { id, name, sprints: {}, open: false };
   };
 
-  const addProject = useCallback(() => {
-    const name = prompt('Enter project name:');
-    if (!name) return;
+  const addProject = useCallback((name: string) => {
     const newProject = createProject(name);
     setProjects((prev) => ({ ...prev, [newProject.id]: newProject }));
   }, []);
 
-  const addSprint = useCallback((projectId: string) => {
-    const name = prompt(`Enter sprint name for project '${projects[projectId].name}':`);
-    if (!name) return;
-    
-    for (let i = 0; i < 20; ++i) {
-      const newSprint = createSprint(name);
-      setProjects((prev) => ({
-        ...prev,
-        [projectId]: {
-          ...prev[projectId],
-          sprints: { ...prev[projectId].sprints, [newSprint.id]: newSprint },
-          open: true, // always keep category open when adding a project
-        },
-      }));
-    }
-  }, [projects]);
+  /**
+   * sprint
+   */
+  const createSprint = (name: string): Sprint => ({
+    id: uuidv4(),
+    name,
+  });
 
+  const addSprint = useCallback((projectId: string, name: string) => {
+    const newSprint = createSprint(name);
+    setProjects((prev) => ({
+      ...prev,
+      [projectId]: {
+        ...prev[projectId],
+        sprints: {
+          ...prev[projectId].sprints,
+          [newSprint.id]: newSprint,
+        },
+        open: true,
+      },
+    }));
+  }, []);
+
+  /**
+   * misc
+   */
   const toggleProject = useCallback((projectId: string) => {
     setProjects((prev) => ({
       ...prev,
