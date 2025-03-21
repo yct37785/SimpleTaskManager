@@ -136,7 +136,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Divider orientation='vertical' flexItem />
 
             {/* main content */}
-            <Box sx={{ overflowY: 'auto' }}>
+            <Box sx={{ overflowY: 'auto', flex: 1 }}>
               {children}
             </Box>
 
