@@ -28,16 +28,18 @@ function InlineTextInput({ placeholder, value, setValue, onSubmit }: {
   onSubmit: () => void;
 }) {
   return (
-    <TextField autoFocus fullWidth size='small' placeholder={placeholder} variant='outlined' value={value} sx={{ my: 1, mx: 2 }}
-      onChange={(e) => setValue(e.target.value)}
-      onBlur={onSubmit}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          onSubmit();
-        }
-      }}
-    />
+    <Box sx={{ ml: 2 }}>
+      <TextField autoFocus size='small' fullWidth placeholder={placeholder} variant='outlined' value={value}
+        onChange={(e) => setValue(e.target.value)}
+        onBlur={onSubmit}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            onSubmit();
+          }
+        }}
+      />
+    </Box>
   );
 };
 
@@ -76,7 +78,8 @@ function SprintList({ proj, sprintInputForProject, sprintName, setSprintName, ha
 }) {
   return (
     <Collapse in={proj.open} timeout='auto' unmountOnExit>
-      <List sx={{ pl: 2, bgcolor: 'background.paper' }}>
+      <List sx={{ pl: 2 }}>
+        {/* sprint name input */}
         {sprintInputForProject === proj.id && (
           <InlineTextInput
             placeholder='Sprint name'
@@ -86,11 +89,8 @@ function SprintList({ proj, sprintInputForProject, sprintName, setSprintName, ha
           />
         )}
 
-        {Object.keys(proj.sprints).length === 0 ? (
-          <Typography variant='body2' sx={{ pl: 2, fontStyle: 'italic', color: 'text.secondary' }}>
-            No sprints yet
-          </Typography>
-        ) : (
+        {/* display sprints */}
+        {Object.keys(proj.sprints).length > 0 ? (
           Object.values(proj.sprints).map((sprint) => (
             <Link
               key={sprint.id}
@@ -104,7 +104,7 @@ function SprintList({ proj, sprintInputForProject, sprintName, setSprintName, ha
               </ListItemButton>
             </Link>
           ))
-        )}
+        ) : null}
       </List>
     </Collapse>
   );
