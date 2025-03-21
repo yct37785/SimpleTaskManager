@@ -92,7 +92,7 @@ export default function SprintPage() {
       </Box>
 
       {/* dashboard */}
-      <Box sx={{ overflowX: 'auto', overflowY: 'auto', mt: '64px' }}>
+      <Box sx={{ flex: 1, overflowX: 'auto', overflowY: 'auto', mt: '64px' }}>
         <DragDropContext onDragEnd={onDragEnd}>
           <Box sx={{ display: 'flex', gap: 2, p: 2, minHeight: '100%' }}>
             {Object.values(columns).map((column) => (
