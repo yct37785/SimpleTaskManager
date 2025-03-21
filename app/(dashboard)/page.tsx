@@ -3,11 +3,18 @@
 // components
 import { Box, Typography } from '@mui/material';
 import Image from 'next/image';
+// contexts
+import { useProjects } from '@contexts/ProjectContext';
 
 /**
  * home dashboard
  */
 export default function Home() {
+  const { projects } = useProjects();
+
+  const hasProjects = Object.keys(projects).length > 0;
+  if (hasProjects) return null;
+
   return (
     <main style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
 
