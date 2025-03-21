@@ -28,7 +28,7 @@ function InlineTextInput({ placeholder, value, setValue, onSubmit }: {
   onSubmit: () => void;
 }) {
   return (
-    <Box sx={{ ml: 2 }}>
+    <Box>
       <TextField autoFocus size='small' fullWidth placeholder={placeholder} variant='outlined' value={value}
         onChange={(e) => setValue(e.target.value)}
         onBlur={onSubmit}
@@ -78,20 +78,21 @@ function SprintList({ proj, sprintInputForProject, sprintName, setSprintName, ha
 }) {
   return (
     <Collapse in={proj.open} timeout='auto' unmountOnExit>
-      <List sx={{ pl: 2 }}>
-        {/* sprint name input */}
-        {sprintInputForProject === proj.id && (
-          <InlineTextInput
-            placeholder='Sprint name'
-            value={sprintName}
-            setValue={setSprintName}
-            onSubmit={() => handleCreateSprint(proj.id)}
-          />
-        )}
-
-        {/* display sprints */}
-        {Object.keys(proj.sprints).length > 0 ? (
-          Object.values(proj.sprints).map((sprint) => (
+      {/* sprint name input */}
+      {sprintInputForProject === proj.id && (
+        <Box sx={{ pl: 4, mt: 1 }}>
+        <InlineTextInput
+          placeholder='Sprint name'
+          value={sprintName}
+          setValue={setSprintName}
+          onSubmit={() => handleCreateSprint(proj.id)}
+        />
+        </Box>
+      )}
+      {/* display sprints */}
+      {Object.keys(proj.sprints).length > 0 ? (
+        <List sx={{ pl: 2 }}>
+          {Object.values(proj.sprints).map((sprint) => (
             <Link
               key={sprint.id}
               href={`/${proj.name}/${sprint.name}`}
@@ -103,9 +104,9 @@ function SprintList({ proj, sprintInputForProject, sprintName, setSprintName, ha
                 <ListItemText primary={sprint.name} />
               </ListItemButton>
             </Link>
-          ))
-        ) : null}
-      </List>
+          ))}
+        </List>
+      ) : null}
     </Collapse>
   );
 };
@@ -168,12 +169,14 @@ export default function Sidebar() {
 
           {/* project input */}
           {projectInputVisible && (
-            <InlineTextInput
-              placeholder='Project name'
-              value={projectName}
-              setValue={setProjectName}
-              onSubmit={handleCreateProject}
-            />
+            <Box sx={{ ml: 2 }}>
+              <InlineTextInput
+                placeholder='Project name'
+                value={projectName}
+                setValue={setProjectName}
+                onSubmit={handleCreateProject}
+              />
+            </Box>
           )}
 
           {/* render projects and sprints */}
