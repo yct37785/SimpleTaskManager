@@ -29,7 +29,7 @@ function Sidebar() {
 
       {/* sidebar header */}
       <Box sx={{ height: SIDEBAR_HEADER_HEIGHT, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', px: 2, pt: 2 }}>
-        <Typography variant='h6' color='primary' gutterBottom>
+        <Typography variant='h6' color='primary' sx={{ fontWeight: 600, textAlign: 'left' }} gutterBottom>
           TASK MANAGER
         </Typography>
         <ListItemButton onClick={addProject}>
@@ -104,7 +104,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Divider orientation='vertical' flexItem />
 
               {/* main content */}
-              <Box sx={{ overflowY: 'auto', flex: 1 }}>
+              <Box sx={{ overflow: 'auto', flex: 1 }}>
                 {children}
               </Box>
 

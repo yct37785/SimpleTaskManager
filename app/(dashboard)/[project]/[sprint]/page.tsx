@@ -11,7 +11,7 @@ import TaskColumn from '@components/TaskColumn/TaskColumn';
 import SprintPageAppBar from './SprintPageAppBar';
 // defines
 import { Task, Column, ColumnType } from '@defines/schemas';
-import { SIDEBAR_WIDTH, SCROLLBAR_ALLOWANCE } from '@defines/consts';
+import { SIDEBAR_WIDTH, TASK_PAGE_APPBAR_HEIGHT } from '@defines/consts';
 
 const createColumn = (type: ColumnType, title: string): Column => ({
   id: uuidv4(),
@@ -92,9 +92,9 @@ export default function SprintPage() {
       </Box>
 
       {/* dashboard */}
-      <Box sx={{ flex: 1, overflowX: 'auto', overflowY: 'auto', mt: '64px' }}>
+      <Box sx={{ flex: 1, overflowX: 'auto', overflowY: 'auto', mt: `${TASK_PAGE_APPBAR_HEIGHT}px` }}>
         <DragDropContext onDragEnd={onDragEnd}>
-          <Box sx={{ display: 'flex', gap: 2, p: 2, minHeight: '100%' }}>
+          <Box sx={{ display: 'flex', gap: 4, p: 2, minHeight: '100%' }}>
             {Object.values(columns).map((column) => (
               <TaskColumn key={column.id} column={column} setOpenAddTask={setOpenAddTask} />
             ))}
