@@ -16,6 +16,99 @@ import {
 import { useProjects } from '@contexts/ProjectContext';
 // defines
 import { SIDEBAR_WIDTH, SIDEBAR_HEADER_HEIGHT, SCROLLBAR_ALLOWANCE, SIDEBAR_BG } from '@defines/consts';
+import { Project } from '@defines/schemas';
+
+/**
+ * text input reusable component
+ */
+function InlineTextInput({ placeholder, value, setValue, onSubmit }: {
+  placeholder: string;
+  value: string;
+  setValue: (val: string) => void;
+  onSubmit: () => void;
+}) {
+  return (
+    <TextField autoFocus fullWidth size='small' placeholder={placeholder} variant='outlined' value={value} sx={{ my: 1, mx: 2 }}
+      onChange={(e) => setValue(e.target.value)}
+      onBlur={onSubmit}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          onSubmit();
+        }
+      }}
+    />
+  );
+};
+
+/**
+ * list all projects
+ */
+function ProjectListItem({ proj, onAddSprint }: {
+  proj: Project;
+  onAddSprint: (e: React.MouseEvent) => void;
+}) {
+  const { toggleProject } = useProjects();
+
+  return (
+    <ListItemButton onClick={() => toggleProject(proj.id)}>
+      <ListItemIcon>
+        {proj.open ? <FolderOpenIcon /> : <FolderIcon />}
+      </ListItemIcon>
+      <ListItemText primary={proj.name} />
+      <IconButton onClick={onAddSprint} size='small'>
+        <AddIcon fontSize='small' />
+      </IconButton>
+      {proj.open ? <ExpandLess /> : <ExpandMore />}
+    </ListItemButton>
+  );
+};
+
+/**
+ * list all sprints under a project
+ */
+function SprintList({ proj, sprintInputForProject, sprintName, setSprintName, handleCreateSprint }: {
+  proj: Project;
+  sprintInputForProject: string | null;
+  sprintName: string;
+  setSprintName: (val: string) => void;
+  handleCreateSprint: (projId: string) => void;
+}) {
+  return (
+    <Collapse in={proj.open} timeout='auto' unmountOnExit>
+      <List sx={{ pl: 2, bgcolor: 'background.paper' }}>
+        {sprintInputForProject === proj.id && (
+          <InlineTextInput
+            placeholder='Sprint name'
+            value={sprintName}
+            setValue={setSprintName}
+            onSubmit={() => handleCreateSprint(proj.id)}
+          />
+        )}
+
+        {Object.keys(proj.sprints).length === 0 ? (
+          <Typography variant='body2' sx={{ pl: 2, fontStyle: 'italic', color: 'text.secondary' }}>
+            No sprints yet
+          </Typography>
+        ) : (
+          Object.values(proj.sprints).map((sprint) => (
+            <Link
+              key={sprint.id}
+              href={`/${proj.name}/${sprint.name}`}
+              passHref
+              legacyBehavior
+            >
+              <ListItemButton>
+                <ListItemIcon><InsertDriveFileIcon /></ListItemIcon>
+                <ListItemText primary={sprint.name} />
+              </ListItemButton>
+            </Link>
+          ))
+        )}
+      </List>
+    </Collapse>
+  );
+};
 
 /**
  * sidebar component
@@ -46,6 +139,15 @@ export default function Sidebar() {
     setSprintInputForProject(null);
   };
 
+  /**
+   * utilities
+   */
+  const handleAddSprintClick = (e: React.MouseEvent, projId: string, isOpen: boolean) => {
+    e.stopPropagation();
+    if (!isOpen) toggleProject(projId);
+    setSprintInputForProject(projId);
+  };
+
   return (
     <Box sx={{ width: SIDEBAR_WIDTH, bgcolor: SIDEBAR_BG, display: 'flex', flexDirection: 'column' }}>
 
@@ -64,77 +166,30 @@ export default function Sidebar() {
       <List sx={{ flex: 1, overflowY: 'auto', pb: 2 }}>
         <Box sx={{ width: SIDEBAR_WIDTH - SCROLLBAR_ALLOWANCE }}>
 
-          {/* project input field */}
+          {/* project input */}
           {projectInputVisible && (
-            <TextField
-              autoFocus
-              fullWidth
-              size='small'
+            <InlineTextInput
               placeholder='Project name'
-              variant='outlined'
               value={projectName}
-              onChange={(e) => setProjectName(e.target.value)}
-              onBlur={handleCreateProject}
-              onKeyDown={(e) => e.key === 'Enter' && handleCreateProject()}
-              sx={{ my: 1, mx: 2, height: 20 }}
+              setValue={setProjectName}
+              onSubmit={handleCreateProject}
             />
           )}
 
-          {/* render projects */}
+          {/* render projects and sprints */}
           {Object.values(projects).map((proj) => (
             <div key={proj.id}>
-              <ListItemButton onClick={() => toggleProject(proj.id)}>
-                <ListItemIcon>{proj.open ? <FolderOpenIcon /> : <FolderIcon />}</ListItemIcon>
-                <ListItemText primary={proj.name} />
-                <IconButton
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSprintInputForProject(proj.id);
-                    // project must be open when adding stream
-                    if (!proj.open) {
-                      toggleProject(proj.id);
-                    }
-                  }}
-                  size='small'
-                >
-                  <AddIcon fontSize='small' />
-                </IconButton>
-                {proj.open ? <ExpandLess /> : <ExpandMore />}
-              </ListItemButton>
-
-              <Collapse in={proj.open} timeout='auto' unmountOnExit>
-                <List sx={{ pl: 2, bgcolor: 'background.paper' }}>
-                  {sprintInputForProject === proj.id && (
-                    <TextField
-                      autoFocus
-                      fullWidth
-                      size='small'
-                      placeholder='Sprint name'
-                      variant='outlined'
-                      value={sprintName}
-                      onChange={(e) => setSprintName(e.target.value)}
-                      onBlur={() => handleCreateSprint(proj.id)}
-                      onKeyDown={(e) => e.key === 'Enter' && handleCreateSprint(proj.id)}
-                      sx={{ my: 1, mx: 1, height: 10 }}
-                    />
-                  )}
-
-                  {Object.keys(proj.sprints).length === 0 ? (
-                    <Typography variant='body2' sx={{ pl: 2, fontStyle: 'italic', color: 'text.secondary' }}>
-                      No sprints yet
-                    </Typography>
-                  ) : (
-                    Object.values(proj.sprints).map((sprint) => (
-                      <Link href={`/${proj.name}/${sprint.name}`} passHref legacyBehavior key={sprint.id}>
-                        <ListItemButton>
-                          <ListItemIcon><InsertDriveFileIcon /></ListItemIcon>
-                          <ListItemText primary={sprint.name} />
-                        </ListItemButton>
-                      </Link>
-                    ))
-                  )}
-                </List>
-              </Collapse>
+              <ProjectListItem
+                proj={proj}
+                onAddSprint={(e) => handleAddSprintClick(e, proj.id, proj.open)}
+              />
+              <SprintList
+                proj={proj}
+                sprintInputForProject={sprintInputForProject}
+                sprintName={sprintName}
+                setSprintName={setSprintName}
+                handleCreateSprint={handleCreateSprint}
+              />
             </div>
           ))}
 
