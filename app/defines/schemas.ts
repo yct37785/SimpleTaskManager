@@ -13,7 +13,6 @@ export type Project = {
   id: string;
   name: string;
   sprints: Record<string, Sprint>;
-  open: boolean;
 }
 
 export enum ColumnType {

@@ -8,7 +8,6 @@ type ProjectContextType = {
   projects: Record<string, Project>;
   addProject: (name: string) => void;
   addSprint: (projectId: string, name: string) => void;
-  toggleProject: (projectId: string) => void;
 };
 
 /**
@@ -36,7 +35,7 @@ export const ProjectProvider = ({ children }: { children: React.ReactNode }) => 
    */
   const createProject = (name: string): Project => {
     const id = uuidv4();
-    return { id, name, sprints: {}, open: false };
+    return { id, name, sprints: {} };
   };
 
   const addProject = useCallback((name: string) => {
@@ -53,7 +52,7 @@ export const ProjectProvider = ({ children }: { children: React.ReactNode }) => 
   });
 
   const addSprint = useCallback((projectId: string, name: string) => {
-    for (let i = 0; i < 20; ++i) {
+    for (let i = 0; i < 1; ++i) {
       const newSprint = createSprint(name);
       setProjects((prev) => ({
         ...prev,
@@ -69,18 +68,8 @@ export const ProjectProvider = ({ children }: { children: React.ReactNode }) => 
     }
   }, []);
 
-  /**
-   * misc
-   */
-  const toggleProject = useCallback((projectId: string) => {
-    setProjects((prev) => ({
-      ...prev,
-      [projectId]: { ...prev[projectId], open: !prev[projectId].open },
-    }));
-  }, []);
-
   return (
-    <ProjectContext.Provider value={{ projects, addProject, addSprint, toggleProject }}>
+    <ProjectContext.Provider value={{ projects, addProject, addSprint }}>
       {children}
     </ProjectContext.Provider>
   );

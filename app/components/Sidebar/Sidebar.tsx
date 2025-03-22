@@ -46,22 +46,22 @@ function InlineTextInput({ placeholder, value, setValue, onSubmit }: {
 /**
  * list all projects
  */
-function ProjectListItem({ proj, onAddSprint }: {
+function ProjectListItem({ proj, isOpen, onAddSprint, toggleOpen }: {
   proj: Project;
+  isOpen: boolean;
+  toggleOpen: () => void;
   onAddSprint: (e: React.MouseEvent) => void;
 }) {
-  const { toggleProject } = useProjects();
-
   return (
-    <ListItemButton onClick={() => toggleProject(proj.id)}>
+    <ListItemButton onClick={toggleOpen}>
       <ListItemIcon>
-        {proj.open ? <FolderOpenIcon /> : <FolderIcon />}
+        {isOpen ? <FolderOpenIcon /> : <FolderIcon />}
       </ListItemIcon>
       <ListItemText primary={proj.name} />
       <IconButton onClick={onAddSprint} size='small'>
         <AddIcon fontSize='small' />
       </IconButton>
-      {proj.open ? <ExpandLess /> : <ExpandMore />}
+      {isOpen ? <ExpandLess /> : <ExpandMore />}
     </ListItemButton>
   );
 };
@@ -69,15 +69,16 @@ function ProjectListItem({ proj, onAddSprint }: {
 /**
  * list all sprints under a project
  */
-function SprintList({ proj, sprintInputForProject, sprintName, setSprintName, handleCreateSprint }: {
+function SprintList({ proj, isOpen, sprintInputForProject, sprintName, setSprintName, handleCreateSprint }: {
   proj: Project;
+  isOpen: boolean;
   sprintInputForProject: string | null;
   sprintName: string;
   setSprintName: (val: string) => void;
   handleCreateSprint: (projId: string) => void;
 }) {
   return (
-    <Collapse in={proj.open} timeout='auto' unmountOnExit>
+    <Collapse in={isOpen} timeout='auto' unmountOnExit>
       {/* sprint name input */}
       {sprintInputForProject === proj.id && (
         <Box sx={{ pl: 4, mt: 1 }}>
@@ -116,12 +117,13 @@ function SprintList({ proj, sprintInputForProject, sprintName, setSprintName, ha
  */
 export default function Sidebar() {
   // context
-  const { projects, addProject, addSprint, toggleProject } = useProjects();
+  const { projects, addProject, addSprint } = useProjects();
   // state
   const [projectInputVisible, setProjectInputVisible] = useState(false);
   const [projectName, setProjectName] = useState('');
   const [sprintInputForProject, setSprintInputForProject] = useState<string | null>(null);
   const [sprintName, setSprintName] = useState('');
+  const [openProjects, setOpenProjects] = useState<Record<string, boolean>>({});
 
   /**
    * project and sprint creation handlers
@@ -143,9 +145,13 @@ export default function Sidebar() {
   /**
    * utilities
    */
-  const handleAddSprintClick = (e: React.MouseEvent, projId: string, isOpen: boolean) => {
+  const toggleOpen = (id: string) => {
+    setOpenProjects((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const handleAddSprintClick = (e: React.MouseEvent, projId: string) => {
     e.stopPropagation();
-    if (!isOpen) toggleProject(projId);
+    setOpenProjects((prev) => ({ ...prev, [projId]: true }));
     setSprintInputForProject(projId);
   };
 
@@ -187,10 +193,13 @@ export default function Sidebar() {
             <div key={proj.id}>
               <ProjectListItem
                 proj={proj}
-                onAddSprint={(e) => handleAddSprintClick(e, proj.id, proj.open)}
+                isOpen={openProjects[proj.id] || false}
+                toggleOpen={() => toggleOpen(proj.id)}
+                onAddSprint={(e) => handleAddSprintClick(e, proj.id)}
               />
               <SprintList
                 proj={proj}
+                isOpen={openProjects[proj.id] || false}
                 sprintInputForProject={sprintInputForProject}
                 sprintName={sprintName}
                 setSprintName={setSprintName}
