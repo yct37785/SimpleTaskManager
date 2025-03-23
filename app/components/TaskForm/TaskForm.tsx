@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 // components
 import {
   Button, TextField, TextFieldProps, Dialog, DialogActions, DialogContent,
@@ -24,15 +25,15 @@ function TextInput(props: TextFieldProps) {
 };
 
 type Props = {
-  openAddTask: boolean;
-  setOpenAddTask: (open: boolean) => void;
-  addTask: (task: Task, columnId: 'TODO' | 'IN_PROGRESS') => void;
+  openColumn: string;
+  setOpenColumn: (id: string) => void;
+  addTask: (task: Task, columnId: string) => void;
 };
 
 /**
  * form
  */
-export default function TaskForm({ openAddTask, setOpenAddTask, addTask }: Props) {
+export default function TaskForm({ openColumn, setOpenColumn, addTask }: Props) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState<Dayjs | null>(dayjs());
@@ -42,7 +43,7 @@ export default function TaskForm({ openAddTask, setOpenAddTask, addTask }: Props
     if (!title.trim() || !description.trim() || !dueDate) return;
 
     const newTask: Task = {
-      id: crypto.randomUUID(),
+      id: uuidv4(),
       title,
       description,
       dueDate: dueDate.toISOString(),
@@ -50,8 +51,8 @@ export default function TaskForm({ openAddTask, setOpenAddTask, addTask }: Props
       addDate: new Date().toISOString(),
     };
 
-    addTask(newTask, 'TODO');
-    setOpenAddTask(false);
+    addTask(newTask, openColumn);
+    setOpenColumn('');
     setTitle('');
     setDescription('');
     setDueDate(dayjs());
@@ -60,8 +61,8 @@ export default function TaskForm({ openAddTask, setOpenAddTask, addTask }: Props
 
   return (
     <Dialog
-      open={openAddTask}
-      onClose={() => setOpenAddTask(false)}
+      open={openColumn !== ''}
+      onClose={() => setOpenColumn('')}
       maxWidth='sm'
       fullWidth
       scroll='body' // allow scrolling if content overflows
@@ -101,7 +102,7 @@ export default function TaskForm({ openAddTask, setOpenAddTask, addTask }: Props
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={() => setOpenAddTask(false)}>Cancel</Button>
+        <Button onClick={() => setOpenColumn('')}>Cancel</Button>
         <Button
           onClick={handleAddTask}
           variant='contained'

@@ -13,9 +13,8 @@ import SprintPageAppBar from './SprintPageAppBar';
 import { Task, Column, ColumnType } from '@defines/schemas';
 import { SIDEBAR_WIDTH, TASK_PAGE_APPBAR_HEIGHT } from '@defines/consts';
 
-const createColumn = (type: ColumnType, title: string): Column => ({
-  id: uuidv4(),
-  droppableId: type,
+const createColumn = (id: string, type: ColumnType, title: string): Column => ({
+  id,
   type,
   title,
   tasks: []
@@ -31,25 +30,22 @@ export default function SprintPage() {
   const sprint = params.sprint as string;
   // state
   const [mode, setMode] = useState(0); // 0 = List, 1 = Graph, 2 = Calendar
-  const [openAddTask, setOpenAddTask] = useState(false);
+  const [openColumn, setOpenColumn] = useState('');  // column to add task to
+  // TODO: give proper ids to columns
   const [columns, setColumns] = useState<Record<string, Column>>({
-    [ColumnType.TODO]: createColumn(ColumnType.TODO, 'TODO'),
-    [ColumnType.IN_PROGRESS]: createColumn(ColumnType.IN_PROGRESS, 'IN PROGRESS'),
-    [ColumnType.DONE]: createColumn(ColumnType.DONE, 'DONE'),
+    ['asdasdasd']: createColumn('asdasdasd', ColumnType.TODO, 'TODO'),
+    ['sdfsdfds']: createColumn('sdfsdfds', ColumnType.IN_PROGRESS, 'IN PROGRESS'),
+    ['rf34tsvdf']: createColumn('rf34tsvdf', ColumnType.DONE, 'DONE'),
   });
 
   // add new task
   const addTask = (task: Task, columnId: string): void => {
-    setColumns((prev) => {
-      const column = prev[columnId];
-      return {
-        ...prev,
-        [columnId]: {
-          ...column,
-          tasks: [...column.tasks, task], // append at the end
-        },
-      };
-    });
+    const column = { ...columns[columnId] };
+    column.tasks.push(task);
+    setColumns(prev => ({
+      ...prev,
+      [columnId]: column
+    }));
   };
 
   // handle drag end
@@ -73,7 +69,7 @@ export default function SprintPage() {
 
   return (
     <main style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <TaskForm openAddTask={openAddTask} setOpenAddTask={setOpenAddTask} addTask={addTask} />
+      <TaskForm openColumn={openColumn} setOpenColumn={setOpenColumn} addTask={addTask} />
 
       {/* appbar */}
       <Box sx={{
@@ -88,7 +84,7 @@ export default function SprintPage() {
         <DragDropContext onDragEnd={onDragEnd}>
           <Box sx={{ display: 'flex', gap: 4, p: 2, minHeight: '100%' }}>
             {Object.values(columns).map((column) => (
-              <TaskColumn key={column.id} column={column} setOpenAddTask={setOpenAddTask} />
+              <TaskColumn key={column.id} column={column} setOpenColumn={setOpenColumn} />
             ))}
           </Box>
         </DragDropContext>

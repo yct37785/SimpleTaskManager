@@ -13,18 +13,18 @@ import { TASK_COLUMN_WIDTH, TASK_COLUMN_MIN_HEIGHT } from '@defines/consts';
 
 type Props = {
   column: Column;
-  setOpenAddTask: (open: boolean) => void;
+  setOpenColumn: (id: string) => void;
 };
 
 /**
  * task column component
  */
-export default function TaskColumn({ column, setOpenAddTask }: Props) {
+export default function TaskColumn({ column, setOpenColumn }: Props) {
   return (
     <Box>
       <Typography variant='body2'>{column.title}</Typography>
       <Box sx={{ border: '2px dashed #ccc', width: TASK_COLUMN_WIDTH, borderRadius: 2, p: 2, flex: 1, mt: 1, textAlign: 'center' }}>
-        <Droppable droppableId={column.droppableId}>
+        <Droppable droppableId={column.id}>
           {(provided) => (
             <Box ref={provided.innerRef} {...provided.droppableProps}>
               {column.tasks.map((task, index) => (
@@ -34,7 +34,8 @@ export default function TaskColumn({ column, setOpenAddTask }: Props) {
             </Box>
           )}
         </Droppable>
-        <Button variant='outlined' startIcon={<AddIcon />} onClick={() => setOpenAddTask(true)}>new task</Button>
+        <Button variant='outlined' startIcon={<AddIcon />}
+          onClick={() => setOpenColumn(column.id)}>new task</Button>
       </Box>
     </Box>
   );
