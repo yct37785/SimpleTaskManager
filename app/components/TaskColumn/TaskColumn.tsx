@@ -7,7 +7,7 @@ import TaskCard from '../TaskCard/TaskCard';
 import { 
   Add as AddIcon
 } from '@mui/icons-material';
-// defines
+// types
 import { Column } from '@defines/schemas';
 import { TASK_COLUMN_WIDTH, TASK_COLUMN_MIN_HEIGHT } from '@defines/consts';
 

@@ -1,20 +1,28 @@
 'use client';
 
 import React, { useState } from 'react';
-// mui
+// components
 import {
-  Button, TextField, Dialog, DialogActions, DialogContent,
+  Button, TextField, TextFieldProps, Dialog, DialogActions, DialogContent,
   DialogTitle, Chip, Autocomplete, Stack, Typography
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-// utils
 import dayjs, { Dayjs } from 'dayjs';
+import LabelSelector from './LabelSelector';
 // types
-import { Task } from '@defines/schemas';
+import { Task, Label } from '@defines/schemas';
 
-type Label = {
-  name: string;
-  color: string;
+/**
+ * input
+ */
+function TextInput(props: TextFieldProps) {
+  return (
+    <TextField
+      fullWidth
+      variant='outlined'
+      {...props}
+    />
+  );
 };
 
 type Props = {
@@ -23,14 +31,15 @@ type Props = {
   addTask: (task: Task, columnId: 'TODO' | 'IN_PROGRESS') => void;
 };
 
+/**
+ * form
+ */
 export default function TaskForm({ openAddTask, setOpenAddTask, addTask }: Props) {
-  // form state
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState<Dayjs | null>(dayjs());
   const [labels, setLabels] = useState<Label[]>([]);
 
-  // label input management
   const handleAddTask = () => {
     if (!title.trim() || !description.trim() || !dueDate) return;
 
@@ -55,83 +64,55 @@ export default function TaskForm({ openAddTask, setOpenAddTask, addTask }: Props
     <Dialog
       open={openAddTask}
       onClose={() => setOpenAddTask(false)}
-      maxWidth="sm"
+      maxWidth='sm'
       fullWidth
+      scroll='body' // allow scrolling if content overflows
     >
-      {/* Task Title */}
-      <TextField
-        label="Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        required
-        fullWidth
-      />
+      <DialogTitle>Create New Task</DialogTitle>
 
       <DialogContent dividers>
         <Stack spacing={2}>
 
-          {/* Description */}
-          <TextField
-            label="Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+          <TextInput
+            label='Title'
+            required
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+
+          <TextInput
+            label='Description'
             required
             multiline
             minRows={3}
-            fullWidth
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
           />
 
-          {/* Due Date */}
           <DatePicker
-            label="Due Date"
+            label='Due Date'
             disablePast
             value={dueDate}
             onChange={(date) => setDueDate(date)}
             slotProps={{
-              textField: { fullWidth: true, required: true }
+              textField: {
+                fullWidth: true,
+                required: true,
+              }
             }}
           />
 
-          {/* Labels */}
-          <Autocomplete
-            multiple
-            freeSolo
-            options={[]}
-            value={labels.map((l) => l.name)}
-            onChange={(event, newValues) => {
-              const newLabels: Label[] = newValues.map((val) => {
-                const existing = labels.find((l) => l.name === val);
-                return existing || {
-                  name: val,
-                  color: '#' + Math.floor(Math.random() * 16777215).toString(16), // random color
-                };
-              });
-              setLabels(newLabels);
-            }}
-            renderTags={(value: readonly string[], getTagProps) =>
-              value.map((option, index) => {
-                const label = labels.find((l) => l.name === option);
-                return (
-                  <Chip
-                    {...getTagProps({ index })}
-                    label={option}
-                    key={option}
-                    sx={{ bgcolor: label?.color || 'grey.300', color: 'white' }}
-                  />
-                );
-              })
-            }
-            renderInput={(params) => (
-              <TextField {...params} label="Labels (optional)" placeholder="Type and press enter" />
-            )}
-          />
-
+          <LabelSelector labels={labels} setLabels={setLabels} />
         </Stack>
       </DialogContent>
 
       <DialogActions>
         <Button onClick={() => setOpenAddTask(false)}>Cancel</Button>
-        <Button onClick={handleAddTask} variant="contained" disabled={!title || !description || !dueDate}>
+        <Button
+          onClick={handleAddTask}
+          variant='contained'
+          disabled={!title || !description || !dueDate}
+        >
           Create
         </Button>
       </DialogActions>

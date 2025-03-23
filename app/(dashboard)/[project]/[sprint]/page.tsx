@@ -9,7 +9,7 @@ import { Box } from '@mui/material';
 import TaskForm from '@components/TaskForm/TaskForm';
 import TaskColumn from '@components/TaskColumn/TaskColumn';
 import SprintPageAppBar from './SprintPageAppBar';
-// defines
+// types
 import { Task, Column, ColumnType } from '@defines/schemas';
 import { SIDEBAR_WIDTH, TASK_PAGE_APPBAR_HEIGHT } from '@defines/consts';
 

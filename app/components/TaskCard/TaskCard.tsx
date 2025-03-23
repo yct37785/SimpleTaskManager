@@ -3,7 +3,7 @@
 // components
 import { Draggable } from '@hello-pangea/dnd';
 import { Box } from '@mui/material';
-// defines
+// types
 import { Task } from '@defines/schemas';
 
 type Props = {

@@ -1,0 +1,55 @@
+'use client';
+
+import React, { useState } from 'react';
+// components
+import {
+  Button, TextField, TextFieldProps, Dialog, DialogActions, DialogContent,
+  DialogTitle, Chip, Autocomplete, Stack, Typography
+} from '@mui/material';
+// types
+import { Task, Label } from '@defines/schemas';
+
+type Props = {
+  labels: Label[];
+  setLabels: (labels: Label[]) => void;
+};
+
+/**
+ * label selector
+ */
+export default function LabelSelector({ labels, setLabels }: Props) {
+  return (
+    <Autocomplete
+      multiple
+      freeSolo
+      options={[]}
+      value={labels.map((l) => l.name)}
+      onChange={(event, newValues) => {
+        const newLabels: Label[] = newValues.map((val) => {
+          const existing = labels.find((l) => l.name === val);
+          return existing || {
+            name: val,
+            color: '#' + Math.floor(Math.random() * 16777215).toString(16),
+          };
+        });
+        setLabels(newLabels);
+      }}
+      renderTags={(value: readonly string[], getTagProps) =>
+        value.map((option, index) => {
+          const label = labels.find((l) => l.name === option);
+          return (
+            <Chip
+              {...getTagProps({ index })}
+              label={option}
+              key={option}
+              sx={{ bgcolor: label?.color || 'grey.300', color: 'white' }}
+            />
+          );
+        })
+      }
+      renderInput={(params) => (
+        <TextField {...params} label='Labels (optional)' placeholder='Type and press enter' />
+      )}
+    />
+  );
+};

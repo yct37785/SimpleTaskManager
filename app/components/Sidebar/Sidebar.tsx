@@ -14,7 +14,7 @@ import {
 } from '@mui/icons-material';
 // contexts
 import { useProjects } from '@contexts/ProjectContext';
-// defines
+// types
 import { SIDEBAR_WIDTH, TASK_PAGE_APPBAR_HEIGHT, SCROLLBAR_ALLOWANCE, SIDEBAR_BG } from '@defines/consts';
 import { Project } from '@defines/schemas';
 
