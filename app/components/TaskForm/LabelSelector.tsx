@@ -48,7 +48,7 @@ export default function LabelSelector({ labels, setLabels }: Props) {
         })
       }
       renderInput={(params) => (
-        <TextField {...params} label='Labels (optional)' placeholder='Type and press enter' />
+        <TextField {...params} label='Labels (optional)' placeholder='Type and press enter' multiline />
       )}
     />
   );

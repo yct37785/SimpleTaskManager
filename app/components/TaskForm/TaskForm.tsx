@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 // components
 import {
   Button, TextField, TextFieldProps, Dialog, DialogActions, DialogContent,
-  DialogTitle, Chip, Autocomplete, Stack, Typography
+  DialogTitle, Box, Stack, Typography
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs, { Dayjs } from 'dayjs';
@@ -17,9 +17,7 @@ import { Task, Label } from '@defines/schemas';
  */
 function TextInput(props: TextFieldProps) {
   return (
-    <TextField
-      fullWidth
-      variant='outlined'
+    <TextField fullWidth variant='outlined' multiline required
       {...props}
     />
   );
@@ -68,23 +66,19 @@ export default function TaskForm({ openAddTask, setOpenAddTask, addTask }: Props
       fullWidth
       scroll='body' // allow scrolling if content overflows
     >
-      <DialogTitle>Create New Task</DialogTitle>
 
       <DialogContent dividers>
         <Stack spacing={2}>
 
           <TextInput
-            label='Title'
-            required
+            label='Task title'
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
 
           <TextInput
-            label='Description'
-            required
-            multiline
-            minRows={3}
+            label='Task description'
+            rows={4}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
