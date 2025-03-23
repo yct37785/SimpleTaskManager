@@ -1,7 +1,15 @@
+export type Label = {
+  name: string;
+  color: string;
+}
+
 export type Task = {
   id: string;
   title: string;
-  timestampAdded: number;
+  description: string;
+  dueDate: string; // ISO string
+  labels?: Label[];
+  addDate: string; // ISO string for when the task was added
 }
 
 export type Sprint = {
