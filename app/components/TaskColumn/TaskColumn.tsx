@@ -24,10 +24,10 @@ export default function TaskColumn({ column, setOpenAddTask }: Props) {
     <Box>
       <Typography variant='body2'>{column.title}</Typography>
       <Box sx={{ border: '2px dashed #ccc', width: TASK_COLUMN_WIDTH, borderRadius: 2, p: 2, flex: 1, mt: 1, textAlign: 'center' }}>
-        <Droppable droppableId={column.id}>
+        <Droppable droppableId={column.droppableId}>
           {(provided) => (
             <Box ref={provided.innerRef} {...provided.droppableProps}>
-              {Object.values(column.tasks).map((task, index) => (
+              {column.tasks.map((task, index) => (
                 <TaskCard key={task.id} task={task} index={index} />
               ))}
               {provided.placeholder}

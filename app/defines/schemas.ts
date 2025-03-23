@@ -30,8 +30,9 @@ export enum ColumnType {
 }
 
 export type Column = {
-  id: string;
+  id: string;             // UUID for backend
+  droppableId: string;    // stable id for frontend DnD
   type: ColumnType;
   title: string;
-  tasks: Record<string, Task>;
+  tasks: Task[];
 }

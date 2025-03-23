@@ -15,9 +15,10 @@ import { SIDEBAR_WIDTH, TASK_PAGE_APPBAR_HEIGHT } from '@defines/consts';
 
 const createColumn = (type: ColumnType, title: string): Column => ({
   id: uuidv4(),
+  droppableId: type,
   type,
   title,
-  tasks: {},
+  tasks: []
 });
 
 /**
@@ -39,44 +40,35 @@ export default function SprintPage() {
 
   // add new task
   const addTask = (task: Task, columnId: string): void => {
-    task.timestampAdded = Date.now();
-    setColumns((prevColumns) => ({
-      ...prevColumns,
-      [columnId]: {
-        ...prevColumns[columnId],
-        tasks: { ...prevColumns[columnId].tasks, [task.id]: task },
-      },
-    }));
+    setColumns((prev) => {
+      const column = prev[columnId];
+      return {
+        ...prev,
+        [columnId]: {
+          ...column,
+          tasks: [...column.tasks, task], // append at the end
+        },
+      };
+    });
   };
 
   // handle drag end
   const onDragEnd = (result: DropResult): void => {
-    if (!result.destination) return;
+    const { source, destination, draggableId } = result;
+    if (!destination) return;
 
-    const sourceColId = result.source.droppableId;
-    const destColId = result.destination.droppableId;
+    const sourceCol = columns[source.droppableId];
+    const destCol = columns[destination.droppableId];
 
-    const sourceCol = columns[sourceColId];
-    const destCol = columns[destColId];
-
-    // find the moved task
-    const movedTask = sourceCol.tasks[result.draggableId];
-    if (!movedTask) return;
-
-    // remove task from source column
-    const updatedSourceTasks = { ...sourceCol.tasks };
-    delete updatedSourceTasks[result.draggableId];
-
-    // add task to destination column and sort by timestamp
-    movedTask.timestampAdded = Date.now();
-    const updatedDestTasks = { ...destCol.tasks, [movedTask.id]: movedTask };
-
-    // update state
-    setColumns({
-      ...columns,
-      [sourceColId]: { ...sourceCol, tasks: updatedSourceTasks },
-      [destColId]: { ...destCol, tasks: updatedDestTasks },
-    });
+    const task = sourceCol.tasks[source.index];
+    sourceCol.tasks.splice(source.index, 1);
+    destCol.tasks.splice(destination.index, 0, task);
+    
+    setColumns(prev => ({
+      ...prev,
+      [source.droppableId]: sourceCol,
+      [destination.droppableId]: destCol,
+    }));
   };
 
   return (
