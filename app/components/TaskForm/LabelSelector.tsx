@@ -23,12 +23,12 @@ export default function LabelSelector({ labels, setLabels }: Props) {
       multiple
       freeSolo
       options={[]}
-      value={labels.map((l) => l.name)}
+      value={labels.map((l) => l.title)}
       onChange={(event, newValues) => {
         const newLabels: Label[] = newValues.map((val) => {
-          const existing = labels.find((l) => l.name === val);
+          const existing = labels.find((l) => l.title === val);
           return existing || {
-            name: val,
+            title: val,
             color: '#' + Math.floor(Math.random() * 16777215).toString(16),
           };
         });
@@ -36,7 +36,7 @@ export default function LabelSelector({ labels, setLabels }: Props) {
       }}
       renderTags={(value: readonly string[], getTagProps) =>
         value.map((option, index) => {
-          const label = labels.find((l) => l.name === option);
+          const label = labels.find((l) => l.title === option);
           return (
             <Chip
               {...getTagProps({ index })}
