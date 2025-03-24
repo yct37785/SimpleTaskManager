@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { Box, Toolbar, Divider, Typography, ToggleButton, Tabs, Tab } from '@mui/material';
 import {
   Checklist as ChecklistIcon,
-  Schema as SchemaIcon,
   CalendarMonth as CalendarIcon
 } from '@mui/icons-material';
 
@@ -34,7 +33,6 @@ export default function SprintPageAppBar({ project, sprint, mode, setMode }: Pro
       <Box sx={{ flex: 1 }}>
         <Tabs value={mode} onChange={handleModeChange} aria-label='sprint modes' centered>
           <Tab icon={<ChecklistIcon />} />
-          <Tab icon={<SchemaIcon />} />
           <Tab icon={<CalendarIcon />} />
         </Tabs>
         <Divider />
