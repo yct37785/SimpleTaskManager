@@ -12,15 +12,9 @@ export type Task = {
   addDate: string; // ISO string for when the task was added
 }
 
-export enum ColumnType {
-  TODO = 'TODO',
-  IN_PROGRESS = 'IN_PROGRESS',
-  DONE = 'DONE'
-}
-
 export type Column = {
   id: string;
-  type: ColumnType;
+  isTodo: boolean;
   title: string;
   tasks: Task[];
 }

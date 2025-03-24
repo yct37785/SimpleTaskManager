@@ -6,7 +6,7 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { Stack, Box, Divider, CssBaseline } from '@mui/material';
 import Sidebar from '@components/Sidebar/Sidebar';
 // contexts
-import { ProjectProvider } from '@contexts/ProjectContext';
+import { ProjectsProvider } from '@contexts/ProjectsContext';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <CssBaseline />
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <ProjectProvider>
+          <ProjectsProvider>
             <AppRouterCacheProvider options={{ enableCssLayer: true }}>
               <Stack direction='row' sx={{ height: '100vh' }}>
 
@@ -38,7 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
               </Stack>
             </AppRouterCacheProvider>
-          </ProjectProvider>
+          </ProjectsProvider>
         </LocalizationProvider>
       </body>
     </html>

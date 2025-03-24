@@ -10,7 +10,7 @@ import TaskForm from '@components/TaskForm/TaskForm';
 import TaskColumn from '@components/TaskColumn/TaskColumn';
 import SprintPageAppBar from './SprintPageAppBar';
 // types
-import { Task, Column, ColumnType } from '@defines/schemas';
+import { Task, Column } from '@defines/schemas';
 import { SIDEBAR_WIDTH, TASK_PAGE_APPBAR_HEIGHT } from '@defines/consts';
 
 const createColumn = (id: string, type: ColumnType, title: string): Column => ({
