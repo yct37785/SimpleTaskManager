@@ -70,7 +70,7 @@ export default function SprintPage() {
       </Box>
 
       {/* Board */}
-      <Box sx={{ overflowX: 'auto', overflowY: 'auto', mt: `${TASK_PAGE_APPBAR_HEIGHT}px` }}>
+      <Box sx={{ mt: `${TASK_PAGE_APPBAR_HEIGHT}px` }}>
         <DragDropContext onDragEnd={onDragEnd}>
           <Box sx={{ display: 'flex', gap: 4, p: 2 }}>
             {columns.map((column) => (
