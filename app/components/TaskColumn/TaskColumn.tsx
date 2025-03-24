@@ -8,7 +8,7 @@ import {
   Add as AddIcon
 } from '@mui/icons-material';
 // types
-import { Column, ColumnType } from '@defines/schemas';
+import { Column } from '@defines/schemas';
 import { TASK_COLUMN_WIDTH, TASK_COLUMN_MIN_HEIGHT } from '@defines/consts';
 
 type Props = {
@@ -39,7 +39,7 @@ export default function TaskColumn({ column, setOpenColumn }: Props) {
             </Box>
           )}
         </Droppable>
-        {column.type === ColumnType.TODO ? <Button variant='outlined' startIcon={<AddIcon />}
+        {column.isTodo ? <Button variant='outlined' startIcon={<AddIcon />}
           onClick={() => setOpenColumn(column.id)}>new task</Button> : null}
       </Box>
     </Box>

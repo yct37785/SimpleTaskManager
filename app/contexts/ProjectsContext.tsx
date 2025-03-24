@@ -7,8 +7,8 @@ import { Project, Sprint, Column, Task } from '@defines/schemas';
 type ProjectsContextType = {
   projects: Record<string, Project>;
   setProjects: React.Dispatch<React.SetStateAction<Record<string, Project>>>;
-  addProject: (title: string) => void;
-  addSprint: (projectId: string, title: string) => void;
+  createProject: (title: string) => void;
+  createSprint: (projectId: string, title: string) => void;
   addTask: (projectId: string, sprintId: string, columnId: string, task: Task) => void;
   moveTask: (
     projectId: string,
@@ -40,9 +40,9 @@ export const ProjectsProvider = ({ children }: { children: ReactNode }) => {
   const [projects, setProjects] = useState<Record<string, Project>>({});
 
   /**
-   * adds a new project to the board
+   * create a new project to the board
    */
-  const addProject = (title: string) => {
+  const createProject = (title: string) => {
     const id = uuidv4();
     setProjects((prev) => ({
       ...prev,
@@ -55,9 +55,9 @@ export const ProjectsProvider = ({ children }: { children: ReactNode }) => {
   };
 
   /**
-   * adds a new sprint with default columns to a specific project
+   * create a new sprint with default columns to a specific project
    */
-  const addSprint = (projectId: string, title: string) => {
+  const createSprint = (projectId: string, title: string) => {
     const sprintId = uuidv4();
 
     const newSprint: Sprint = {
@@ -177,8 +177,8 @@ export const ProjectsProvider = ({ children }: { children: ReactNode }) => {
       value={{
         projects,
         setProjects,
-        addProject,
-        addSprint,
+        createProject,
+        createSprint,
         addTask,
         moveTask,
       }}

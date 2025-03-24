@@ -4,13 +4,13 @@
 import { Box, Typography } from '@mui/material';
 import Image from 'next/image';
 // contexts
-import { useProjects } from '@contexts/ProjectContext';
+import { useProjectsManager } from '@contexts/ProjectsContext';
 
 /**
  * home dashboard
  */
 export default function Home() {
-  const { projects } = useProjects();
+  const { projects } = useProjectsManager();
 
   const hasProjects = Object.keys(projects).length > 0;
   if (hasProjects) return null;

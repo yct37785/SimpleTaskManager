@@ -1,9 +1,12 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 // components
 import Link from 'next/link';
-import { Box, List, ListItemButton, ListItemIcon, ListItemText, IconButton, Collapse, Typography, TextField, Divider } from '@mui/material';
+import {
+  Box, List, ListItemButton, ListItemIcon, ListItemText,
+  IconButton, Collapse, Typography, TextField, Divider
+} from '@mui/material';
 import {
   Add as AddIcon,
   Folder as FolderIcon,
@@ -13,7 +16,7 @@ import {
   ExpandMore
 } from '@mui/icons-material';
 // contexts
-import { useProjects } from '@contexts/ProjectContext';
+import { useProjectsManager } from '@contexts/ProjectsContext';
 // types
 import { SIDEBAR_WIDTH, TASK_PAGE_APPBAR_HEIGHT, SCROLLBAR_ALLOWANCE, SIDEBAR_BG } from '@defines/consts';
 import { Project } from '@defines/schemas';
@@ -29,7 +32,13 @@ function InlineTextInput({ placeholder, value, setValue, onSubmit }: {
 }) {
   return (
     <Box>
-      <TextField autoFocus size='small' fullWidth placeholder={placeholder} variant='outlined' value={value}
+      <TextField
+        autoFocus
+        size='small'
+        fullWidth
+        placeholder={placeholder}
+        variant='outlined'
+        value={value}
         onChange={(e) => setValue(e.target.value)}
         onBlur={onSubmit}
         onKeyDown={(e) => {
@@ -41,10 +50,10 @@ function InlineTextInput({ placeholder, value, setValue, onSubmit }: {
       />
     </Box>
   );
-};
+}
 
 /**
- * list all projects
+ * render a single project row
  */
 function ProjectListItem({ proj, isOpen, onAddSprint, toggleOpen }: {
   proj: Project;
@@ -57,17 +66,17 @@ function ProjectListItem({ proj, isOpen, onAddSprint, toggleOpen }: {
       <ListItemIcon>
         {isOpen ? <FolderOpenIcon /> : <FolderIcon />}
       </ListItemIcon>
-      <ListItemText primary={proj.name} />
+      <ListItemText primary={proj.title} />
       <IconButton onClick={onAddSprint} size='small'>
         <AddIcon fontSize='small' />
       </IconButton>
       {isOpen ? <ExpandLess /> : <ExpandMore />}
     </ListItemButton>
   );
-};
+}
 
 /**
- * list all sprints under a project
+ * render all sprints inside a project
  */
 function SprintList({ proj, isOpen, sprintInputForProject, sprintName, setSprintName, handleCreateSprint }: {
   proj: Project;
@@ -82,27 +91,28 @@ function SprintList({ proj, isOpen, sprintInputForProject, sprintName, setSprint
       {/* sprint name input */}
       {sprintInputForProject === proj.id && (
         <Box sx={{ pl: 4, mt: 1 }}>
-        <InlineTextInput
-          placeholder='Sprint name'
-          value={sprintName}
-          setValue={setSprintName}
-          onSubmit={() => handleCreateSprint(proj.id)}
-        />
+          <InlineTextInput
+            placeholder='Sprint name'
+            value={sprintName}
+            setValue={setSprintName}
+            onSubmit={() => handleCreateSprint(proj.id)}
+          />
         </Box>
       )}
-      {/* display sprints */}
+
+      {/* sprint list */}
       {Object.keys(proj.sprints).length > 0 ? (
         <List sx={{ pl: 2 }} disablePadding>
           {Object.values(proj.sprints).map((sprint) => (
             <Link
               key={sprint.id}
-              href={`/${proj.name}/${sprint.name}`}
+              href={`/${proj.id}/${sprint.id}`}
               passHref
               legacyBehavior
             >
               <ListItemButton>
                 <ListItemIcon><InsertDriveFileIcon /></ListItemIcon>
-                <ListItemText primary={sprint.name} />
+                <ListItemText primary={sprint.title} />
               </ListItemButton>
             </Link>
           ))}
@@ -110,14 +120,15 @@ function SprintList({ proj, isOpen, sprintInputForProject, sprintName, setSprint
       ) : null}
     </Collapse>
   );
-};
+}
 
 /**
  * sidebar component
  */
 export default function Sidebar() {
   // context
-  const { projects, addProject, addSprint } = useProjects();
+  const { projects, createProject, createSprint } = useProjectsManager();
+
   // state
   const [projectInputVisible, setProjectInputVisible] = useState(false);
   const [projectName, setProjectName] = useState('');
@@ -126,25 +137,25 @@ export default function Sidebar() {
   const [openProjects, setOpenProjects] = useState<Record<string, boolean>>({});
 
   /**
-   * project and sprint creation handlers
+   * create a project from name input
    */
   const handleCreateProject = () => {
     const name = projectName.trim();
-    if (name) addProject(name);
+    if (name) createProject(name);
     setProjectName('');
     setProjectInputVisible(false);
   };
 
+  /**
+   * create a sprint for a project from name input
+   */
   const handleCreateSprint = (projectId: string) => {
     const name = sprintName.trim();
-    if (name) addSprint(projectId, name);
+    if (name) createSprint(projectId, name);
     setSprintName('');
     setSprintInputForProject(null);
   };
 
-  /**
-   * utilities
-   */
   const toggleOpen = (id: string) => {
     setOpenProjects((prev) => ({ ...prev, [id]: !prev[id] }));
   };
@@ -157,8 +168,7 @@ export default function Sidebar() {
 
   return (
     <Box sx={{ width: SIDEBAR_WIDTH, bgcolor: SIDEBAR_BG, display: 'flex', flexDirection: 'column' }}>
-
-      {/* sidebar header */}
+      {/* header */}
       <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
         <Box sx={{ height: TASK_PAGE_APPBAR_HEIGHT }}>
           <Typography variant='h6' color='primary' sx={{ fontWeight: 600, textAlign: 'left', mt: 1, ml: 2 }} gutterBottom>
@@ -172,7 +182,7 @@ export default function Sidebar() {
         </ListItemButton>
       </Box>
 
-      {/* projects list */}
+      {/* project list */}
       <List sx={{ flex: 1, overflowY: 'auto', pb: 2 }}>
         <Box sx={{ width: SIDEBAR_WIDTH - SCROLLBAR_ALLOWANCE }}>
 
@@ -188,7 +198,7 @@ export default function Sidebar() {
             </Box>
           )}
 
-          {/* render projects and sprints */}
+          {/* each project */}
           {Object.values(projects).map((proj) => (
             <div key={proj.id}>
               <ProjectListItem
@@ -207,7 +217,6 @@ export default function Sidebar() {
               />
             </div>
           ))}
-
         </Box>
       </List>
     </Box>
