@@ -29,7 +29,7 @@ export default function SprintPage() {
   const project = params.project as string;
   const sprint = params.sprint as string;
   // state
-  const [mode, setMode] = useState(0); // 0 = List, 1 = Graph, 2 = Calendar
+  const [mode, setMode] = useState(0); // 0 = List, 1 = Calendar
   const [openColumn, setOpenColumn] = useState('');  // column to add task to
   // TODO: give proper ids to columns
   const [columns, setColumns] = useState<Record<string, Column>>({

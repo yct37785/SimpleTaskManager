@@ -1,5 +1,5 @@
 export type Label = {
-  name: string;
+  title: string;
   color: string;
 }
 
@@ -10,17 +10,6 @@ export type Task = {
   dueDate: string; // ISO string
   labels?: Label[];
   addDate: string; // ISO string for when the task was added
-}
-
-export type Sprint = {
-  id: string;
-  name: string;
-}
-
-export type Project = {
-  id: string;
-  name: string;
-  sprints: Record<string, Sprint>;
 }
 
 export enum ColumnType {
@@ -34,4 +23,16 @@ export type Column = {
   type: ColumnType;
   title: string;
   tasks: Task[];
+}
+
+export type Sprint = {
+  id: string;
+  title: string;
+  columns: Column[];
+}
+
+export type Project = {
+  id: string;
+  title: string;
+  sprints: Record<string, Sprint>;
 }
