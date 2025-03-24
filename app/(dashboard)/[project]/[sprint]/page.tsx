@@ -80,9 +80,9 @@ export default function SprintPage() {
       </Box>
 
       {/* dashboard */}
-      <Box sx={{ flex: 1, overflowX: 'auto', overflowY: 'auto', mt: `${TASK_PAGE_APPBAR_HEIGHT}px` }}>
+      <Box sx={{ overflowX: 'auto', overflowY: 'auto', mt: `${TASK_PAGE_APPBAR_HEIGHT}px` }}>
         <DragDropContext onDragEnd={onDragEnd}>
-          <Box sx={{ display: 'flex', gap: 4, p: 2, minHeight: '100%' }}>
+          <Box sx={{ display: 'flex', gap: 4, p: 2 }}>
             {Object.values(columns).map((column) => (
               <TaskColumn key={column.id} column={column} setOpenColumn={setOpenColumn} />
             ))}
