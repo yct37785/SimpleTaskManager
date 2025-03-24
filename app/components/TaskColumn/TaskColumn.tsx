@@ -2,14 +2,14 @@
 
 // components
 import { Droppable } from '@hello-pangea/dnd';
-import { Button, Box, Typography, Stack } from '@mui/material';
+import { Button, Box, Typography } from '@mui/material';
 import TaskCard from '../TaskCard/TaskCard';
 import { 
   Add as AddIcon
 } from '@mui/icons-material';
 // types
 import { Column } from '@defines/schemas';
-import { TASK_COLUMN_WIDTH, TASK_COLUMN_MIN_HEIGHT } from '@defines/consts';
+import { TASK_COLUMN_WIDTH } from '@defines/consts';
 
 type Props = {
   column: Column;

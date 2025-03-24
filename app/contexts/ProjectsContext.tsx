@@ -135,41 +135,28 @@ export const ProjectsProvider = ({ children }: { children: ReactNode }) => {
     sourceIndex: number,
     destIndex: number
   ) => {
-    setProjects((prev) => {
-      const project = prev[projectId];
-      const sprint = project.sprints[sprintId];
+    const project = projects[projectId];
+    const sprint = project.sprints[sprintId];
 
-      const sourceColumn = sprint.columns.find((col) => col.id === sourceColId)!;
-      const destColumn = sprint.columns.find((col) => col.id === destColId)!;
+    // columns
+    const sourceColumn = sprint.columns.find((col: Column) => col.id === sourceColId)!;
+    const destColumn = sprint.columns.find((col: Column) => col.id === destColId)!;
 
-      const task = sourceColumn.tasks[sourceIndex];
+    // task
+    const task = sourceColumn.tasks[sourceIndex];
+    sourceColumn.tasks.splice(sourceIndex, 1);
+    destColumn.tasks.splice(destIndex, 0, task);
 
-      const updatedSourceTasks = [...sourceColumn.tasks];
-      updatedSourceTasks.splice(sourceIndex, 1);
-
-      const updatedDestTasks = [...destColumn.tasks];
-      updatedDestTasks.splice(destIndex, 0, task);
-
-      const updatedColumns = sprint.columns.map((col) => {
-        if (col.id === sourceColId) return { ...col, tasks: updatedSourceTasks };
-        if (col.id === destColId) return { ...col, tasks: updatedDestTasks };
-        return col;
-      });
-
-      return {
-        ...prev,
-        [projectId]: {
-          ...project,
-          sprints: {
-            ...project.sprints,
-            [sprintId]: {
-              ...sprint,
-              columns: updatedColumns,
-            },
-          },
+    setProjects(prev => ({
+      ...prev,
+      [projectId]: {
+        ...project,
+        sprints: {
+          ...project.sprints,
+          [sprintId]: { ...sprint },
         },
-      };
-    });
+      }
+    }));
   };
 
   return (
