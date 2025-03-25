@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 // components
 import { DragDropContext, DropResult } from '@hello-pangea/dnd';
@@ -30,6 +30,15 @@ export default function SprintPage() {
   // local state
   const [mode, setMode] = useState(0); // 0 = List, 1 = Calendar
   const [openColumn, setOpenColumn] = useState('');  // columnId to add task to
+
+  // document title
+  useEffect(() => {
+    if (project && sprint) {
+      document.title = `${project.title} - ${sprint.title} | Task Manager`;
+    } else {
+      document.title = 'Task Manager';
+    }
+  }, [project, sprint]);
 
   // add task handler
   const handleAddTask = (task: Task, columnId: string): void => {

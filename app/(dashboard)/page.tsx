@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 // components
 import { Box, Typography } from '@mui/material';
 import Image from 'next/image';
@@ -14,6 +15,11 @@ export default function Home() {
 
   const hasProjects = Object.keys(projects).length > 0;
   if (hasProjects) return null;
+
+  // document title
+  useEffect(() => {
+    document.title = 'Task Manager';
+  }, []);
 
   return (
     <main style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
