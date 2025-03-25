@@ -34,7 +34,6 @@ export type Column = {
  * - ordered
  */
 export type Sprint = {
-  id: string;
   title: string;
   startDate: number;
   endDate: number;
