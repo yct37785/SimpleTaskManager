@@ -5,16 +5,16 @@ import { useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import Image from 'next/image';
 // contexts
-import { useProjectsManager } from '@contexts/ProjectsContext';
+import { useWorkspacesManager } from '@contexts/WorkspacesContext';
 
 /**
  * home dashboard
  */
 export default function Home() {
-  const { projects } = useProjectsManager();
+  const { workspaces } = useWorkspacesManager();
 
-  const hasProjects = Object.keys(projects).length > 0;
-  if (hasProjects) return null;
+  const hasWorkspaces = Object.keys(workspaces).length > 0;
+  if (hasWorkspaces) return null;
 
   // document title
   useEffect(() => {
@@ -29,10 +29,10 @@ export default function Home() {
           Welcome to Task Manager
         </Typography>
         <Typography variant='h6' color='text.secondary' sx={{ fontWeight: 500, textAlign: 'left' }}>
-          Get started by creating a <strong>project</strong> to organize your work efficiently.
+          Get started by creating a <strong>workspace</strong> to organize your work efficiently.
         </Typography>
         <Typography variant='h6' color='text.secondary' sx={{ fontWeight: 500, textAlign: 'left', mt: 2 }}>
-          Within each project, add <strong>sprints</strong> to break down tasks and track progress.
+          Within each workspace, add <strong>projects</strong> to break down tasks and track progress.
         </Typography>
       </Box>
 
@@ -40,7 +40,7 @@ export default function Home() {
         <Image src='/arrow.svg' alt='Arrow pointing to sidebar' width={100} height={100} 
         style={{ transform: 'scale(1, -1) rotate(20deg)', position: 'absolute', top: '8px' }} />
         <Typography variant='body1' fontWeight='bold' color='text.secondary' sx={{ ml: '40px' }}>
-          Click <strong>'Add Project'</strong> in the sidebar!
+          Click <strong>'Add Workspace'</strong> in the sidebar!
         </Typography>
       </Box>
 
