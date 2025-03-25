@@ -36,10 +36,10 @@ export default function Home() {
         </Typography>
       </Box>
 
-      <Box sx={{ position: 'absolute', top: '7%', left: '23%', display: 'flex', alignItems: 'center' }}>
+      <Box sx={{ position: 'absolute', top: '120px', left: '300px' }}>
         <Image src='/arrow.svg' alt='Arrow pointing to sidebar' width={100} height={100} 
-        style={{ transform: 'rotate(20deg)' }} />
-        <Typography variant='body1' fontWeight='bold' color='text.secondary' sx={{ mt: 5, ml: 2 }}>
+        style={{ transform: 'scale(1, -1) rotate(20deg)', position: 'absolute', top: '8px' }} />
+        <Typography variant='body1' fontWeight='bold' color='text.secondary' sx={{ ml: '40px' }}>
           Click <strong>'Add Project'</strong> in the sidebar!
         </Typography>
       </Box>
