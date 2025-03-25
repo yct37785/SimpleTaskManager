@@ -171,7 +171,7 @@ export default function Sidebar() {
       {/* header */}
       <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
         <Box sx={{ height: TASK_PAGE_APPBAR_HEIGHT }}>
-          <Typography variant='h6' color='primary' sx={{ fontWeight: 600, textAlign: 'left', mt: 1, ml: 2 }} gutterBottom>
+          <Typography variant='h6' color='#55F' sx={{ fontWeight: 600, textAlign: 'left', mt: 1, ml: 2 }} gutterBottom>
             TASK MANAGER
           </Typography>
         </Box>
