@@ -8,12 +8,8 @@ import {
   IconButton, Collapse, Typography, TextField, Divider
 } from '@mui/material';
 import {
-  Add as AddIcon,
-  Folder as FolderIcon,
-  FolderOpen as FolderOpenIcon,
-  InsertDriveFile as InsertDriveFileIcon,
-  ExpandLess,
-  ExpandMore
+  Add as AddIcon, Folder as FolderIcon, FolderOpen as FolderOpenIcon, InsertDriveFile as InsertDriveFileIcon, Send as SendIcon,
+  CalendarMonth as CalendarIcon, Home as HomeIcon, PieChart as PieCharIcon, ExpandLess, ExpandMore
 } from '@mui/icons-material';
 // contexts
 import { useProjectsManager } from '@contexts/ProjectsContext';
@@ -135,6 +131,11 @@ export default function Sidebar() {
   const [sprintInputForProject, setSprintInputForProject] = useState<string | null>(null);
   const [sprintName, setSprintName] = useState('');
   const [openProjects, setOpenProjects] = useState<Record<string, boolean>>({});
+  const [open, setOpen] = useState(true);
+
+  const handleClick = () => {
+    setOpen(!open);
+  };
 
   /**
    * create a project from name input
@@ -175,7 +176,24 @@ export default function Sidebar() {
             TASK MANAGER
           </Typography>
         </Box>
+
         <Divider />
+
+        {/* projects management */}
+        <List>
+          <ListItemButton>
+            <ListItemIcon><CalendarIcon /></ListItemIcon>
+            <ListItemText primary='Timeline' />
+          </ListItemButton>
+          <ListItemButton>
+            <ListItemIcon><PieCharIcon /></ListItemIcon>
+            <ListItemText primary='Metrics' />
+          </ListItemButton>
+        </List>
+
+        <Divider />
+
+        {/* add projects */}
         <ListItemButton onClick={() => setProjectInputVisible(true)}>
           <ListItemIcon><AddIcon color='primary' /></ListItemIcon>
           <ListItemText primary='Add Project' />
