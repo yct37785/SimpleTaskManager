@@ -1,4 +1,4 @@
-export const SIDEBAR_WIDTH = 300;
+export const SIDEBAR_WIDTH = 280;
 export const SCROLLBAR_ALLOWANCE = 16;
 export const TASK_PAGE_APPBAR_HEIGHT = 48;
 export const TASK_COLUMN_WIDTH = 250;
