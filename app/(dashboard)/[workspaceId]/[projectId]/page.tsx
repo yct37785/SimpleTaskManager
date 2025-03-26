@@ -5,33 +5,35 @@ import { useParams } from 'next/navigation';
 // components
 import { Box, Typography } from '@mui/material';
 // contexts
-import { useProjectsManager } from '@contexts/ProjectsContext';
+import { useWorkspacesManager } from '@contexts/WorkspacesContext';
 
 /**
  * project dashboard
  */
 export default function ProjectPage() {
-  // get IDs from URL
-  const { project: projectId } = useParams() as { project: string };
+  const { workspaceId, projectId } = useParams() as { workspaceId: string, projectId: string };
+  const { workspaces } = useWorkspacesManager();
 
-  // context
-  const { projects } = useProjectsManager();
-  const project = projects[projectId];
+  const workspace = workspaces[workspaceId];
+  const project = workspace?.projects[projectId];
+
+  if (!workspace || !project) {
+    return <div>Invalid workspace or project</div>;
+  }
 
   // document title
   useEffect(() => {
-    if (project) {
-      document.title = `${project.title} | Task Manager`;
+    if (workspace && project) {
+      document.title = `${workspace.title} - ${project.title} | Task Manager`;
     } else {
       document.title = 'Task Manager';
     }
-  }, [project]);
-
+  }, [workspace, project]);
 
   return (
     <main style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <Typography variant='h4' fontWeight='bold' color='primary' gutterBottom>
-        Project page
+        Project dashboard
       </Typography>
     </main>
   );
