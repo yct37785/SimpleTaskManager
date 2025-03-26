@@ -3,9 +3,11 @@
   height: 36px;
   text-align: center;
   line-height: 36px;
-  border-radius: 0;
   cursor: pointer;
   user-select: none;
+  position: relative;
+  font-weight: 500;
+  border-radius: 0;
 }
 
 /* highlighted range */
@@ -14,14 +16,54 @@
   color: white;
 }
 
-/* start of range */
+/* start of range with knob */
 .calendarCell[data-selection-start] {
   border-top-left-radius: 6px;
   border-bottom-left-radius: 6px;
 }
 
-/* end of range */
+.calendarCell[data-selection-start]::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: white;
+  border: 2px solid #1976d2;
+  z-index: 2;
+}
+
+/* end of range with knob */
 .calendarCell[data-selection-end] {
   border-top-right-radius: 6px;
   border-bottom-right-radius: 6px;
+}
+
+.calendarCell[data-selection-end]::after {
+  content: '';
+  position: absolute;
+  right: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: white;
+  border: 2px solid #1976d2;
+  z-index: 2;
+}
+
+/* hover state */
+.calendarCell[data-hovered]:not([data-selected]) {
+  background-color: rgba(25, 118, 210, 0.1);
+}
+
+/* disabled / unavailable */
+.calendarCell[data-disabled],
+.calendarCell[data-unavailable] {
+  opacity: 0.4;
+  pointer-events: none;
 }
