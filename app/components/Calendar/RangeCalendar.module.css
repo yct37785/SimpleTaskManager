@@ -1,0 +1,27 @@
+.calendarCell {
+  width: 36px;
+  height: 36px;
+  text-align: center;
+  line-height: 36px;
+  border-radius: 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* highlighted range */
+.calendarCell[data-selected] {
+  background-color: #1976d2;
+  color: white;
+}
+
+/* start of range */
+.calendarCell[data-selection-start] {
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+
+/* end of range */
+.calendarCell[data-selection-end] {
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
