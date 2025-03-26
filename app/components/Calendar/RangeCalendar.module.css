@@ -36,6 +36,11 @@
   z-index: 2;
 }
 
+.calendarCell[data-selection-start]:hover::before {
+  background-color: #1565c0;
+  border-color: #fff;
+}
+
 /* end of range with knob */
 .calendarCell[data-selection-end] {
   border-top-right-radius: 6px;
@@ -54,6 +59,11 @@
   background-color: white;
   border: 2px solid #1976d2;
   z-index: 2;
+}
+
+.calendarCell[data-selection-end]:hover::after {
+  background-color: #1565c0;
+  border-color: #fff;
 }
 
 /* hover state */
