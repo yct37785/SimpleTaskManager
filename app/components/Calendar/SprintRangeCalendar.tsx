@@ -10,25 +10,44 @@ import {
   RangeCalendar,
   Heading,
   Button as AriaButton,
-  DateValue,
 } from 'react-aria-components';
 import { Box } from '@mui/material';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
-import { getTimezone, toEpochDay } from '@utils/DateUtils';
-import { today, isWeekend } from '@internationalized/date';
+import { getTimezone, getLocale } from '@utils/DateUtils';
+import { today } from '@internationalized/date';
+
+/**
+ * temp range data struct
+ */
+type HighlightRange = {
+  start: Date;
+  end: Date;
+  color: string;
+};
 
 type Props = {
   cellSize?: number;
   fontSize?: string;
+  highlightRanges?: HighlightRange[];
 };
 
 /**
- * component to select multiple date range
+ * displays a calendar with range selection and cell highlight support
  */
 export default function SprintRangeCalendar({
   cellSize = 40,
-  fontSize = 'medium'
+  fontSize = 'medium',
+  highlightRanges = [],
 }: Props) {
+  const timeZone = getTimezone();
+
+  const isDateInHighlightRange = (cellDate: Date) => {
+    return highlightRanges.some(
+      (range) =>
+        cellDate >= range.start &&
+        cellDate <= range.end
+    );
+  };
 
   return (
     <Box sx={{ overflowY: 'auto', width: 'fit-content', maxWidth: '100%' }}>
@@ -36,19 +55,6 @@ export default function SprintRangeCalendar({
         aria-label='Select project range'
         visibleDuration={{ months: 2 }}
         pageBehavior='single'
-        onChange={(range) => {
-          // epoch days
-          let now = today(getTimezone());
-          const timeZone = getTimezone();
-          const startDate = range.start.toDate(timeZone);
-          const endDate = range.end.toDate(timeZone);
-          const epochDayStart = toEpochDay(startDate);
-          const epochDayEnd = toEpochDay(endDate);
-          console.log('now: ' + now);
-          console.log('Timezone: ' + timeZone);
-          console.log('epochDayStart:', epochDayStart);
-          console.log('epochDayEnd:', epochDayEnd);
-        }}
         minValue={today(getTimezone())}
       >
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -68,18 +74,28 @@ export default function SprintRangeCalendar({
                 {(day) => <CalendarHeaderCell>{day}</CalendarHeaderCell>}
               </CalendarGridHeader>
               <CalendarGridBody className={styles.calendarGridBody}>
-                {(date) => (
-                  <CalendarCell
-                    date={date}
-                    className={styles.calendarCell}
-                    style={{
-                      width: cellSize,
-                      height: cellSize,
-                      lineHeight: `${cellSize}px`,
-                      fontSize,
-                    }}
-                  />
-                )}
+                {(date) => {
+                  const jsDate = date.toDate(timeZone);
+
+                  // get highlight color if any
+                  const match = highlightRanges.find(
+                    (range) => jsDate >= range.start && jsDate <= range.end
+                  );
+
+                  return (
+                    <CalendarCell
+                      date={date}
+                      className={styles.calendarCell}
+                      style={{
+                        width: cellSize,
+                        height: cellSize,
+                        lineHeight: `${cellSize}px`,
+                        fontSize,
+                        backgroundColor: match?.color || undefined,
+                      }}
+                    />
+                  );
+                }}
               </CalendarGridBody>
             </CalendarGrid>
           ))}

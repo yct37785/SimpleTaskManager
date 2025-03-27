@@ -33,7 +33,20 @@ export default function ProjectPage() {
   return (
     <main style={{ height: '100vh', overflow: 'auto', padding: '2rem' }}>
       <Box>
-        <SprintRangeCalendar cellSize={48} fontSize='1rem' />
+        <SprintRangeCalendar cellSize={48} fontSize='1rem'
+          highlightRanges={[
+            {
+              start: new Date(2025, 3, 1),
+              end: new Date(2025, 3, 7),
+              color: 'lightgreen',
+            },
+            {
+              start: new Date(2025, 3, 15),
+              end: new Date(2025, 3, 20),
+              color: 'lightblue',
+            },
+          ]}
+        />
       </Box>
     </main>
   );
