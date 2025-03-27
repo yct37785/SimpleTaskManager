@@ -11,7 +11,7 @@ import {
   Heading,
   Button as AriaButton,
 } from 'react-aria-components';
-import { Box, IconButton } from '@mui/material';
+import { Box } from '@mui/material';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 
 /**
@@ -19,29 +19,29 @@ import { ChevronLeft, ChevronRight } from '@mui/icons-material';
  */
 export default function SprintRangeCalendar() {
   return (
-    <Box sx={{ flex: 1, overflowY: 'auto' }}>
+    <Box sx={{ overflowY: 'auto', width: 'fit-content', maxWidth: '100%' }}>
       <RangeCalendar
         aria-label='Select project range'
-        visibleDuration={{ months: 3 }}
+        visibleDuration={{ months: 2 }}
         pageBehavior='single'
       >
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <AriaButton slot='previous'>
+          <AriaButton slot='previous' className={styles.navButton}>
             <ChevronLeft />
           </AriaButton>
           <Heading style={{ flex: 1, textAlign: 'center' }} />
-          <AriaButton slot='next'>
+          <AriaButton slot='next' className={styles.navButton}>
             <ChevronRight />
           </AriaButton>
         </Box>
 
         <Box sx={{ display: 'flex', gap: 3 }}>
-          {[0, 1, 2].map((offset) => (
-            <CalendarGrid key={offset} offset={{ months: offset }}>
-              <CalendarGridHeader>
+          {[0, 1].map((offset) => (
+            <CalendarGrid key={offset} offset={{ months: offset }} className={styles.calendarGrid}>
+              <CalendarGridHeader className={styles.calendarGridHeader}>
                 {(day) => <CalendarHeaderCell>{day}</CalendarHeaderCell>}
               </CalendarGridHeader>
-              <CalendarGridBody>
+              <CalendarGridBody className={styles.calendarGridBody}>
                 {(date) => <CalendarCell date={date} className={styles.calendarCell} />}
               </CalendarGridBody>
             </CalendarGrid>

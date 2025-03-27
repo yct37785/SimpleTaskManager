@@ -1,13 +1,67 @@
+/**
+ * calendar grid
+ */
+.calendarGrid {
+  overflow: hidden;
+}
+
+/* calendar grid header */
+.calendarGridHeader {
+  font-weight: 600;
+  font-size: large;
+  color: #616161;
+}
+
+/**
+ * month selector
+ */
+ .navButton {
+  border: none;
+  background: transparent;
+  padding: 6px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1976d2;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.navButton:hover {
+  background-color: rgba(25, 118, 210, 0.1);
+}
+
+.navButton:focus-visible {
+  outline: 2px solid #1976d2;
+}
+
+/**
+ * calendar cell
+ */
 .calendarCell {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   text-align: center;
-  line-height: 36px;
+  line-height: 40px;
+  font-size: medium;
   cursor: pointer;
   user-select: none;
   position: relative;
   font-weight: 500;
   border-radius: 0;
+  transition: background-color 0.2s ease;
+}
+
+/* on hover over unselected cells */
+.calendarCell[data-hovered]:not([data-selected]) {
+  background-color: rgba(25, 118, 210, 0.08);
+}
+
+/* MUI-like focus ring */
+.calendarCell[data-focus-visible] {
+  outline: 2px solid #1976d2;
+  outline-offset: -2px;
 }
 
 /* highlighted range */
