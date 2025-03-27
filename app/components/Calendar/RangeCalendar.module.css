@@ -1,11 +1,12 @@
 /**
- * calendar grid
+ * calendar grid container
  */
 .calendarGrid {
   overflow: hidden;
 }
-
-/* calendar grid header */
+/**
+ * day of the week header
+ */
 .calendarGridHeader {
   font-weight: 600;
   font-size: large;
@@ -13,7 +14,7 @@
 }
 
 /**
- * month selector
+ * month navigator buttons
  */
  .navButton {
   border: none;
@@ -37,7 +38,7 @@
 }
 
 /**
- * calendar cell
+ * cell main style
  */
 .calendarCell {
   width: 40px;
@@ -53,24 +54,24 @@
   transition: background-color 0.2s ease;
 }
 
-/* on hover over unselected cells */
+/**
+ * unselected cells
+ */
 .calendarCell[data-hovered]:not([data-selected]) {
   background-color: rgba(25, 118, 210, 0.08);
 }
 
-/* MUI-like focus ring */
-.calendarCell[data-focus-visible] {
-  outline: 2px solid #1976d2;
-  outline-offset: -2px;
-}
-
-/* highlighted range */
+/**
+ * selected cells
+ */
 .calendarCell[data-selected] {
   background-color: #1976d2;
   color: white;
 }
 
-/* start of range with knob */
+/**
+ * range start
+ */
 .calendarCell[data-selection-start] {
   border-top-left-radius: 6px;
   border-bottom-left-radius: 6px;
@@ -95,7 +96,13 @@
   border-color: #fff;
 }
 
-/* end of range with knob */
+.calendarCell[data-selection-start]:hover {
+  opacity: 0.4;
+}
+
+/**
+ * range end
+ */
 .calendarCell[data-selection-end] {
   border-top-right-radius: 6px;
   border-bottom-right-radius: 6px;
@@ -120,12 +127,25 @@
   border-color: #fff;
 }
 
-/* hover state */
+
+.calendarCell[data-selection-end]:hover {
+  opacity: 0.4;
+}
+
+.calendarCell[data-selection-end]:hover {
+  opacity: 0.4;
+}
+
+/**
+ * hover over unselected cells
+ */
 .calendarCell[data-hovered]:not([data-selected]) {
   background-color: rgba(25, 118, 210, 0.1);
 }
 
-/* disabled / unavailable */
+/**
+ * disabled/unavilable cells
+ */
 .calendarCell[data-disabled],
 .calendarCell[data-unavailable] {
   opacity: 0.4;
