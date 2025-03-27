@@ -10,10 +10,12 @@ import {
   RangeCalendar,
   Heading,
   Button as AriaButton,
+  DateValue,
 } from 'react-aria-components';
 import { Box } from '@mui/material';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { getTimezone, toEpochDay } from '@utils/DateUtils';
+import { today, isWeekend } from '@internationalized/date';
 
 type Props = {
   cellSize?: number;
@@ -27,6 +29,7 @@ export default function SprintRangeCalendar({
   cellSize = 40,
   fontSize = 'medium'
 }: Props) {
+
   return (
     <Box sx={{ overflowY: 'auto', width: 'fit-content', maxWidth: '100%' }}>
       <RangeCalendar
@@ -35,15 +38,18 @@ export default function SprintRangeCalendar({
         pageBehavior='single'
         onChange={(range) => {
           // epoch days
+          let now = today(getTimezone());
           const timeZone = getTimezone();
           const startDate = range.start.toDate(timeZone);
           const endDate = range.end.toDate(timeZone);
           const epochDayStart = toEpochDay(startDate);
           const epochDayEnd = toEpochDay(endDate);
+          console.log('now: ' + now);
           console.log('Timezone: ' + timeZone);
           console.log('epochDayStart:', epochDayStart);
           console.log('epochDayEnd:', epochDayEnd);
         }}
+        minValue={today(getTimezone())}
       >
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <AriaButton slot='previous' className={styles.navButton}>
