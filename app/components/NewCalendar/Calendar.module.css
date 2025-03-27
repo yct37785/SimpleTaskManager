@@ -1,0 +1,78 @@
+.calendarGrid {
+  overflow: hidden;
+}
+.calendarGridHeader {
+  font-weight: 600;
+  font-size: large;
+  color: #616161;
+}
+.navButton {
+  border: none;
+  background: transparent;
+  padding: 6px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1976d2;
+  transition: background-color 0.2s ease-in-out;
+}
+.navButton:hover {
+  background-color: rgba(25, 118, 210, 0.1);
+}
+.cell {
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  font-weight: 500;
+  border-radius: 0;
+  transition: background-color 0.2s ease;
+}
+.cell[data-hovered]:not([data-selected]) {
+  background-color: rgba(25, 118, 210, 0.08);
+}
+.cell[data-selected] {
+  background-color: #1976d2;
+  color: white;
+}
+.cell[data-selection-start] {
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+.cell[data-selection-start]::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: white;
+  border: 2px solid #1976d2;
+  z-index: 2;
+}
+.cell[data-selection-end] {
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+.cell[data-selection-end]::after {
+  content: '';
+  position: absolute;
+  right: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: white;
+  border: 2px solid #1976d2;
+  z-index: 2;
+}
+.cell[data-disabled],
+.cell[data-unavailable] {
+  opacity: 0.4;
+  pointer-events: none;
+}
