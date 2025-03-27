@@ -14,10 +14,18 @@ import {
 import { Box } from '@mui/material';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 
+type Props = {
+  cellSize?: number;
+  fontSize?: string;
+};
+
 /**
  * component to select multiple date range
  */
-export default function SprintRangeCalendar() {
+export default function SprintRangeCalendar({
+  cellSize = 40,
+  fontSize = 'medium'
+}: Props) {
   return (
     <Box sx={{ overflowY: 'auto', width: 'fit-content', maxWidth: '100%' }}>
       <RangeCalendar
@@ -42,7 +50,18 @@ export default function SprintRangeCalendar() {
                 {(day) => <CalendarHeaderCell>{day}</CalendarHeaderCell>}
               </CalendarGridHeader>
               <CalendarGridBody className={styles.calendarGridBody}>
-                {(date) => <CalendarCell date={date} className={styles.calendarCell} />}
+                {(date) => (
+                  <CalendarCell
+                    date={date}
+                    className={styles.calendarCell}
+                    style={{
+                      width: cellSize,
+                      height: cellSize,
+                      lineHeight: `${cellSize}px`,
+                      fontSize,
+                    }}
+                  />
+                )}
               </CalendarGridBody>
             </CalendarGrid>
           ))}

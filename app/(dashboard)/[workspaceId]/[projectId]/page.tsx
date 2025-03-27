@@ -33,7 +33,7 @@ export default function ProjectPage() {
   return (
     <main style={{ height: '100vh', overflow: 'auto', padding: '2rem' }}>
       <Box>
-        <SprintRangeCalendar />
+        <SprintRangeCalendar cellSize={48} fontSize='1rem' />
       </Box>
     </main>
   );
