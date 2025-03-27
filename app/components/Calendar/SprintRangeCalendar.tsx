@@ -13,6 +13,7 @@ import {
 } from 'react-aria-components';
 import { Box } from '@mui/material';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
+import { getTimezone, toEpochDay } from '@utils/DateUtils';
 
 type Props = {
   cellSize?: number;
@@ -32,6 +33,17 @@ export default function SprintRangeCalendar({
         aria-label='Select project range'
         visibleDuration={{ months: 2 }}
         pageBehavior='single'
+        onChange={(range) => {
+          // epoch days
+          const timeZone = getTimezone();
+          const startDate = range.start.toDate(timeZone);
+          const endDate = range.end.toDate(timeZone);
+          const epochDayStart = toEpochDay(startDate);
+          const epochDayEnd = toEpochDay(endDate);
+          console.log('Timezone: ' + timeZone);
+          console.log('epochDayStart:', epochDayStart);
+          console.log('epochDayEnd:', epochDayEnd);
+        }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <AriaButton slot='previous' className={styles.navButton}>
