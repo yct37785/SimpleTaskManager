@@ -1,9 +1,10 @@
 'use client';
 
 import { useRef } from 'react';
-import { useLocale, useRangeCalendar } from 'react-aria';
-import { useRangeCalendarState } from 'react-stately';
-import { createCalendar } from '@internationalized/date';
+import { useRangeCalendar } from '@react-aria/calendar';
+import { useRangeCalendarState } from '@react-stately/calendar';
+import { createCalendar, today, getLocalTimeZone } from '@internationalized/date';
+import { useLocale } from '@react-aria/i18n';
 import { Box, IconButton, Typography } from '@mui/material';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import CalendarGrid from './CalendarGrid';
@@ -26,10 +27,12 @@ export default function RangeCalendar({
   fontSize = '1rem',
   highlightRanges = [],
 }: Props) {
-  const { locale } = useLocale();
+  let { locale } = useLocale();
   const ref = useRef(null);
 
   const state = useRangeCalendarState({
+    // minValue: today(getLocalTimeZone()),
+    visibleDuration: { months: 2 },
     locale,
     createCalendar,
   });
@@ -39,13 +42,13 @@ export default function RangeCalendar({
     prevButtonProps,
     nextButtonProps,
     title
-  } = useRangeCalendar({}, state, ref);
+  } = useRangeCalendar({ minValue: today(getLocalTimeZone()) }, state, ref);
 
   return (
     <Box {...calendarProps} ref={ref} className={styles.calendar}>
       {/* Header with nav buttons */}
       <Box className={styles.header}>
-        <Typography variant="h6" sx={{ flex: 1, textAlign: 'center' }}>
+        <Typography variant='h6' sx={{ flex: 1, textAlign: 'center' }}>
           {title}
         </Typography>
         {/* <IconButton {...prevButtonProps} className={styles.navButton}><ChevronLeft /></IconButton>

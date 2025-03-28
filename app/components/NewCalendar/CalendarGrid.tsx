@@ -1,8 +1,9 @@
 'use client';
 
 import { useCalendarGrid } from 'react-aria';
-import { getWeeksInMonth } from '@internationalized/date';
-import { useLocale } from 'react-aria';
+import { RangeCalendarState } from 'react-stately';
+import { getWeeksInMonth, CalendarDate, endOfMonth } from '@internationalized/date';
+import { useLocale } from '@react-aria/i18n';
 import CalendarCell from './CalendarCell';
 import styles from './Calendar.module.css';
 
@@ -13,7 +14,7 @@ type HighlightRange = {
 };
 
 type Props = {
-  state: any;
+  state: RangeCalendarState;
   offset: number; // for month shifting
   highlightRanges: HighlightRange[];
   cellSize: number;
@@ -29,12 +30,12 @@ export default function CalendarGrid({
 }: Props) {
   const { locale } = useLocale();
 
-  // Get props for this calendar grid
-  const { gridProps, headerProps, weekDays } = useCalendarGrid({}, state);
+  // calculate how many weeks are in this month view
+  const startDate = state.visibleRange.start.add({ months: offset });
+  let endDate = endOfMonth(startDate);
+  const weeksInMonth = getWeeksInMonth(startDate, locale);
 
-  // Calculate how many weeks are in this month view
-  const visibleStart = state.visibleRange.start.add({ months: offset });
-  const weeksInMonth = getWeeksInMonth(visibleStart, locale);
+  const { gridProps, headerProps, weekDays } = useCalendarGrid({ startDate, endDate }, state);
 
   return (
     <table {...gridProps} className={styles.calendarTable}>
@@ -46,9 +47,9 @@ export default function CalendarGrid({
         </tr>
       </thead>
       <tbody>
-        {[...Array(weeksInMonth).keys()].map((weekIndex) => (
+        {[...new Array(weeksInMonth).keys()].map((weekIndex) => (
           <tr key={weekIndex}>
-            {state.getDatesInWeek(weekIndex).map((date: any, i: number) =>
+            {state.getDatesInWeek(weekIndex, startDate).map((date: CalendarDate | null, i: number) =>
               date ? (
                 <CalendarCell
                   key={i}
