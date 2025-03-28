@@ -11,8 +11,9 @@ export type Task = {
   id: string;
   title: string;
   description: string;
-  addedDate: number;
-  completedDate: number;
+  addDate: string;
+  dueDate: string;
+  completedDate: string;
   labels?: Label[];
 }
 
