@@ -46,7 +46,7 @@ export default function RangeCalendar({
 
   return (
     <Box {...calendarProps} ref={ref} className={styles.calendar}>
-      {/* header with nav buttons */}
+      {/* header */}
       <Box className={styles.header}>
         <CalendarNavButton {...prevButtonProps} className={styles.navButton}>
           <ChevronLeft />
@@ -59,7 +59,7 @@ export default function RangeCalendar({
         </CalendarNavButton>
       </Box>
 
-      {/* render multiple months */}
+      {/* grid */}
       <Box sx={{ display: 'flex', gap: 3 }}>
         {[0, 1].map(offset => (
           <CalendarGrid
