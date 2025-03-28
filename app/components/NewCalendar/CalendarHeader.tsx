@@ -13,13 +13,13 @@ type Props = AriaButtonProps<'button'> & {
 /**
  * wraps a MUI IconButton for use with React Aria's onPress and isDisabled props
  */
-export function CalendarNavButton({ onPress, isDisabled, children, className, ...rest }: Props) {
+export function CalendarNavButton({ onPress, isDisabled, children, className }: Props) {
   const handleClick = () => {
     if (onPress) onPress({} as PressEvent);
   };
 
   return (
-    <IconButton onClick={handleClick} disabled={isDisabled} {...rest} className={className}>
+    <IconButton onClick={handleClick} disabled={isDisabled} className={className}>
       {children}
     </IconButton>
   );
