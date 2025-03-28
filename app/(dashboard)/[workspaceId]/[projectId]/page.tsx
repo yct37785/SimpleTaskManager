@@ -6,7 +6,7 @@ import { useParams } from 'next/navigation';
 // MUI
 import { Box, Container, Typography, Divider } from '@mui/material';
 // our components
-import RangeCalendar from '@components/NewCalendar/RangeCalendar';
+import RangeCalendar from '@components/Calendar/RangeCalendar';
 import { useWorkspacesManager } from '@contexts/WorkspacesContext';
 
 /**
