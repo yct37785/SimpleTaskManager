@@ -37,6 +37,7 @@ export default function RangeCalendar({
   const state = useRangeCalendarState({
     // minValue: today(getLocalTimeZone()),
     visibleDuration: { months: 2 },
+    pageBehavior: 'single',
     locale,
     createCalendar,
   });
