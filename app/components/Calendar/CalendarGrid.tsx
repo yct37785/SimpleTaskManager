@@ -8,6 +8,7 @@ import { getWeeksInMonth, CalendarDate, endOfMonth } from '@internationalized/da
 // our components
 import CalendarCell, { HighlightRange } from './CalendarCell';
 // styles
+import '@styles/globals.css';
 import styles from './Calendar.module.css';
 
 type Props = {

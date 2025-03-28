@@ -14,6 +14,7 @@ import CalendarGrid from './CalendarGrid';
 import { HighlightRange } from './CalendarCell';
 import { CalendarNavButton } from './CalendarHeader';
 // styles
+import '@styles/globals.css';
 import styles from './Calendar.module.css';
 
 type Props = {
@@ -48,9 +49,9 @@ export default function RangeCalendar({
   } = useRangeCalendar({ minValue: today(getLocalTimeZone()) }, state, ref);
 
   return (
-    <Box {...calendarProps} ref={ref} className={styles.calendar}>
+    <Box {...calendarProps} ref={ref} className={styles.rangeCalendar}>
       {/* header */}
-      <Box className={styles.header}>
+      <Box className={styles.rangeCalendarHeader}>
         <CalendarNavButton {...prevButtonProps} className={styles.navButton}>
           <ChevronLeft />
         </CalendarNavButton>

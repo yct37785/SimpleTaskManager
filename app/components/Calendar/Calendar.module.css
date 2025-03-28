@@ -1,20 +1,22 @@
-.calendar {
+.rangeCalendar {
   width: fit-content;
   max-width: 100%;
 }
 
-.header {
+.rangeCalendarHeader {
   display: flex;
 }
 
 .calendarGrid {
   overflow: hidden;
 }
+
 .calendarGridHeader {
   font-weight: 600;
   font-size: large;
   color: #616161;
 }
+
 .navButton {
   border: none;
   background: transparent;

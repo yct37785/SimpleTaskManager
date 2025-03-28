@@ -9,6 +9,7 @@ import { Box } from '@mui/material';
 // others
 import { CalendarDate, isSameDay, isSameMonth, getDayOfWeek, getLocalTimeZone } from '@internationalized/date';
 // styles
+import '@styles/globals.css';
 import styles from './Calendar.module.css';
 
 /**

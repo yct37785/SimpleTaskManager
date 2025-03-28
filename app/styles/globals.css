@@ -1,0 +1,8 @@
+:root {
+  --calendar-accent-color: #1976d2;
+  --calendar-accent-hover: rgba(25, 118, 210, 0.1);
+  --calendar-border-radius: 6px;
+  --calendar-transition-speed: 0.2s;
+  --calendar-knob-size: 8px;
+  --calendar-knob-border: 2px solid var(--calendar-accent-color);
+}
