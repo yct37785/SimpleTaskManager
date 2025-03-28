@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+// next
 import { useParams } from 'next/navigation';
-// components
+// MUI
 import { Box, Container, Typography, Divider } from '@mui/material';
-import RangeCalendar from '@/app/components/NewCalendar/RangeCalendar';
-// contexts
+// our components
+import RangeCalendar from '@components/NewCalendar/RangeCalendar';
 import { useWorkspacesManager } from '@contexts/WorkspacesContext';
 
 /**

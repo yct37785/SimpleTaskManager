@@ -1,15 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-// components
-import {
-  Button, TextField, TextFieldProps, Dialog, DialogActions, DialogContent,
-  DialogTitle, Box, Stack, Typography
-} from '@mui/material';
+// MUI
+import { Button, TextField, TextFieldProps, Dialog, DialogActions, DialogContent, Box, Stack, Typography } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import dayjs, { Dayjs } from 'dayjs';
+// our components
 import LabelSelector from './LabelSelector';
+// others
+import { v4 as uuidv4 } from 'uuid';
+import dayjs, { Dayjs } from 'dayjs';
 // types
 import { Task, Label } from '@defines/schemas';
 

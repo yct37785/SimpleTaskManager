@@ -1,14 +1,15 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-// components
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
+// MUI
 import { Stack, Box, Divider, CssBaseline } from '@mui/material';
-import Sidebar from '@components/Sidebar/Sidebar';
-// contexts
-import { WorkspacesProvider } from '@contexts/WorkspacesContext';
 import { LocalizationProvider } from '@mui/x-date-pickers';
+// MUI providers
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+// our components
+import Sidebar from '@components/Sidebar/Sidebar';
+import { WorkspacesProvider } from '@contexts/WorkspacesContext';
 
 /**
  * root layout

@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect } from 'react';
-// components
-import { Box, Typography } from '@mui/material';
+// next
 import Image from 'next/image';
-// contexts
+// MUI
+import { Box, Typography } from '@mui/material';
+// our components
 import { useWorkspacesManager } from '@contexts/WorkspacesContext';
 
 /**

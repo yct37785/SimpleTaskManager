@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-// components
+// next
 import Link from 'next/link';
+// MUI
 import {
   Box, List, ListItemButton, ListItemIcon, ListItemText,
   IconButton, Collapse, Typography, TextField, Divider
@@ -11,7 +12,7 @@ import {
   Add as AddIcon, Folder as FolderIcon, FolderOpen as FolderOpenIcon, InsertDriveFile as InsertDriveFileIcon, Send as SendIcon,
   CalendarMonth as CalendarIcon, Home as HomeIcon, PieChart as PieCharIcon, ExpandLess, ExpandMore
 } from '@mui/icons-material';
-// contexts
+// our components
 import { useWorkspacesManager } from '@contexts/WorkspacesContext';
 // types
 import { SIDEBAR_WIDTH, TASK_PAGE_APPBAR_HEIGHT, SCROLLBAR_ALLOWANCE, SIDEBAR_BG } from '@defines/consts';

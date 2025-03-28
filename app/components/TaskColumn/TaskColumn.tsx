@@ -1,12 +1,12 @@
 'use client';
 
-// components
+// DND
 import { Droppable } from '@hello-pangea/dnd';
+// MUI
 import { Button, Box, Typography } from '@mui/material';
+import {  Add as AddIcon } from '@mui/icons-material';
+// our components
 import TaskCard from '../TaskCard/TaskCard';
-import { 
-  Add as AddIcon
-} from '@mui/icons-material';
 // types
 import { Column } from '@defines/schemas';
 import { TASK_COLUMN_WIDTH } from '@defines/consts';
