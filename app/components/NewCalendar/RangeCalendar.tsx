@@ -1,13 +1,13 @@
 'use client';
 
 import { useRef } from 'react';
-import { useRangeCalendar } from '@react-aria/calendar';
-import { useRangeCalendarState } from '@react-stately/calendar';
+import { useRangeCalendar, useLocale } from 'react-aria';
+import { useRangeCalendarState } from 'react-stately';
 import { createCalendar, today, getLocalTimeZone } from '@internationalized/date';
-import { useLocale } from '@react-aria/i18n';
-import { Box, IconButton, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import CalendarGrid from './CalendarGrid';
+import { CalendarNavButton } from './CalendarHeader';
 import styles from './Calendar.module.css';
 
 type HighlightRange = {
@@ -46,16 +46,20 @@ export default function RangeCalendar({
 
   return (
     <Box {...calendarProps} ref={ref} className={styles.calendar}>
-      {/* Header with nav buttons */}
+      {/* header with nav buttons */}
       <Box className={styles.header}>
+        <CalendarNavButton {...prevButtonProps} className={styles.navButton}>
+          <ChevronLeft />
+        </CalendarNavButton>
         <Typography variant='h6' sx={{ flex: 1, textAlign: 'center' }}>
           {title}
         </Typography>
-        {/* <IconButton {...prevButtonProps} className={styles.navButton}><ChevronLeft /></IconButton>
-        <IconButton {...nextButtonProps} className={styles.navButton}><ChevronRight /></IconButton> */}
+        <CalendarNavButton {...nextButtonProps} className={styles.navButton}>
+          <ChevronRight />
+        </CalendarNavButton>
       </Box>
 
-      {/* Render multiple months */}
+      {/* render multiple months */}
       <Box sx={{ display: 'flex', gap: 3 }}>
         {[0, 1].map(offset => (
           <CalendarGrid
