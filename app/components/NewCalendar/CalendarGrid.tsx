@@ -1,26 +1,26 @@
 'use client';
 
-import { useCalendarGrid } from 'react-aria';
+// react-aria
+import { useCalendarGrid, useLocale } from 'react-aria';
 import { RangeCalendarState } from 'react-stately';
+// others
 import { getWeeksInMonth, CalendarDate, endOfMonth } from '@internationalized/date';
-import { useLocale } from '@react-aria/i18n';
-import CalendarCell from './CalendarCell';
+// our components
+import CalendarCell, { HighlightRange } from './CalendarCell';
+// styles
 import styles from './Calendar.module.css';
-
-type HighlightRange = {
-  start: Date;
-  end: Date;
-  color: string;
-};
 
 type Props = {
   state: RangeCalendarState;
-  offset: number; // for month shifting
+  offset: number;
   highlightRanges: HighlightRange[];
   cellSize: number;
   fontSize: string;
 };
 
+/**
+ * calendar grid component with one month of days
+ */
 export default function CalendarGrid({
   state,
   offset,

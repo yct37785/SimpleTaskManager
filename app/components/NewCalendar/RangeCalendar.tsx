@@ -1,20 +1,20 @@
 'use client';
 
 import { useRef } from 'react';
+// react-aria
 import { useRangeCalendar, useLocale } from 'react-aria';
 import { useRangeCalendarState } from 'react-stately';
-import { createCalendar, today, getLocalTimeZone } from '@internationalized/date';
+// MUI
 import { Box, Typography } from '@mui/material';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
+// others
+import { createCalendar, today, getLocalTimeZone } from '@internationalized/date';
+// our components
 import CalendarGrid from './CalendarGrid';
+import { HighlightRange } from './CalendarCell';
 import { CalendarNavButton } from './CalendarHeader';
+// styles
 import styles from './Calendar.module.css';
-
-type HighlightRange = {
-  start: Date;
-  end: Date;
-  color: string;
-};
 
 type Props = {
   cellSize?: number;
@@ -22,6 +22,9 @@ type Props = {
   highlightRanges?: HighlightRange[];
 };
 
+/**
+ * range calendar component
+ */
 export default function RangeCalendar({
   cellSize = 40,
   fontSize = '1rem',

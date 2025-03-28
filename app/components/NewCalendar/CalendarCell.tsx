@@ -1,18 +1,20 @@
 'use client';
 
 import { useRef } from 'react';
-import { useCalendarCell } from 'react-aria';
-import { useFocusRing } from '@react-aria/focus';
-import { useLocale } from '@react-aria/i18n';
-import { isSameDay, isSameMonth, getDayOfWeek } from '@internationalized/date';
-import { CalendarDate } from '@internationalized/date';
+// react-aria
+import { useCalendarCell, useFocusRing, useLocale, mergeProps } from 'react-aria';
 import { RangeCalendarState } from 'react-stately';
+// MUI
 import { Box } from '@mui/material';
-import { mergeProps } from '@react-aria/utils';
+// others
+import { CalendarDate, isSameDay, isSameMonth, getDayOfWeek, getLocalTimeZone } from '@internationalized/date';
+// styles
 import styles from './Calendar.module.css';
-import { getTimezone } from '@utils/DateUtils';
 
-type HighlightRange = {
+/**
+ * define a range to highlight
+ */
+export type HighlightRange = {
   start: Date;
   end: Date;
   color: string;
@@ -26,6 +28,9 @@ type Props = {
   highlightRanges?: HighlightRange[];
 };
 
+/**
+ * calendar cell component of a single day
+ */
 export default function CalendarCell({
   state,
   date,
@@ -34,8 +39,7 @@ export default function CalendarCell({
   highlightRanges = []
 }: Props) {
   const ref = useRef(null);
-  const timeZone = getTimezone();
-  const jsDate = date.toDate(timeZone);
+  const jsDate = date.toDate(getLocalTimeZone());
   const currentMonth = state.visibleRange.start;
   const { locale } = useLocale();
 
