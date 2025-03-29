@@ -80,7 +80,6 @@ export default function CalendarCell({ state, date, cellSize, fontSize, startDat
       <Box
         {...mergeProps(buttonProps, focusProps)}
         ref={ref}
-        hidden={isOutsideMonth}
         sx={{
           // dimensions
           width: cellSize,
@@ -94,6 +93,8 @@ export default function CalendarCell({ state, date, cellSize, fontSize, startDat
           alignItems: 'center',
           justifyContent: 'center',
           // behaviours
+          visibility: isOutsideMonth ? 'hidden' : 'visible',
+          pointerEvents: isOutsideMonth ? 'none' : 'auto',
           cursor: isDisabled ? 'auto' : 'pointer',
           userSelect: 'none',
           // colors
