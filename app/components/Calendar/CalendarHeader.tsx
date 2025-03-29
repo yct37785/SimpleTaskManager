@@ -8,9 +8,8 @@ import { IconButton, IconButtonProps, Box, Typography } from '@mui/material';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 // others
 import { PressEvent } from '@react-types/shared';
-// styles
-import '@styles/globals.css';
-import styles from './Calendar.module.css';
+// defines
+import { calendar_accent, transition_speed } from '@defines/styles';
 
 type NavButtonProps = AriaButtonProps & {
   children: ReactNode;
@@ -25,7 +24,18 @@ function CalendarNavButton({ onPress, isDisabled, children }: NavButtonProps) {
   };
 
   return (
-    <IconButton onClick={handleClick} disabled={isDisabled} className={styles.navButton}>
+    <IconButton onClick={handleClick} disabled={isDisabled}
+      sx={{
+        border: 'none',
+        background: 'transparent',
+        borderRadius: '50%',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: calendar_accent,
+        transition: `background-color ${transition_speed} ease-in-out`
+      }}>
       {children}
     </IconButton>
   );
@@ -42,7 +52,7 @@ type Props = {
  */
 export default function CalendarHeader({ prevButtonProps, nextButtonProps, title }: Props) {
   return (
-    <Box className={styles.calendarHeader}>
+    <Box sx={{ display: 'flex' }}>
       <CalendarNavButton {...prevButtonProps}>
         <ChevronLeft />
       </CalendarNavButton>

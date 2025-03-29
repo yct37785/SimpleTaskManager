@@ -12,9 +12,6 @@ import { createCalendar, today, getLocalTimeZone } from '@internationalized/date
 import CalendarHeader from './CalendarHeader';
 import CalendarGrid from './CalendarGrid';
 import { HighlightRange } from './CalendarCell';
-// styles
-import '@styles/globals.css';
-import styles from './Calendar.module.css';
 
 type Props = {
   cellSize?: number;
@@ -49,7 +46,7 @@ export default function RangeCalendar({
   } = useRangeCalendar({ minValue: today(getLocalTimeZone()) }, state, ref);
 
   return (
-    <Box {...calendarProps} ref={ref} className={styles.rangeCalendar}>
+    <Box {...calendarProps} ref={ref} sx={{ width: 'fit-content', maxWidth: '100%' }}>
       {/* header */}
       <CalendarHeader prevButtonProps={prevButtonProps} nextButtonProps={nextButtonProps} title={title} />
 

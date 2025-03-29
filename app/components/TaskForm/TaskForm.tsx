@@ -9,7 +9,7 @@ import LabelSelector from './LabelSelector';
 // others
 import { v4 as uuidv4 } from 'uuid';
 import dayjs, { Dayjs } from 'dayjs';
-// types
+// defines
 import { Task, Label } from '@defines/schemas';
 
 /**

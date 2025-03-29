@@ -14,8 +14,8 @@ import {
 } from '@mui/icons-material';
 // our components
 import { useWorkspacesManager } from '@contexts/WorkspacesContext';
-// types
-import { SIDEBAR_WIDTH, TASK_PAGE_APPBAR_HEIGHT, SCROLLBAR_ALLOWANCE, SIDEBAR_BG } from '@defines/consts';
+// defines
+import { sidebar_width, appbar_height, scrollbar_allowance, sidebar_bg } from '@/app/defines/styles';
 import { Workspace, Project } from '@defines/schemas';
 
 /**
@@ -161,10 +161,10 @@ export default function Sidebar() {
   };
 
   return (
-    <Box sx={{ width: SIDEBAR_WIDTH, bgcolor: SIDEBAR_BG, display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ width: sidebar_width, bgcolor: sidebar_bg, display: 'flex', flexDirection: 'column' }}>
       {/* header */}
       <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
-        <Box sx={{ height: TASK_PAGE_APPBAR_HEIGHT }}>
+        <Box sx={{ height: appbar_height }}>
           <Link href='/' style={{ textDecoration: 'none' }}>
             <Typography variant='h6' color='primary' gutterBottom
               sx={{ fontWeight: 600, textAlign: 'left', mt: 1, ml: 2, cursor: 'pointer' }}>
@@ -198,7 +198,7 @@ export default function Sidebar() {
 
       {/* workspace list */}
       <List sx={{ flex: 1, overflowY: 'auto', pb: 2 }}>
-        <Box sx={{ width: SIDEBAR_WIDTH - SCROLLBAR_ALLOWANCE }}>
+        <Box sx={{ width: sidebar_width - scrollbar_allowance }}>
 
           {/* workspace input */}
           {workspaceInputVisible && (
