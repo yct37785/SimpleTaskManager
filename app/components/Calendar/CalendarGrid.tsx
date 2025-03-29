@@ -38,8 +38,8 @@ export default function CalendarGrid({
   const { gridProps, headerProps, weekDays } = useCalendarGrid({ startDate, endDate }, state);
 
   return (
-    <table {...gridProps} style={{ overflow: 'hidden' }}>
-      <thead {...headerProps} style={{ fontWeight: 600, fontSize: 'large', color: calendar_header }}>
+    <table {...gridProps}>
+      <thead {...headerProps} style={{ fontSize: '1.2rem', color: calendar_header }}>
         <tr>
           {weekDays.map((day, i) => (
             <th key={i}>{day}</th>
