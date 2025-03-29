@@ -5,14 +5,13 @@ import { useRef } from 'react';
 import { useRangeCalendar, useLocale } from 'react-aria';
 import { useRangeCalendarState } from 'react-stately';
 // MUI
-import { Box, Typography } from '@mui/material';
-import { ChevronLeft, ChevronRight } from '@mui/icons-material';
+import { Box } from '@mui/material';
 // others
 import { createCalendar, today, getLocalTimeZone } from '@internationalized/date';
 // our components
+import CalendarHeader from './CalendarHeader';
 import CalendarGrid from './CalendarGrid';
 import { HighlightRange } from './CalendarCell';
-import { CalendarNavButton } from './CalendarHeader';
 // styles
 import '@styles/globals.css';
 import styles from './Calendar.module.css';
@@ -52,17 +51,7 @@ export default function RangeCalendar({
   return (
     <Box {...calendarProps} ref={ref} className={styles.rangeCalendar}>
       {/* header */}
-      <Box className={styles.rangeCalendarHeader}>
-        <CalendarNavButton {...prevButtonProps} className={styles.navButton}>
-          <ChevronLeft />
-        </CalendarNavButton>
-        <Typography variant='h6' sx={{ flex: 1, textAlign: 'center' }}>
-          {title}
-        </Typography>
-        <CalendarNavButton {...nextButtonProps} className={styles.navButton}>
-          <ChevronRight />
-        </CalendarNavButton>
-      </Box>
+      <CalendarHeader prevButtonProps={prevButtonProps} nextButtonProps={nextButtonProps} title={title} />
 
       {/* grid */}
       <Box sx={{ display: 'flex', gap: 3 }}>
