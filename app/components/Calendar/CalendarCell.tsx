@@ -26,6 +26,7 @@ type Props = {
   date: CalendarDate;
   cellSize: number;
   fontSize: string;
+  isOutsideMonth: boolean;
   highlightRanges?: HighlightRange[];
 };
 
@@ -37,6 +38,7 @@ export default function CalendarCell({
   date,
   cellSize,
   fontSize,
+  isOutsideMonth,
   highlightRanges = []
 }: Props) {
   const ref = useRef(null);
@@ -54,7 +56,6 @@ export default function CalendarCell({
 
   const { focusProps, isFocusVisible } = useFocusRing();
 
-  const isOutsideMonth = !isSameMonth(date, currentMonth);
   const isSelectionStart = state.highlightedRange?.start && isSameDay(date, state.highlightedRange.start);
   const isSelectionEnd = state.highlightedRange?.end && isSameDay(date, state.highlightedRange.end);
   const dayOfWeek = getDayOfWeek(date, locale);
@@ -76,7 +77,7 @@ export default function CalendarCell({
         component='div'
         {...mergeProps(buttonProps, focusProps)}
         ref={ref}
-        //hidden={isOutsideMonth}
+        hidden={isOutsideMonth}
         className={`${styles.cell} ${isSelected ? styles.selected : ''} ${isDisabled ? styles.disabled : ''}`}
         data-selection-start={isSelectionStart || undefined}
         data-selection-end={isSelectionEnd || undefined}

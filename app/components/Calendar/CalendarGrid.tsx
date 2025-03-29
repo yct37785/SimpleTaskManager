@@ -4,7 +4,7 @@
 import { useCalendarGrid, useLocale } from 'react-aria';
 import { RangeCalendarState } from 'react-stately';
 // others
-import { getWeeksInMonth, CalendarDate, endOfMonth } from '@internationalized/date';
+import { getWeeksInMonth, CalendarDate, endOfMonth, isSameMonth } from '@internationalized/date';
 // our components
 import CalendarCell, { HighlightRange } from './CalendarCell';
 // styles
@@ -59,6 +59,7 @@ export default function CalendarGrid({
                   highlightRanges={highlightRanges}
                   cellSize={cellSize}
                   fontSize={fontSize}
+                  isOutsideMonth={!isSameMonth(startDate, date)}
                 />
               ) : <td key={i} />
             )}
