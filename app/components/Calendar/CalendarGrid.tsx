@@ -58,7 +58,8 @@ export default function CalendarGrid({
                   highlightRanges={highlightRanges}
                   cellSize={cellSize}
                   fontSize={fontSize}
-                  isOutsideMonth={!isSameMonth(startDate, date)}
+                  startDate={startDate}
+                  endDate={endDate}
                 />
               ) : <td key={i} />
             )}

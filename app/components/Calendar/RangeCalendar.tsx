@@ -29,7 +29,7 @@ export default function RangeCalendar({
   const ref = useRef(null);
 
   const state = useRangeCalendarState({
-    // minValue: today(getLocalTimeZone()),
+    minValue: today(getLocalTimeZone()),
     visibleDuration: { months: 2 },
     pageBehavior: 'single',
     locale,
@@ -49,7 +49,7 @@ export default function RangeCalendar({
       <CalendarHeader prevButtonProps={prevButtonProps} nextButtonProps={nextButtonProps} title={title} />
 
       {/* grid */}
-      <Box sx={{ display: 'flex', gap: 3 }}>
+      <Box sx={{ display: 'flex', gap: 3, mt: 1 }}>
         {[0, 1].map(offset => (
           <CalendarGrid
             key={offset}
