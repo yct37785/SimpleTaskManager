@@ -1,3 +1,20 @@
+.iconBtn {
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--calendar-accent);
+  transition: background-color var(--transition-speed) ease-in-out;
+}
+
+.dayOfWeek {
+  font-size: 1.2rem;
+  color: var(--calendar-header);
+}
+
 .cellWrapper {
   text-align: center;
   position: relative;
@@ -14,7 +31,7 @@
 .disabled {
   cursor: default;
   pointer-events: none;
-  opacity: 0.4;
+  opacity: var(--disabled-opacity);
   color: var(--disabled-text);
 }
 

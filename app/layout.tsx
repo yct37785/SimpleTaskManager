@@ -11,7 +11,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Sidebar from '@components/Sidebar/Sidebar';
 import { WorkspacesProvider } from '@contexts/WorkspacesContext';
 // styles
-import '@defines/globals.css';
+import '@styles/globals.css';
 
 /**
  * root layout

@@ -9,7 +9,7 @@ import {  Add as AddIcon } from '@mui/icons-material';
 import TaskCard from '../TaskCard/TaskCard';
 // defines
 import { Column } from '@defines/schemas';
-import { task_column_width } from '@/app/defines/styles';
+import { task_column_width } from '@/app/defines/dimens';
 
 type Props = {
   column: Column;

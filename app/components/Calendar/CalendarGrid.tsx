@@ -7,8 +7,8 @@ import { RangeCalendarState } from 'react-stately';
 import { getWeeksInMonth, CalendarDate, endOfMonth, isSameMonth } from '@internationalized/date';
 // our components
 import CalendarCell, { HighlightRange } from './CalendarCell';
-// defines
-import { calendar_header } from '@defines/styles';
+// styles
+import styles from './calendar.module.css';
 
 type Props = {
   state: RangeCalendarState;
@@ -39,7 +39,7 @@ export default function CalendarGrid({
 
   return (
     <table {...gridProps} style={{ borderCollapse: 'collapse' }}>
-      <thead {...headerProps} style={{ fontSize: '1.2rem', color: calendar_header }}>
+      <thead {...headerProps} className={styles.dayOfWeek}>
         <tr>
           {weekDays.map((day, i) => (
             <th key={i}>{day}</th>

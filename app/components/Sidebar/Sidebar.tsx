@@ -15,8 +15,10 @@ import {
 // our components
 import { useWorkspacesManager } from '@contexts/WorkspacesContext';
 // defines
-import { sidebar_width, appbar_height, scrollbar_allowance, sidebar_bg } from '@/app/defines/styles';
+import { sidebar_width, appbar_height, scrollbar_allowance } from '@/app/defines/dimens';
 import { Workspace, Project } from '@defines/schemas';
+// styles
+import styles from './sidebar.module.css';
 
 /**
  * text input reusable component
@@ -161,7 +163,7 @@ export default function Sidebar() {
   };
 
   return (
-    <Box sx={{ width: sidebar_width, bgcolor: sidebar_bg, display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ width: sidebar_width }} className={styles.sidebar}>
       {/* header */}
       <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
         <Box sx={{ height: appbar_height }}>

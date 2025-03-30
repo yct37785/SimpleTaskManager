@@ -1,7 +1,12 @@
 :root {
+  --sidebar-bg: #f6f6f6;
+  --calendar-header: #616161;
   --calendar-accent: #1976d2;
   --calendar-accent-light: #1976d278;
   --calendar-accent-hover: #125aa3;
   --calendar-hover-bg: #1976d214;
   --disabled-text: #aaa;
+
+  --transition-speed: 0.4;
+  --disabled-opacity: 0.4;
 }
