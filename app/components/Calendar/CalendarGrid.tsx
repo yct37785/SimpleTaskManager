@@ -2,7 +2,7 @@
 
 // react-aria
 import { useCalendarGrid, useLocale } from 'react-aria';
-import { RangeCalendarState } from 'react-stately';
+import { CalendarState, RangeCalendarState } from 'react-stately';
 // others
 import { getWeeksInMonth, CalendarDate, endOfMonth, isSameMonth } from '@internationalized/date';
 // our components
@@ -10,8 +10,8 @@ import CalendarCell, { HighlightRange } from './CalendarCell';
 // styles
 import styles from './calendar.module.css';
 
-type Props = {
-  state: RangeCalendarState;
+type Props<T extends CalendarState | RangeCalendarState> = {
+  state: T;
   offset: number;
   highlightRanges: HighlightRange[];
   cellSize: number;
@@ -22,14 +22,14 @@ type Props = {
 /**
  * calendar grid component with one month of days
  */
-export default function CalendarGrid({
+export default function CalendarGrid<T extends CalendarState | RangeCalendarState>({
   state,
   offset,
   highlightRanges,
   cellSize,
   dayOfWeekFontSize,
   fontSize
-}: Props) {
+}: Props<T>) {
   const { locale } = useLocale();
 
   // calculate how many weeks are in this month view

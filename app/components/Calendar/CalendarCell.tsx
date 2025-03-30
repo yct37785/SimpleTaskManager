@@ -3,9 +3,7 @@
 import { useRef } from 'react';
 // react-aria
 import { useCalendarCell, useFocusRing, useLocale, mergeProps } from 'react-aria';
-import { RangeCalendarState } from 'react-stately';
-// MUI
-import { Box, darken } from '@mui/material';
+import { CalendarState, RangeCalendarState } from 'react-stately';
 // others
 import { CalendarDate, isSameDay, isSameMonth, getDayOfWeek, getLocalTimeZone } from '@internationalized/date';
 // styles
@@ -20,8 +18,8 @@ export type HighlightRange = {
   color: string;
 };
 
-type Props = {
-  state: RangeCalendarState;
+type Props<T extends CalendarState | RangeCalendarState> = {
+  state: T;
   date: CalendarDate;
   cellSize: number;
   fontSize: string;
@@ -32,14 +30,14 @@ type Props = {
 /**
  * calendar cell component of a single day
  */
-export default function CalendarCell({
+export default function CalendarCell<T extends CalendarState | RangeCalendarState>({
   state,
   date,
   cellSize,
   fontSize,
   startDate,
   highlightRanges = []
-}: Props) {
+}: Props<T>) {
   const ref = useRef(null);
   const { locale } = useLocale();
   const jsDate = date.toDate(getLocalTimeZone());
@@ -55,6 +53,29 @@ export default function CalendarCell({
 
   const { focusProps, isFocusVisible } = useFocusRing();
 
+  // custom ranges
+  // const matchedHighlight = highlightRanges.find(
+  //   range => jsDate >= range.start && jsDate <= range.end
+  // );
+
+  /**
+   * calendar date picker
+   */
+  if (!('highlightedRange' in state)) {
+    return <td {...cellProps} style={{ padding: 0 }}>
+      {isSameMonth(startDate, date) ? <div
+        {...mergeProps(buttonProps, focusProps)}
+        ref={ref}
+        className={styles.knob}
+      >
+        {formattedDate}
+      </div> : <div style={{ width: cellSize, height: cellSize }} />}
+    </td>;
+  }
+  
+  /**
+   * calendar range picker
+   */
   const isSelectionStart = state.highlightedRange ? isSameDay(date, state.highlightedRange.start) : isSelected;
   const isSelectionEnd = state.highlightedRange ? isSameDay(date, state.highlightedRange.end) : isSelected;
   const isRoundedLeft = isSelected && (isSelectionStart || dayOfWeek === 0 || date.day === 1);
@@ -77,11 +98,6 @@ export default function CalendarCell({
   ]
     .filter(Boolean)
     .join(' ');
-  
-  // custom ranges
-  // const matchedHighlight = highlightRanges.find(
-  //   range => jsDate >= range.start && jsDate <= range.end
-  // );
 
   return (
     <td {...cellProps} style={{ padding: 0 }}>
