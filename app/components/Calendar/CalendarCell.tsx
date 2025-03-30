@@ -76,7 +76,7 @@ export default function CalendarCell({ state, date, cellSize, fontSize, startDat
       : 'rgba(0,0,0,0)';
 
   return (
-    <td {...cellProps}>
+    <td {...cellProps}  style={{ padding: 0 }}>
       <Box
         {...mergeProps(buttonProps, focusProps)}
         ref={ref}
