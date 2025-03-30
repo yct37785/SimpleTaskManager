@@ -54,25 +54,32 @@ export default function CalendarCell<T extends CalendarState | RangeCalendarStat
   const { focusProps, isFocusVisible } = useFocusRing();
 
   // custom ranges
-  // const matchedHighlight = highlightRanges.find(
-  //   range => jsDate >= range.start && jsDate <= range.end
-  // );
+  const matchedHighlight = highlightRanges.find(
+    range => jsDate >= range.start && jsDate <= range.end
+  );
+
+  /**
+   * if outside month
+   */
+  if (!isSameMonth(startDate, date)) {
+    return <td {...cellProps} style={{ padding: 0, width: cellSize, height: cellSize }} />
+  }
 
   /**
    * calendar date picker
    */
   if (!('highlightedRange' in state)) {
     return <td {...cellProps} style={{ padding: 0 }}>
-      {isSameMonth(startDate, date) ? <div
+      <div
         {...mergeProps(buttonProps, focusProps)}
         ref={ref}
         className={styles.knob}
       >
         {formattedDate}
-      </div> : <div style={{ width: cellSize, height: cellSize }} />}
+      </div>
     </td>;
   }
-  
+
   /**
    * calendar range picker
    */
@@ -101,7 +108,7 @@ export default function CalendarCell<T extends CalendarState | RangeCalendarStat
 
   return (
     <td {...cellProps} style={{ padding: 0 }}>
-      {isSameMonth(startDate, date) ? <div
+      <div
         {...mergeProps(buttonProps, focusProps)}
         ref={ref}
         className={cellClassNames}
@@ -117,7 +124,7 @@ export default function CalendarCell<T extends CalendarState | RangeCalendarStat
         >
           {formattedDate}
         </div>
-      </div> : <div style={{ width: cellSize, height: cellSize }} />}
+      </div>
     </td>
   );
 };
