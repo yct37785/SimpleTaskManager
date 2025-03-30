@@ -43,13 +43,7 @@ export default function CalendarCell<T extends CalendarState | RangeCalendarStat
   const jsDate = date.toDate(getLocalTimeZone());
   const dayOfWeek = getDayOfWeek(date, locale);
 
-  const {
-    cellProps,
-    buttonProps,
-    isSelected,
-    isDisabled,
-    formattedDate
-  } = useCalendarCell({ date }, state, ref);
+  const { cellProps, buttonProps, isSelected, isDisabled, formattedDate } = useCalendarCell({ date }, state, ref);
 
   const { focusProps, isFocusVisible } = useFocusRing();
 
@@ -62,8 +56,25 @@ export default function CalendarCell<T extends CalendarState | RangeCalendarStat
    * if outside month
    */
   if (!isSameMonth(startDate, date)) {
-    return <td {...cellProps} style={{ padding: 0, width: cellSize, height: cellSize }} />
+    return <td {...cellProps} style={{ width: cellSize, height: cellSize }} />
   }
+
+  // render cell
+  const renderCell = (cellClassNames: string, innerClassNames: string) => {
+    return <td {...cellProps} style={{ padding: 0 }}>
+      <div {...mergeProps(buttonProps, focusProps)} ref={ref} className={cellClassNames}>
+        <div className={innerClassNames}
+          style={{
+            width: cellSize,
+            height: cellSize,
+            fontSize,
+            lineHeight: `${cellSize}px`
+          }}>
+          {formattedDate}
+        </div>
+      </div>
+    </td>
+  };
 
   /**
    * calendar date picker
@@ -82,27 +93,8 @@ export default function CalendarCell<T extends CalendarState | RangeCalendarStat
       ]
         .filter(Boolean)
         .join(' ');
-    return (
-      <td {...cellProps} style={{ padding: 0 }}>
-        <div
-          {...mergeProps(buttonProps, focusProps)}
-          ref={ref}
-          className={cellClassNames}
-        >
-          <div
-            className={innerClassNames}
-            style={{
-              width: cellSize,
-              height: cellSize,
-              fontSize,
-              lineHeight: `${cellSize}px`
-            }}
-          >
-            {formattedDate}
-          </div>
-        </div>
-      </td>
-    );
+    
+    return renderCell(cellClassNames, innerClassNames);
   }
 
   /**
@@ -131,25 +123,5 @@ export default function CalendarCell<T extends CalendarState | RangeCalendarStat
     .filter(Boolean)
     .join(' ');
 
-  return (
-    <td {...cellProps} style={{ padding: 0 }}>
-      <div
-        {...mergeProps(buttonProps, focusProps)}
-        ref={ref}
-        className={cellClassNames}
-      >
-        <div
-          className={innerClassNames}
-          style={{
-            width: cellSize,
-            height: cellSize,
-            fontSize,
-            lineHeight: `${cellSize}px`
-          }}
-        >
-          {formattedDate}
-        </div>
-      </div>
-    </td>
-  );
+    return renderCell(cellClassNames, innerClassNames);
 };
