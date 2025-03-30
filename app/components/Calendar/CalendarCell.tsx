@@ -69,15 +69,40 @@ export default function CalendarCell<T extends CalendarState | RangeCalendarStat
    * calendar date picker
    */
   if (!('highlightedRange' in state)) {
-    return <td {...cellProps} style={{ padding: 0 }}>
-      <div
-        {...mergeProps(buttonProps, focusProps)}
-        ref={ref}
-        className={styles.knob}
-      >
-        {formattedDate}
-      </div>
-    </td>;
+    const cellClassNames = [
+      styles.cellWrapper,
+      isDisabled && styles.disabled,
+      isFocusVisible && styles.focusVisible
+    ]
+      .filter(Boolean)
+      .join(' ');
+    const innerClassNames = [
+        styles.cellInner,
+        isSelected && styles.knob
+      ]
+        .filter(Boolean)
+        .join(' ');
+    return (
+      <td {...cellProps} style={{ padding: 0 }}>
+        <div
+          {...mergeProps(buttonProps, focusProps)}
+          ref={ref}
+          className={cellClassNames}
+        >
+          <div
+            className={innerClassNames}
+            style={{
+              width: cellSize,
+              height: cellSize,
+              fontSize,
+              lineHeight: `${cellSize}px`
+            }}
+          >
+            {formattedDate}
+          </div>
+        </div>
+      </td>
+    );
   }
 
   /**

@@ -7,6 +7,7 @@ import { useParams } from 'next/navigation';
 import { Box, Container, Typography, Divider } from '@mui/material';
 // our components
 import RangeCalendar from '@components/Calendar/RangeCalendar';
+import CalendarPicker from '@components/Calendar/CalendarPicker';
 import { useWorkspacesManager } from '@contexts/WorkspacesContext';
 
 /**
@@ -34,7 +35,7 @@ export default function ProjectPage() {
   return (
     <main style={{ height: '100vh', overflow: 'auto', padding: '2rem' }}>
       <Box>
-        <RangeCalendar
+        <CalendarPicker
           cellSize={48}
           dayOfWeekFontSize='1.2rem'
           fontSize='1rem'
