@@ -1,0 +1,53 @@
+.cellWrapper {
+  text-align: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.selected {
+  background-color: var(--calendar-accent-light);
+}
+
+.disabled {
+  cursor: default;
+  pointer-events: none;
+  opacity: 0.4;
+  color: var(--disabled-text);
+}
+
+.focusVisible {
+  outline: 2px solid var(--calendar-accent);
+}
+
+.roundedLeft {
+  border-top-left-radius: 100px;
+  border-bottom-left-radius: 100px;
+}
+
+.roundedRight {
+  border-top-right-radius: 100px;
+  border-bottom-right-radius: 100px;
+}
+
+.cellInner {
+  border-radius: 100px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cellInner:hover {
+  background-color: var(--calendar-hover-bg);
+}
+
+.knob {
+  background-color: var(--calendar-accent);
+}
+
+.knob:hover {
+  background-color: var(--calendar-accent-hover);
+}

@@ -55,11 +55,10 @@ export default function CalendarGrid({
                   key={i}
                   state={state}
                   date={date}
-                  highlightRanges={highlightRanges}
                   cellSize={cellSize}
                   fontSize={fontSize}
                   startDate={startDate}
-                  endDate={endDate}
+                  highlightRanges={highlightRanges}
                 />
               ) : <td key={i} />
             )}

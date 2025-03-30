@@ -1,0 +1,7 @@
+:root {
+  --calendar-accent: #1976d2;
+  --calendar-accent-light: #1976d278;
+  --calendar-accent-hover: #125aa3;
+  --calendar-hover-bg: #1976d214;
+  --disabled-text: #aaa;
+}
