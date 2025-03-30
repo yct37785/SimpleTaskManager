@@ -24,7 +24,7 @@ function CalendarNavButton({ onPress, isDisabled, children }: NavButtonProps) {
   };
 
   return (
-    <IconButton onClick={handleClick} disabled={isDisabled} className={styles.iconBtn}>
+    <IconButton onClick={handleClick} disabled={isDisabled}>
       {children}
     </IconButton>
   );
