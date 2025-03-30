@@ -1,5 +1,4 @@
 .dayOfWeek {
-  font-size: 1.2rem;
   color: var(--calendar-header);
 }
 
@@ -22,6 +21,7 @@
 
 .knob {
   background-color: var(--calendar-accent);
+  color: #fff;
 }
 
 .knob:hover {

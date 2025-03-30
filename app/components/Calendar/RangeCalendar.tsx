@@ -15,6 +15,8 @@ import { HighlightRange } from './CalendarCell';
 
 type Props = {
   cellSize?: number;
+  dayOfWeekFontSize?: string;
+  fontSize?: string;
   highlightRanges?: HighlightRange[];
 };
 
@@ -23,6 +25,8 @@ type Props = {
  */
 export default function RangeCalendar({
   cellSize = 40,
+  dayOfWeekFontSize = '1.2rem',
+  fontSize = '1rem',
   highlightRanges = [],
 }: Props) {
   let { locale } = useLocale();
@@ -57,7 +61,8 @@ export default function RangeCalendar({
             offset={offset}
             highlightRanges={highlightRanges}
             cellSize={cellSize}
-            fontSize='1rem'
+            dayOfWeekFontSize={dayOfWeekFontSize}
+            fontSize={fontSize}
           />
         ))}
       </Box>

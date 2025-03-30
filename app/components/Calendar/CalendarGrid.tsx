@@ -15,6 +15,7 @@ type Props = {
   offset: number;
   highlightRanges: HighlightRange[];
   cellSize: number;
+  dayOfWeekFontSize: string;
   fontSize: string;
 };
 
@@ -26,6 +27,7 @@ export default function CalendarGrid({
   offset,
   highlightRanges,
   cellSize,
+  dayOfWeekFontSize,
   fontSize
 }: Props) {
   const { locale } = useLocale();
@@ -39,7 +41,7 @@ export default function CalendarGrid({
 
   return (
     <table {...gridProps} style={{ borderCollapse: 'collapse' }}>
-      <thead {...headerProps} className={styles.dayOfWeek}>
+      <thead {...headerProps} className={styles.dayOfWeek} style={{ fontSize: dayOfWeekFontSize }}>
         <tr>
           {weekDays.map((day, i) => (
             <th key={i}>{day}</th>
