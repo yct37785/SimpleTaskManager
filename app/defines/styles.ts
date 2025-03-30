@@ -9,6 +9,7 @@ export const task_column_min_height = 400;
 export const sidebar_bg = '#f6f6f6';
 export const calendar_header = '#616161';
 export const calendar_accent = '#1976d2';
+export const calendar_accent_light = `${calendar_accent}78`;
 export const text_disabled = '#aaa';
 export const disabled_opacity = 0.4;
 
