@@ -7,6 +7,10 @@
   user-select: none;
 }
 
+.cellTd {
+  padding: 4px 0 4px 0;
+}
+
 .cellInner {
   border-radius: 100px;
   text-align: center;

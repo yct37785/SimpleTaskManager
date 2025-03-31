@@ -61,7 +61,7 @@ export default function CalendarCell<T extends CalendarState | RangeCalendarStat
 
   // render cell
   const renderCell = (cellClassNames: string, innerClassNames: string) => {
-    return <td {...cellProps} style={{ padding: 0 }}>
+    return <td {...cellProps} className={styles.cellTd}>
       <div {...mergeProps(buttonProps, focusProps)} ref={ref} className={cellClassNames}>
         <div className={innerClassNames}
           style={{
