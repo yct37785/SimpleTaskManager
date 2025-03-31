@@ -10,7 +10,7 @@ export type Label = {
 export type Task = {
   id: string;
   title: string;
-  description: string;
+  desc: string;
   addDate: string;
   dueDate: string;
   completedDate: string;
@@ -36,6 +36,7 @@ export type Column = {
  */
 export type Sprint = {
   title: string;
+  desc: string;
   startDate: number;
   endDate: number;
   columns: Column[];
@@ -49,6 +50,7 @@ export type Sprint = {
 export type Project = {
   id: string;
   title: string;
+  desc: string;
   startDate: number;
   endDate: number;
   sprints: Sprint[];

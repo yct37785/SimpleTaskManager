@@ -24,17 +24,17 @@ type Props = {
  */
 export default function TaskForm({ openColumn, setOpenColumn, addTask }: Props) {
   const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+  const [desc, setDesc] = useState('');
   const [dueDate, setDueDate] = useState<Dayjs | null>(dayjs());
   const [labels, setLabels] = useState<Label[]>([]);
 
   const handleSubmit = () => {
-    if (!title.trim() || !description.trim() || !dueDate) return;
+    if (!title.trim() || !desc.trim() || !dueDate) return;
 
     const newTask: Task = {
       id: uuidv4(),
       title,
-      description,
+      desc,
       addDate: new Date().toISOString(),
       dueDate: dueDate.toISOString(),
       completedDate: '',
@@ -44,7 +44,7 @@ export default function TaskForm({ openColumn, setOpenColumn, addTask }: Props) 
     addTask(newTask, openColumn);
     setOpenColumn('');
     setTitle('');
-    setDescription('');
+    setDesc('');
     setDueDate(dayjs());
     setLabels([]);
   };
@@ -55,7 +55,7 @@ export default function TaskForm({ openColumn, setOpenColumn, addTask }: Props) 
       onClose={() => setOpenColumn('')}
       onSubmit={handleSubmit}
       title="New Task"
-      disabled={!title || !description || !dueDate}
+      disabled={!title || !desc || !dueDate}
     >
       <TextInput
         label='Task title'
@@ -67,8 +67,8 @@ export default function TaskForm({ openColumn, setOpenColumn, addTask }: Props) 
         label='Task description'
         rows={4}
         required
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
+        value={desc}
+        onChange={(e) => setDesc(e.target.value)}
       />
       <DatePicker
         label='Due Date'
