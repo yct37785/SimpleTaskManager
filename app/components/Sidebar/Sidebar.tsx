@@ -14,6 +14,7 @@ import {
 } from '@mui/icons-material';
 // our components
 import { useWorkspacesManager } from '@contexts/WorkspacesContext';
+import ProjectForm from '@components/Forms/ProjectForm';
 // defines
 import { sidebar_width, appbar_height, scrollbar_allowance } from '@/app/defines/dimens';
 import { Workspace, Project } from '@defines/schemas';
@@ -47,10 +48,10 @@ function InlineTextInput({ placeholder, value, setValue, onSubmit }: {
 /**
  * render a single workspace row
  */
-function WorkspaceListItem({ workspace, isOpen, onAddProject, toggleOpen }: {
+function WorkspaceListItem({ workspace, isOpen, setProjectDialogOpen, toggleOpen }: {
   workspace: Workspace;
   isOpen: boolean;
-  onAddProject: (e: React.MouseEvent) => void;
+  setProjectDialogOpen: (v: boolean) => void;
   toggleOpen: () => void;
 }) {
   return (
@@ -59,7 +60,7 @@ function WorkspaceListItem({ workspace, isOpen, onAddProject, toggleOpen }: {
         {isOpen ? <FolderOpenIcon /> : <FolderIcon />}
       </ListItemIcon>
       <ListItemText primary={workspace.title} />
-      <IconButton onClick={onAddProject} size='small'>
+      <IconButton onClick={() => setProjectDialogOpen(true)} size='small'>
         <AddIcon fontSize='small' />
       </IconButton>
       {isOpen ? <ExpandLess /> : <ExpandMore />}
@@ -70,28 +71,12 @@ function WorkspaceListItem({ workspace, isOpen, onAddProject, toggleOpen }: {
 /**
  * render all projects inside a workspace
  */
-function ProjectsList({ workspace, isOpen, targetWorkspace, projectTitle, setProjectTitle, handleCreateProject }: {
+function ProjectsList({ workspace, isOpen }: {
   workspace: Workspace;
   isOpen: boolean;
-  targetWorkspace: string | null;
-  projectTitle: string;
-  setProjectTitle: (val: string) => void;
-  handleCreateProject: (workspaceId: string) => void;
 }) {
   return (
     <Collapse in={isOpen} timeout='auto' unmountOnExit>
-      {/* project name input */}
-      {targetWorkspace === workspace.id && (
-        <Box sx={{ pl: 4, mt: 1 }}>
-          <InlineTextInput
-            placeholder='Project title'
-            value={projectTitle}
-            setValue={setProjectTitle}
-            onSubmit={() => handleCreateProject(workspace.id)}
-          />
-        </Box>
-      )}
-
       {/* project list */}
       {Object.keys(workspace.projects).length > 0 ? (
         <List sx={{ pl: 2 }} disablePadding>
@@ -124,8 +109,7 @@ export default function Sidebar() {
   // state
   const [workspaceInputVisible, setWorkspaceInputVisible] = useState(false);
   const [workspaceTitle, setWorkspaceTitle] = useState('');
-  const [targetWorkspace, setTargetWorkspace] = useState<string | null>(null);
-  const [projectTitle, setProjectTitle] = useState('');
+  const [projectDialogOpen, setProjectDialogOpen] = useState(false);
   const [openWorkspaces, setOpenWorkspaces] = useState<Record<string, boolean>>({});
 
   /**
@@ -144,22 +128,11 @@ export default function Sidebar() {
    * create a project for a workspace from name input
    */
   const handleCreateProject = (workspaceId: string) => {
-    const title = projectTitle.trim();
-    if (title) {
-      createProject(workspaceId, title, 0, 100000);
-    }
-    setProjectTitle('');
-    setTargetWorkspace(null);
+    // createProject(workspaceId, title, 0, 100000);
   };
 
   const toggleOpen = (id: string) => {
     setOpenWorkspaces((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  const handleAddProjectClick = (e: React.MouseEvent, workspaceId: string) => {
-    e.stopPropagation();
-    setOpenWorkspaces((prev) => ({ ...prev, [workspaceId]: true }));
-    setTargetWorkspace(workspaceId);
   };
 
   return (
@@ -220,21 +193,23 @@ export default function Sidebar() {
               <WorkspaceListItem
                 workspace={ws}
                 isOpen={openWorkspaces[ws.id] || false}
-                onAddProject={(e) => handleAddProjectClick(e, ws.id)}
+                setProjectDialogOpen={setProjectDialogOpen}
                 toggleOpen={() => toggleOpen(ws.id)}
               />
               <ProjectsList
                 workspace={ws}
                 isOpen={openWorkspaces[ws.id] || false}
-                targetWorkspace={targetWorkspace}
-                projectTitle={projectTitle}
-                setProjectTitle={setProjectTitle}
-                handleCreateProject={handleCreateProject}
               />
             </div>
           ))}
         </Box>
       </List>
+
+      {/* create project form */}
+      <ProjectForm 
+      projectDialogOpen={projectDialogOpen}
+      setProjectDialogOpen={setProjectDialogOpen} />
+      
     </Box>
   );
 };
