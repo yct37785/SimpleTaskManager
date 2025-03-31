@@ -10,8 +10,11 @@ import LabelSelector from './LabelSelector';
 // others
 import { v4 as uuidv4 } from 'uuid';
 import dayjs, { Dayjs } from 'dayjs';
+import { today, getLocalTimeZone } from '@internationalized/date';
 // defines
 import { Task, Label } from '@defines/schemas';
+// utils
+import { dateToCalendarDate } from '@utils/datetimeUtils';
 
 type Props = {
   openColumn: string;
@@ -35,8 +38,8 @@ export default function TaskForm({ openColumn, setOpenColumn, addTask }: Props) 
       id: uuidv4(),
       title,
       desc,
-      addDate: new Date(),
-      dueDate: dueDate.toDate(),
+      addDate: today(getLocalTimeZone()),
+      dueDate: dateToCalendarDate(dueDate.toDate()),
       completedDate: undefined,
       labels,
     };
@@ -54,7 +57,7 @@ export default function TaskForm({ openColumn, setOpenColumn, addTask }: Props) 
       open={openColumn !== ''}
       onClose={() => setOpenColumn('')}
       onSubmit={handleSubmit}
-      title="New Task"
+      title='New Task'
       disabled={!title || !desc || !dueDate}
     >
       <TextInput

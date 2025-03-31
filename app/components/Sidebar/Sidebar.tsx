@@ -15,11 +15,11 @@ import {
 // our components
 import { useWorkspacesManager } from '@contexts/WorkspacesContext';
 import ProjectForm from '@components/Forms/ProjectForm';
-// others
-import dayjs, { Dayjs } from 'dayjs';
 // defines
 import { sidebar_width, appbar_height, scrollbar_allowance } from '@/app/defines/dimens';
 import { Workspace, Project } from '@defines/schemas';
+// utils
+import { dateToCalendarDate } from '@utils/datetimeUtils';
 // styles
 import styles from './sidebar.module.css';
 
@@ -144,7 +144,7 @@ export default function Sidebar() {
    */
   const handleCreateProject = (title: string, desc: string, endDate: Date) => {
     if (activeWorkspace && title) {
-      createProject(activeWorkspace, title, desc, new Date(), endDate);
+      createProject(activeWorkspace, title, desc, dateToCalendarDate(new Date()), dateToCalendarDate(endDate));
     }
   };
 
