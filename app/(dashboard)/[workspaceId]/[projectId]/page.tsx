@@ -26,6 +26,7 @@ export default function ProjectPage() {
   const project = workspace?.projects[projectId];
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [showFullDesc, setShowFullDesc] = useState(false);
 
   if (!workspace || !project) {
     return <div>Invalid workspace or project</div>;
@@ -40,6 +41,38 @@ export default function ProjectPage() {
   }, [workspace, project]);
 
   /**
+   * toggle desc
+   */
+  const projectDesc = (description: string) => {
+    return <Box>
+      <Typography
+        variant='body2'
+        color='text.secondary'
+        sx={{
+          lineHeight: 1.5,
+          display: '-webkit-box',
+          overflow: 'hidden',
+          WebkitBoxOrient: 'vertical',
+          WebkitLineClamp: showFullDesc ? 'none' : 3,
+        }}
+      >
+        {description}
+      </Typography>
+
+      {description.length > 200 && (
+        <Typography
+          variant='caption'
+          color='primary'
+          sx={{ cursor: 'pointer', mt: 0.5, display: 'inline-block' }}
+          onClick={() => setShowFullDesc(prev => !prev)}
+        >
+          {showFullDesc ? 'Show less' : 'Show more'}
+        </Typography>
+      )}
+    </Box>
+  };
+
+  /**
    * project details dashboard
    */
   const projectDetailsBar = () => {
@@ -51,24 +84,28 @@ export default function ProjectPage() {
       day: 'numeric'
     });
     const relativeDue = getRelativeTime(now, dueDate);
-
+  
+    const description = project.desc || fallbackDesc;
+  
     return (
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 2 }}>
         <Box sx={{ flex: 1 }}>
           <Typography variant='h5' fontWeight={600}>
             {`${workspace.title} - ${project.title}`}
           </Typography>
+  
           <Stack direction='row' alignItems='center' spacing={0.5} mt={1}>
             <CalendarMonthIcon fontSize='small' color='action' />
             <Typography variant='subtitle2' color='text.secondary'>
               {`Due by: ${formattedDue} (${relativeDue})`}
             </Typography>
           </Stack>
-          <Typography variant='body2' color='text.secondary' sx={{ maxWidth: '80ch', lineHeight: 1.5, mt: 2 }}>
-            {project.desc || fallbackDesc}
-          </Typography>
+  
+          <Box sx={{ mt: 2, maxWidth: '80ch' }}>
+            {projectDesc(description)}
+          </Box>
         </Box>
-
+  
         <Tooltip title='Edit Project'>
           <IconButton onClick={() => setEditDialogOpen(true)} sx={{ mt: 0.5 }}>
             <EditIcon />
@@ -83,7 +120,7 @@ export default function ProjectPage() {
       <Box>
         {projectDetailsBar()}
         <Divider sx={{ mb: 3 }} />
-        <CalendarPicker
+        <RangeCalendar
           cellSize={48}
           dayOfWeekFontSize='1.2rem'
           fontSize='1rem'
