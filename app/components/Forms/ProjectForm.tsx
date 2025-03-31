@@ -14,7 +14,7 @@ import { Workspace, Project } from '@defines/schemas';
 type Props = {
   workspace: Workspace;
   projectDialogOpen: boolean;
-  handleCreateProject: (title: string, desc: string, dueDate: Dayjs) => void;
+  handleCreateProject: (title: string, desc: string, dueDate: Date) => void;
   closeProjectDialog: () => void;
 };
 
@@ -29,7 +29,7 @@ export default function ProjectForm({ workspace, projectDialogOpen, handleCreate
   const handleSubmit = () => {
     if (!title.trim() || !description.trim() || !dueDate) return;
 
-    handleCreateProject(title, description, dueDate);
+    handleCreateProject(title, description, dueDate.toDate());
     setTitle('');
     setDescription('');
     setDueDate(dayjs());

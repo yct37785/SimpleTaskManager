@@ -35,9 +35,9 @@ export default function TaskForm({ openColumn, setOpenColumn, addTask }: Props) 
       id: uuidv4(),
       title,
       desc,
-      addDate: new Date().toISOString(),
-      dueDate: dueDate.toISOString(),
-      completedDate: '',
+      addDate: new Date(),
+      dueDate: dueDate.toDate(),
+      completedDate: undefined,
       labels,
     };
 

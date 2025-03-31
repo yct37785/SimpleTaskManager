@@ -13,7 +13,7 @@ export type Task = {
   desc: string;
   addDate: Date;
   dueDate: Date;
-  completedDate: Date;
+  completedDate?: Date;
   labels?: Label[];
 }
 

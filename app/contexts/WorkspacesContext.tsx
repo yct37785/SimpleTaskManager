@@ -10,8 +10,8 @@ type WorkspacesContextType = {
   workspaces: Record<string, Workspace>;
   setWorkspaces: React.Dispatch<React.SetStateAction<Record<string, Workspace>>>;
   createWorkspace: (title: string) => void;
-  createProject: (workspaceId: string, title: string, desc: string, startDate: number, endDate: number) => void;
-  createSprint: (workspaceId: string, projectId: string, title: string, desc: string, startDate: number, endDate: number) => boolean;
+  createProject: (workspaceId: string, title: string, desc: string, startDate: Date, endDate: Date) => void;
+  createSprint: (workspaceId: string, projectId: string, title: string, desc: string, startDate: Date, endDate: Date) => boolean;
   addTask: (workspaceId: string, projectId: string, sprintIdx: number, columnId: string, task: Task) => void;
   moveTask: (workspaceId: string, projectId: string, sprintIdx: number, sourceColId: string,
     destColId: string, sourceIndex: number, destIndex: number) => void;
@@ -52,7 +52,7 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
   /**
    * create a project under a workspace with defined bounds
    */
-  const createProject = (workspaceId: string, title: string, desc: string, startDate: number, endDate: number) => {
+  const createProject = (workspaceId: string, title: string, desc: string, startDate: Date, endDate: Date) => {
     const projectId = uuidv4();
     const newProject: Project = {
       id: projectId,
@@ -84,8 +84,8 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
     projectId: string,
     title: string,
     desc: string,
-    startDate: number,
-    endDate: number
+    startDate: Date,
+    endDate: Date
   ): boolean => {
     const project = workspaces[workspaceId]?.projects[projectId];
     if (!project) return false;
