@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 // others
 import { v4 as uuidv4 } from 'uuid';
+import { CalendarDate } from '@internationalized/date';
 // defines
 import { Workspace, Project, Sprint, Column, Task } from '@defines/schemas';
 
@@ -10,8 +11,8 @@ type WorkspacesContextType = {
   workspaces: Record<string, Workspace>;
   setWorkspaces: React.Dispatch<React.SetStateAction<Record<string, Workspace>>>;
   createWorkspace: (title: string) => void;
-  createProject: (workspaceId: string, title: string, desc: string, startDate: Date, endDate: Date) => void;
-  createSprint: (workspaceId: string, projectId: string, title: string, desc: string, startDate: Date, endDate: Date) => boolean;
+  createProject: (workspaceId: string, title: string, desc: string, startDate: CalendarDate, endDate: CalendarDate) => void;
+  createSprint: (workspaceId: string, projectId: string, title: string, desc: string, startDate: CalendarDate, endDate: CalendarDate) => boolean;
   addTask: (workspaceId: string, projectId: string, sprintIdx: number, columnId: string, task: Task) => void;
   moveTask: (workspaceId: string, projectId: string, sprintIdx: number, sourceColId: string,
     destColId: string, sourceIndex: number, destIndex: number) => void;
@@ -52,7 +53,7 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
   /**
    * create a project under a workspace with defined bounds
    */
-  const createProject = (workspaceId: string, title: string, desc: string, startDate: Date, endDate: Date) => {
+  const createProject = (workspaceId: string, title: string, desc: string, startDate: CalendarDate, endDate: CalendarDate) => {
     const projectId = uuidv4();
     const newProject: Project = {
       id: projectId,
@@ -84,21 +85,22 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
     projectId: string,
     title: string,
     desc: string,
-    startDate: Date,
-    endDate: Date
+    startDate: CalendarDate,
+    endDate: CalendarDate
   ): boolean => {
     const project = workspaces[workspaceId]?.projects[projectId];
     if (!project) return false;
   
     // validate sprint dates
-    if (startDate > endDate || startDate < project.startDate || endDate > project.endDate) {
+    if (startDate.compare(endDate) > 0 || project.startDate.compare(startDate) > 0 || endDate.compare(project.endDate) > 0) {
       return false;
     }
   
     // check for overlap with existing sprints
-    const overlaps = project.sprints.some((sprint) =>
-      !(endDate < sprint.startDate || startDate > sprint.endDate)
-    );
+    const overlaps = project.sprints.some((sprint) => {
+      const noOverlap = endDate.compare(sprint.startDate) < 0 || startDate.compare(sprint.endDate) > 0;
+      return !noOverlap;
+    });
     if (overlaps) {
       return false;
     }

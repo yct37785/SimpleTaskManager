@@ -1,3 +1,5 @@
+import { CalendarDate } from '@internationalized/date';
+
 export type Label = {
   title: string;
   color: string;
@@ -11,9 +13,9 @@ export type Task = {
   id: string;
   title: string;
   desc: string;
-  addDate: Date;
-  dueDate: Date;
-  completedDate?: Date;
+  addDate: CalendarDate;
+  dueDate: CalendarDate;
+  completedDate?: CalendarDate;
   labels?: Label[];
 }
 
@@ -37,8 +39,8 @@ export type Column = {
 export type Sprint = {
   title: string;
   desc: string;
-  startDate: Date;
-  endDate: Date;
+  startDate: CalendarDate;
+  endDate: CalendarDate;
   columns: Column[];
 }
 
@@ -51,8 +53,8 @@ export type Project = {
   id: string;
   title: string;
   desc: string;
-  startDate: Date;
-  endDate: Date;
+  startDate: CalendarDate;
+  endDate: CalendarDate;
   sprints: Sprint[];
 }
 
