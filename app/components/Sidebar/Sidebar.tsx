@@ -144,7 +144,7 @@ export default function Sidebar() {
    */
   const handleCreateProject = (title: string, desc: string, dueDate: Dayjs) => {
     if (activeWorkspace && title) {
-      createProject(activeWorkspace, title, 0, 100000);
+      createProject(activeWorkspace, title, desc, 0, 100000);
     }
   };
 

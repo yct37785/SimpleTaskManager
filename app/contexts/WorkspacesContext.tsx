@@ -9,9 +9,9 @@ import { Workspace, Project, Sprint, Column, Task } from '@defines/schemas';
 type WorkspacesContextType = {
   workspaces: Record<string, Workspace>;
   setWorkspaces: React.Dispatch<React.SetStateAction<Record<string, Workspace>>>;
-  createWorkspace: (name: string) => void;
-  createProject: (workspaceId: string, name: string, startDate: number, endDate: number) => void;
-  createSprint: (workspaceId: string, projectId: string, name: string, startDate: number, endDate: number) => boolean;
+  createWorkspace: (title: string) => void;
+  createProject: (workspaceId: string, title: string, desc: string, startDate: number, endDate: number) => void;
+  createSprint: (workspaceId: string, projectId: string, title: string, desc: string, startDate: number, endDate: number) => boolean;
   addTask: (workspaceId: string, projectId: string, sprintIdx: number, columnId: string, task: Task) => void;
   moveTask: (workspaceId: string, projectId: string, sprintIdx: number, sourceColId: string,
     destColId: string, sourceIndex: number, destIndex: number) => void;
@@ -52,11 +52,12 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
   /**
    * create a project under a workspace with defined bounds
    */
-  const createProject = (workspaceId: string, title: string, startDate: number, endDate: number) => {
+  const createProject = (workspaceId: string, title: string, desc: string, startDate: number, endDate: number) => {
     const projectId = uuidv4();
     const newProject: Project = {
       id: projectId,
       title,
+      desc,
       startDate,
       endDate,
       sprints: [],
@@ -82,6 +83,7 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
     workspaceId: string,
     projectId: string,
     title: string,
+    desc: string,
     startDate: number,
     endDate: number
   ): boolean => {
@@ -103,6 +105,7 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
   
     const newSprint: Sprint = {
       title,
+      desc,
       startDate,
       endDate,
       columns: [
