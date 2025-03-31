@@ -11,9 +11,9 @@ export type Task = {
   id: string;
   title: string;
   desc: string;
-  addDate: string;
-  dueDate: string;
-  completedDate: string;
+  addDate: Date;
+  dueDate: Date;
+  completedDate: Date;
   labels?: Label[];
 }
 
@@ -37,8 +37,8 @@ export type Column = {
 export type Sprint = {
   title: string;
   desc: string;
-  startDate: number;
-  endDate: number;
+  startDate: Date;
+  endDate: Date;
   columns: Column[];
 }
 
@@ -51,8 +51,8 @@ export type Project = {
   id: string;
   title: string;
   desc: string;
-  startDate: number;
-  endDate: number;
+  startDate: Date;
+  endDate: Date;
   sprints: Sprint[];
 }
 
