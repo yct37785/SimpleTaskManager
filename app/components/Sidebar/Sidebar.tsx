@@ -226,10 +226,11 @@ export default function Sidebar() {
       </List>
 
       {/* create project form */}
-      <ProjectForm
+      {activeWorkspace ? <ProjectForm
+        workspace={workspaces[activeWorkspace]}
         projectDialogOpen={projectDialogOpen}
         handleCreateProject={handleCreateProject}
-        closeProjectDialog={() => setProjectDialogOpen(false)} />
+        closeProjectDialog={() => setProjectDialogOpen(false)} /> : null}
       
     </Box>
   );

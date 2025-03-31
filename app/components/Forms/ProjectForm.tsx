@@ -8,8 +8,11 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import BaseFormDialog, { TextInput } from './BaseFormDialog';
 // others
 import dayjs, { Dayjs } from 'dayjs';
+// defines
+import { Workspace, Project } from '@defines/schemas';
 
 type Props = {
+  workspace: Workspace;
   projectDialogOpen: boolean;
   handleCreateProject: (title: string, desc: string, dueDate: Dayjs) => void;
   closeProjectDialog: () => void;
@@ -18,7 +21,7 @@ type Props = {
 /**
  * form
  */
-export default function ProjectForm({ projectDialogOpen, handleCreateProject, closeProjectDialog }: Props) {
+export default function ProjectForm({ workspace, projectDialogOpen, handleCreateProject, closeProjectDialog }: Props) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState<Dayjs | null>(dayjs());
@@ -38,7 +41,7 @@ export default function ProjectForm({ projectDialogOpen, handleCreateProject, cl
       open={projectDialogOpen}
       onClose={() => closeProjectDialog()}
       onSubmit={handleSubmit}
-      title='New Project'
+      title={`${workspace.title} - new project`}
       disabled={!title || !description || !dueDate}
     >
       <TextInput
