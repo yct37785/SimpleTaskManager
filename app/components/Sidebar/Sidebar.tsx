@@ -15,6 +15,8 @@ import {
 // our components
 import { useWorkspacesManager } from '@contexts/WorkspacesContext';
 import ProjectForm from '@components/Forms/ProjectForm';
+// others
+import dayjs, { Dayjs } from 'dayjs';
 // defines
 import { sidebar_width, appbar_height, scrollbar_allowance } from '@/app/defines/dimens';
 import { Workspace, Project } from '@defines/schemas';
@@ -48,10 +50,10 @@ function InlineTextInput({ placeholder, value, setValue, onSubmit }: {
 /**
  * render a single workspace row
  */
-function WorkspaceListItem({ workspace, isOpen, setProjectDialogOpen, toggleOpen }: {
+function WorkspaceListItem({ workspace, isOpen, onClickCreateProject, toggleOpen }: {
   workspace: Workspace;
   isOpen: boolean;
-  setProjectDialogOpen: (v: boolean) => void;
+  onClickCreateProject: (e: React.MouseEvent, workspaceId: string) => void;
   toggleOpen: () => void;
 }) {
   return (
@@ -60,7 +62,7 @@ function WorkspaceListItem({ workspace, isOpen, setProjectDialogOpen, toggleOpen
         {isOpen ? <FolderOpenIcon /> : <FolderIcon />}
       </ListItemIcon>
       <ListItemText primary={workspace.title} />
-      <IconButton onClick={() => setProjectDialogOpen(true)} size='small'>
+      <IconButton onClick={(e) => onClickCreateProject(e, workspace.id)} size='small'>
         <AddIcon fontSize='small' />
       </IconButton>
       {isOpen ? <ExpandLess /> : <ExpandMore />}
@@ -106,10 +108,13 @@ export default function Sidebar() {
   // context
   const { workspaces, createWorkspace, createProject } = useWorkspacesManager();
 
-  // state
+  // creat workspace
   const [workspaceInputVisible, setWorkspaceInputVisible] = useState(false);
   const [workspaceTitle, setWorkspaceTitle] = useState('');
+  // create project
+  const [activeWorkspace, setActiveWorkspace] = useState<string | null>(null);
   const [projectDialogOpen, setProjectDialogOpen] = useState(false);
+  // workspace open/close tracking
   const [openWorkspaces, setOpenWorkspaces] = useState<Record<string, boolean>>({});
 
   /**
@@ -123,14 +128,29 @@ export default function Sidebar() {
     setWorkspaceTitle('');
     setWorkspaceInputVisible(false);
   };
-
+  
   /**
-   * create a project for a workspace from name input
+   * launch project creation dialog
    */
-  const handleCreateProject = (workspaceId: string) => {
-    // createProject(workspaceId, title, 0, 100000);
+  const onClickCreateProject = (e: React.MouseEvent, workspaceId: string) => {
+    e.stopPropagation();
+    setOpenWorkspaces((prev) => ({ ...prev, [workspaceId]: true }));
+    setProjectDialogOpen(true);
+    setActiveWorkspace(workspaceId);
   };
 
+  /**
+   * create project
+   */
+  const handleCreateProject = (title: string, desc: string, dueDate: Dayjs) => {
+    if (activeWorkspace && title) {
+      createProject(activeWorkspace, title, 0, 100000);
+    }
+  };
+
+  /**
+   * expand workspace
+   */
   const toggleOpen = (id: string) => {
     setOpenWorkspaces((prev) => ({ ...prev, [id]: !prev[id] }));
   };
@@ -193,7 +213,7 @@ export default function Sidebar() {
               <WorkspaceListItem
                 workspace={ws}
                 isOpen={openWorkspaces[ws.id] || false}
-                setProjectDialogOpen={setProjectDialogOpen}
+                onClickCreateProject={onClickCreateProject}
                 toggleOpen={() => toggleOpen(ws.id)}
               />
               <ProjectsList
@@ -206,9 +226,10 @@ export default function Sidebar() {
       </List>
 
       {/* create project form */}
-      <ProjectForm 
-      projectDialogOpen={projectDialogOpen}
-      setProjectDialogOpen={setProjectDialogOpen} />
+      <ProjectForm
+        projectDialogOpen={projectDialogOpen}
+        handleCreateProject={handleCreateProject}
+        closeProjectDialog={() => setProjectDialogOpen(false)} />
       
     </Box>
   );

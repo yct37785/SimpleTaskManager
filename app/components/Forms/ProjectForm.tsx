@@ -11,13 +11,14 @@ import dayjs, { Dayjs } from 'dayjs';
 
 type Props = {
   projectDialogOpen: boolean;
-  setProjectDialogOpen: (v: boolean) => void;
+  handleCreateProject: (title: string, desc: string, dueDate: Dayjs) => void;
+  closeProjectDialog: () => void;
 };
 
 /**
  * form
  */
-export default function ProjectForm({ projectDialogOpen, setProjectDialogOpen }: Props) {
+export default function ProjectForm({ projectDialogOpen, handleCreateProject, closeProjectDialog }: Props) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState<Dayjs | null>(dayjs());
@@ -25,15 +26,17 @@ export default function ProjectForm({ projectDialogOpen, setProjectDialogOpen }:
   const handleSubmit = () => {
     if (!title.trim() || !description.trim() || !dueDate) return;
 
+    handleCreateProject(title, description, dueDate);
     setTitle('');
     setDescription('');
     setDueDate(dayjs());
+    closeProjectDialog();
   };
 
   return (
     <BaseFormDialog
       open={projectDialogOpen}
-      onClose={() => setProjectDialogOpen(false)}
+      onClose={() => closeProjectDialog()}
       onSubmit={handleSubmit}
       title='New Project'
       disabled={!title || !description || !dueDate}
