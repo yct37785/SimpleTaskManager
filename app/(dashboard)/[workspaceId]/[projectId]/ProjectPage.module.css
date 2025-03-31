@@ -1,0 +1,11 @@
+.projectDesc {
+  line-height: 1.5;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+}
+
+.projectDescCollapsed {
+  line-clamp: 3;
+  -webkit-line-clamp: 3;
+}
