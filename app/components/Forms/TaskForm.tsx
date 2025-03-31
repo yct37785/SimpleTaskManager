@@ -2,26 +2,16 @@
 
 import React, { useState } from 'react';
 // MUI
-import { Button, TextField, TextFieldProps, Dialog, DialogActions, DialogContent, Box, Stack, Typography } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, Box, Stack, Typography } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 // our components
+import BaseFormDialog, { TextInput } from './BaseFormDialog';
 import LabelSelector from './LabelSelector';
 // others
 import { v4 as uuidv4 } from 'uuid';
 import dayjs, { Dayjs } from 'dayjs';
 // defines
 import { Task, Label } from '@defines/schemas';
-
-/**
- * input
- */
-function TextInput(props: TextFieldProps) {
-  return (
-    <TextField fullWidth variant='outlined' multiline required
-      {...props}
-    />
-  );
-};
 
 type Props = {
   openColumn: string;
@@ -38,7 +28,7 @@ export default function TaskForm({ openColumn, setOpenColumn, addTask }: Props) 
   const [dueDate, setDueDate] = useState<Dayjs | null>(dayjs());
   const [labels, setLabels] = useState<Label[]>([]);
 
-  const handleAddTask = () => {
+  const handleSubmit = () => {
     if (!title.trim() || !description.trim() || !dueDate) return;
 
     const newTask: Task = {
@@ -60,57 +50,34 @@ export default function TaskForm({ openColumn, setOpenColumn, addTask }: Props) 
   };
 
   return (
-    <Dialog
+    <BaseFormDialog
       open={openColumn !== ''}
       onClose={() => setOpenColumn('')}
-      maxWidth='sm'
-      fullWidth
-      scroll='body' // allow scrolling if content overflows
+      onSubmit={handleSubmit}
+      title="New Task"
+      disabled={!title || !description || !dueDate}
     >
-
-      <DialogContent dividers>
-        <Stack spacing={2}>
-
-          <TextInput
-            label='Task title'
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-
-          <TextInput
-            label='Task description'
-            rows={4}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-
-          <DatePicker
-            label='Due Date'
-            disablePast
-            value={dueDate}
-            onChange={(date) => setDueDate(date)}
-            slotProps={{
-              textField: {
-                fullWidth: true,
-                required: true,
-              }
-            }}
-          />
-
-          <LabelSelector labels={labels} setLabels={setLabels} />
-        </Stack>
-      </DialogContent>
-
-      <DialogActions>
-        <Button onClick={() => setOpenColumn('')}>Cancel</Button>
-        <Button
-          onClick={handleAddTask}
-          variant='contained'
-          disabled={!title || !description || !dueDate}
-        >
-          Create
-        </Button>
-      </DialogActions>
-    </Dialog>
+      <TextInput
+        label='Task title'
+        required
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
+      <TextInput
+        label='Task description'
+        rows={4}
+        required
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+      />
+      <DatePicker
+        label='Due Date'
+        disablePast
+        value={dueDate}
+        onChange={(date) => setDueDate(date)}
+        slotProps={{ textField: { fullWidth: true, required: true } }}
+      />
+      <LabelSelector labels={labels} setLabels={setLabels} />
+    </BaseFormDialog>
   );
 };
