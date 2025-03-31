@@ -7,7 +7,7 @@ import { useParams } from 'next/navigation';
 import { Box, Typography, Divider, Tooltip, IconButton, Stack } from '@mui/material';
 import { Edit as EditIcon, CalendarMonth as CalendarMonthIcon } from '@mui/icons-material';
 // date
-import { getLocalTimeZone } from '@internationalized/date';
+import { getLocalTimeZone, today, CalendarDate } from '@internationalized/date';
 // utils
 import { getRelativeTime } from '@utils/datetimeUtils';
 // our components
@@ -78,15 +78,11 @@ export default function ProjectPage() {
    * project details dashboard
    */
   const projectDetailsBar = () => {
-    const dueDate = project.endDate.toDate(getLocalTimeZone());
-    const now = new Date();
-    const formattedDue = dueDate.toLocaleDateString(undefined, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-    const relativeDue = getRelativeTime(now, dueDate);
+    const dueDate: CalendarDate = project.endDate;
+    const now: CalendarDate = today(getLocalTimeZone());
   
+    const formattedDue = `${dueDate.month}/${dueDate.day}/${dueDate.year}`;
+    const relativeDue = getRelativeTime(now, dueDate);
     const description = project.desc || fallbackDesc;
   
     return (

@@ -1,25 +1,47 @@
 import { CalendarDate } from '@internationalized/date';
 
-export function getRelativeTime(from: Date, to: Date): string {
-  const msPerDay = 1000 * 60 * 60 * 24;
-  const diffMs = to.getTime() - from.getTime();
-  const past = diffMs < 0;
-  const absDiff = Math.abs(diffMs);
+/**
+ * conversion from CalendarDate to number of days since year 0
+ */
+function calendarDateToEpochDays(date: CalendarDate): number {
+  const y = date.year;
+  const m = date.month;
+  const d = date.day;
 
-  const days = Math.floor(absDiff / msPerDay);
-  const years = Math.floor(days / 365);
-  const months = Math.floor((days % 365) / 30);
-  const remDays = days - (years * 365 + months * 30);
-
-  const parts = [];
-  if (years) parts.push(`${years} year${years !== 1 ? 's' : ''}`);
-  if (months) parts.push(`${months} month${months !== 1 ? 's' : ''}`);
-  if (remDays || (!years && !months)) parts.push(`${remDays} day${remDays !== 1 ? 's' : ''}`);
-
-  const timeString = parts.join(' ');
-  return past ? `${timeString} ago` : `in ${timeString}`;
+  // using Gregorian calendar days math approximation
+  return y * 365 + Math.floor((y + 3) / 4) - Math.floor((y + 99) / 100) + Math.floor((y + 399) / 400) + (m - 1) * 30 + d;
 }
 
+/**
+ * get duration of 'from' - 'to' in months/weeks/days
+ */
+export function getRelativeTime(from: CalendarDate, to: CalendarDate): string {
+  const past = to.compare(from) < 0;
+
+  // convert both to days since epoch for rough diff
+  const fromEpoch = calendarDateToEpochDays(from);
+  const toEpoch = calendarDateToEpochDays(to);
+  const diffDays = Math.abs(toEpoch - fromEpoch);
+
+  const weeks = Math.floor(diffDays / 7);
+  const days = diffDays % 7;
+  const months = Math.floor(diffDays / 30); // rough approx
+
+  let result = '';
+  if (months >= 1) {
+    result = `${months} month${months !== 1 ? 's' : ''}`;
+  } else if (weeks >= 1) {
+    result = `${weeks} week${weeks !== 1 ? 's' : ''}`;
+  } else {
+    result = `${diffDays} day${diffDays !== 1 ? 's' : ''}`;
+  }
+
+  return past ? `${result} ago` : `in ${result}`;
+}
+
+/**
+ * convert Date to CalendarDate
+ */
 export function dateToCalendarDate(from: Date): CalendarDate {
   return new CalendarDate(
     from.getFullYear(),
