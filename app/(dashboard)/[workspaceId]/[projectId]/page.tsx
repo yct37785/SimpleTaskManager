@@ -6,7 +6,7 @@ import { useParams } from 'next/navigation';
 // MUI
 import { Box, Typography, Divider, Tooltip, IconButton, Stack } from '@mui/material';
 import { Edit as EditIcon, CalendarMonth as CalendarMonthIcon } from '@mui/icons-material';
-// others
+// date
 import { getLocalTimeZone } from '@internationalized/date';
 // utils
 import { getRelativeTime } from '@utils/datetimeUtils';

@@ -4,7 +4,7 @@ import { useRef } from 'react';
 // react-aria
 import { useCalendarCell, useFocusRing, useLocale, mergeProps } from 'react-aria';
 import { CalendarState, RangeCalendarState } from 'react-stately';
-// others
+// date
 import { CalendarDate, isSameDay, isSameMonth, getDayOfWeek, getLocalTimeZone } from '@internationalized/date';
 // styles
 import styles from './calendar.module.css';

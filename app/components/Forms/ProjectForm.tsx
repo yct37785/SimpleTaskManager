@@ -6,7 +6,7 @@ import { Button, Dialog, DialogTitle, DialogActions, DialogContent, Box, Stack, 
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 // our components
 import BaseFormDialog, { TextInput } from './BaseFormDialog';
-// others
+// date
 import dayjs, { Dayjs } from 'dayjs';
 // defines
 import { Workspace, Project } from '@defines/schemas';
