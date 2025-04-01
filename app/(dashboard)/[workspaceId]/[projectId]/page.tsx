@@ -92,7 +92,7 @@ export default function ProjectPage() {
           <Stack direction='row' alignItems='center' spacing={0.5} mt={1}>
             <CalendarMonthIcon fontSize='small' color='action' />
             <Typography variant='subtitle2' color='text.secondary'>
-              {`Due by: ${formattedDue} (${relativeDue})`}
+              {`Complete by: ${formattedDue} (${relativeDue})`}
             </Typography>
           </Stack>
 
