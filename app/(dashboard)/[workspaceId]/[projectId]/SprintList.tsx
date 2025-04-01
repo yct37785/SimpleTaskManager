@@ -1,19 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-// next
-import { useParams } from 'next/navigation';
 // MUI
-import { Box, Typography, Divider, Tooltip, Button, IconButton, Stack, Card, CardContent, CardActionArea } from '@mui/material';
-import { Edit as EditIcon, CalendarMonth as CalendarMonthIcon, Add as AddIcon } from '@mui/icons-material';
-// date
-import { getLocalTimeZone, today, CalendarDate } from '@internationalized/date';
-// utils
-import { getRelativeTime } from '@utils/datetimeUtils';
+import { Box, Typography, Card, CardContent, CardActionArea, Stack, } from '@mui/material';
+import { Add as AddIcon } from '@mui/icons-material';
+// our components
+import SprintCard from '@components/Cards/SprintCard';
 // defines
 import { Project } from '@defines/schemas';
-// styles
-import styles from './ProjectPage.module.css';
 
 type Props = {
   project: Project;
@@ -23,54 +16,59 @@ type Props = {
  * sprints
  */
 export default function SprintList({ project }: Props) {
-
   return (
     <Box sx={{ mb: 4 }}>
+      {/* header */}
       <Typography variant='h6' fontWeight={500} sx={{ mb: 2 }}>
         Sprints
       </Typography>
 
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-        {project.sprints.map((sprint, idx) => (
-          <Card key={idx} sx={{ width: 280, flex: '1 1 auto' }}>
-            <CardContent>
-              <Typography variant='subtitle1' fontWeight={600}>
-                {sprint.title}
-              </Typography>
-              <Typography
-                variant='body2'
-                color='text.secondary'
-                sx={{ mt: 0.5, lineHeight: 1.4 }}
-              >
-                {sprint.desc}
-              </Typography>
-            </CardContent>
-          </Card>
-        ))}
+      {/* grid */}
+      <Box
+        sx={{
+          display: 'grid',
+          gap: 2,
+          gridTemplateColumns: {
+            xs: '1fr',
+            sm: 'repeat(2, 1fr)',
+            md: 'repeat(3, 1fr)',
+            lg: 'repeat(4, 1fr)',
+          },
+        }}
+      >
+        {/* existing sprints */}
+        {project.sprints.map((sprint, idx) => {
+          const totalTasks = sprint.columns.reduce((sum, col) => sum + col.tasks.length, 0);
+          const completedTasks = sprint.columns
+            .find(col => col.title.toLowerCase() === 'done')
+            ?.tasks.length ?? 0;
+
+          return (
+            <SprintCard
+              key={idx}
+              title={sprint.title}
+              desc={sprint.desc}
+              completed={completedTasks}
+              total={totalTasks}
+            />
+          );
+        })}
 
         {/* add sprint */}
-        <Box
+        <Card
+          variant='outlined'
           sx={{
-            width: 280,
-            flex: '1 1 auto',
-            border: '1px dashed',
-            borderColor: 'primary.main',
+            borderStyle: 'dashed',
             color: 'primary.main',
             backgroundColor: 'background.default',
+            height: '100%',
           }}
         >
           <CardActionArea
             onClick={() => {
-              // TODO: open your add sprint dialog here
               console.log('Add Sprint clicked');
             }}
-            sx={{
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              p: 2,
-            }}
+            sx={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', p: 2 }}
           >
             <Stack direction='row' alignItems='center' spacing={1}>
               <AddIcon />
@@ -79,8 +77,8 @@ export default function SprintList({ project }: Props) {
               </Typography>
             </Stack>
           </CardActionArea>
-        </Box>
+        </Card>
       </Box>
     </Box>
   );
-};
+}
