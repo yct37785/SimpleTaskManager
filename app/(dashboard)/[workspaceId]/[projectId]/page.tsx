@@ -13,6 +13,7 @@ import { getRelativeTime } from '@utils/datetimeUtils';
 // our components
 import RangeCalendar from '@components/Calendar/RangeCalendar';
 import CalendarPicker from '@components/Calendar/CalendarPicker';
+import SprintList from './SprintList';
 import { useWorkspacesManager } from '@contexts/WorkspacesContext';
 // styles
 import styles from './ProjectPage.module.css';
@@ -109,77 +110,12 @@ export default function ProjectPage() {
     );
   };
 
-  /**
-   * sprints list
-   */
-  const sprintsList = () => {
-    return (
-      <Box sx={{ mb: 4 }}>
-        <Typography variant='h6' fontWeight={500} sx={{ mb: 2 }}>
-          Sprints
-        </Typography>
-
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-          {project.sprints.map((sprint, idx) => (
-            <Card key={idx} sx={{ width: 280, flex: '1 1 auto' }}>
-              <CardContent>
-                <Typography variant='subtitle1' fontWeight={600}>
-                  {sprint.title}
-                </Typography>
-                <Typography
-                  variant='body2'
-                  color='text.secondary'
-                  sx={{ mt: 0.5, lineHeight: 1.4 }}
-                >
-                  {sprint.desc}
-                </Typography>
-              </CardContent>
-            </Card>
-          ))}
-
-          {/* add sprint */}
-          <Box
-            sx={{
-              width: 280,
-              flex: '1 1 auto',
-              border: '1px dashed',
-              borderColor: 'primary.main',
-              color: 'primary.main',
-              backgroundColor: 'background.default',
-            }}
-          >
-            <CardActionArea
-              onClick={() => {
-                // TODO: open your add sprint dialog here
-                console.log('Add Sprint clicked');
-              }}
-              sx={{
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                p: 2,
-              }}
-            >
-              <Stack direction='row' alignItems='center' spacing={1}>
-                <AddIcon />
-                <Typography variant='body1' fontWeight={500}>
-                  Add Sprint
-                </Typography>
-              </Stack>
-            </CardActionArea>
-          </Box>
-        </Box>
-      </Box>
-    );
-  };
-
   return (
     <main style={{ height: '100vh', overflow: 'auto', padding: '2rem' }}>
       <Box>
         {projectDetailsBar()}
         <Divider sx={{ mb: 3 }} />
-        {sprintsList()}
+        <SprintList project={project} />
       </Box>
     </main>
   );
