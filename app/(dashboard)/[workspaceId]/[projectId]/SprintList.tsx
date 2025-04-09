@@ -76,6 +76,9 @@ export default function SprintList({ project }: Props) {
               desc={sprint.desc}
               completed={completedTasks}
               total={totalTasks}
+              onClick={() => {
+                console.log(`Clicked on ${sprint.title}`);
+              }}
             />
           );
         })}
