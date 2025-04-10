@@ -4,52 +4,85 @@ import { useState, useEffect } from 'react';
 // next
 import { useParams } from 'next/navigation';
 // MUI
-import { Box, Typography, Divider, Tooltip, Button, IconButton, Stack, Card, CardContent, CardActionArea } from '@mui/material';
-import { Edit as EditIcon, CalendarMonth as CalendarMonthIcon, Add as AddIcon } from '@mui/icons-material';
+import {
+  Box, Typography, Divider, Tooltip, IconButton, Stack
+} from '@mui/material';
+import { Edit as EditIcon, CalendarMonth as CalendarMonthIcon } from '@mui/icons-material';
 // date
-import { getLocalTimeZone, today, CalendarDate } from '@internationalized/date';
+import { getLocalTimeZone, today, CalendarDate, parseDate } from '@internationalized/date';
 // utils
 import { getRelativeTime } from '@utils/datetimeUtils';
 // our components
-import RangeCalendar from '@components/Calendar/RangeCalendar';
-import CalendarPicker from '@components/Calendar/CalendarPicker';
 import SprintList from './SprintList';
 import { useWorkspacesManager } from '@contexts/WorkspacesContext';
+// types
+import { Project } from '@defines/schemas';
 // styles
 import styles from './ProjectPage.module.css';
 
-const fallbackDesc = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+const fallbackDesc = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit...';
 
-/**
- * project dashboard
- */
 export default function ProjectPage() {
   const { workspaceId, projectId } = useParams() as { workspaceId: string, projectId: string };
   const { workspaces } = useWorkspacesManager();
 
   const workspace = workspaces[workspaceId];
-  const project = workspace?.projects[projectId];
+  const originalProject = workspace?.projects[projectId];
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [showFullDesc, setShowFullDesc] = useState(false);
+  const [projectData, setProjectData] = useState<Project | null>(null);
 
-  if (!workspace || !project) {
-    return <div>Invalid workspace or project</div>;
-  }
-
+  // inject demo sprints into local state
   useEffect(() => {
-    if (workspace && project) {
-      document.title = `${workspace.title} - ${project.title} | Task Manager`;
+    if (workspace && originalProject) {
+      document.title = `${workspace.title} - ${originalProject.title} | Task Manager`;
+
+      // clone and safely mutate
+      const clonedProject: Project = {
+        ...originalProject,
+        sprints: [...originalProject.sprints]
+      };
+
+      // inject fake sprints if empty
+      if (clonedProject.sprints.length === 0) {
+        clonedProject.sprints.push(
+          {
+            title: 'Sprint 1',
+            desc: 'Kickoff and planning',
+            startDate: parseDate('2025-04-01'),
+            endDate: parseDate('2025-04-10'),
+            columns: [],
+          },
+          {
+            title: 'Sprint 2',
+            desc: 'Implementation phase',
+            startDate: parseDate('2025-04-11'),
+            endDate: parseDate('2025-04-20'),
+            columns: [],
+          },
+          {
+            title: 'Sprint 3',
+            desc: 'Testing and polish',
+            startDate: parseDate('2025-04-21'),
+            endDate: parseDate('2025-04-30'),
+            columns: [],
+          }
+        );
+      }
+
+      setProjectData(clonedProject);
     } else {
       document.title = 'Task Manager';
     }
-  }, [workspace, project]);
+  }, [workspace, originalProject]);
 
-  /**
-   * toggle desc
-   */
-  const projectDesc = (description: string) => {
-    return <Box>
+  if (!workspace || !originalProject) {
+    return <div>Invalid workspace or project</div>;
+  }
+
+  const projectDesc = (description: string) => (
+    <Box>
       <Typography
         variant='body2'
         color='text.secondary'
@@ -69,24 +102,21 @@ export default function ProjectPage() {
         </Typography>
       )}
     </Box>
-  };
+  );
 
-  /**
-   * project details dashboard
-   */
   const projectDetailsBar = () => {
-    const dueDate: CalendarDate = project.endDate;
+    const dueDate: CalendarDate = originalProject.endDate;
     const now: CalendarDate = today(getLocalTimeZone());
 
     const formattedDue = `${dueDate.month}/${dueDate.day}/${dueDate.year}`;
     const relativeDue = getRelativeTime(now, dueDate);
-    const description = project.desc || fallbackDesc;
+    const description = originalProject.desc || fallbackDesc;
 
     return (
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 2 }}>
         <Box sx={{ flex: 1 }}>
           <Typography variant='h5' fontWeight={600}>
-            {`${workspace.title} - ${project.title}`}
+            {`${workspace.title} - ${originalProject.title}`}
           </Typography>
 
           <Stack direction='row' alignItems='center' spacing={0.5} mt={1}>
@@ -115,8 +145,8 @@ export default function ProjectPage() {
       <Box sx={{ height: '100%' }}>
         {projectDetailsBar()}
         <Divider sx={{ mb: 3 }} />
-        <SprintList project={project} />
+        {projectData && <SprintList project={projectData} />}
       </Box>
     </main>
   );
-};
+}
