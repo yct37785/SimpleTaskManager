@@ -1,113 +1,104 @@
 'use client';
 
-// MUI
-import { Box, Typography, Card, CardContent, CardActionArea, Stack, } from '@mui/material';
-import { Add as AddIcon } from '@mui/icons-material';
-// date
-import { parseDate } from '@internationalized/date';
-// our components
-import SprintCard from '@components/Cards/SprintCard';
-// defines
+import { useEffect, useRef } from 'react';
+import Gantt from 'frappe-gantt';
+import { Paper, Typography, Box, useTheme } from '@mui/material';
+import { today, getLocalTimeZone, CalendarDate, fromDate } from '@internationalized/date';
+// types
 import { Project, Sprint } from '@defines/schemas';
 
-const dummySprints: Sprint[] = [
-  {
-    title: 'Sprint Alpha',
-    desc: 'Initial development sprint covering setup and basic features.',
-    startDate: parseDate('2025-04-01'),
-    endDate: parseDate('2025-04-14'),
-    columns: [],
-  },
-  {
-    title: 'Sprint Beta',
-    desc: 'Focus on authentication, error handling, and early feedback.',
-    startDate: parseDate('2025-04-15'),
-    endDate: parseDate('2025-04-28'),
-    columns: [],
-  },
-  {
-    title: 'Sprint Gamma',
-    desc: 'Performance optimizations and dashboard UI polish.',
-    startDate: parseDate('2025-05-01'),
-    endDate: parseDate('2025-05-14'),
-    columns: [],
-  },
-];
+// convert CalendarDate to JS Date
+function calendarDateToDate(cd: CalendarDate): Date {
+  return cd.toDate(getLocalTimeZone());
+}
 
-type Props = {
-  project: Project;
-};
+// dummy sprints for demo
+function createDummySprints(): Sprint[] {
+  const now = today(getLocalTimeZone());
+  const addDays = (base: CalendarDate, days: number) =>
+    new CalendarDate(base.calendar, base.era, base.year, base.month, base.day + days);
 
-/**
- * sprints
- */
-export default function SprintList({ project }: Props) {
+  return [
+    {
+      title: 'Sprint Alpha',
+      desc: 'Initial implementation phase.',
+      startDate: now,
+      endDate: addDays(now, 7),
+      columns: [
+        { id: 'todo', title: 'TODO', isTodo: true, tasks: Array(3).fill({ id: 't1', title: '', desc: '', addDate: now, dueDate: now, completedDate: undefined, labels: [] }) },
+        { id: 'done', title: 'DONE', isTodo: false, tasks: Array(1).fill({ id: 't4', title: '', desc: '', addDate: now, dueDate: now, completedDate: now, labels: [] }) }
+      ]
+    },
+    {
+      title: 'Sprint Beta',
+      desc: 'Testing and documentation.',
+      startDate: addDays(now, 10),
+      endDate: addDays(now, 17),
+      columns: [
+        { id: 'todo', title: 'TODO', isTodo: true, tasks: Array(4).fill({ id: 't2', title: '', desc: '', addDate: now, dueDate: now, completedDate: undefined, labels: [] }) },
+        { id: 'done', title: 'DONE', isTodo: false, tasks: Array(2).fill({ id: 't5', title: '', desc: '', addDate: now, dueDate: now, completedDate: now, labels: [] }) }
+      ]
+    }
+  ];
+}
+
+export default function SprintList() {
+  const theme = useTheme();
+  const ganttRef = useRef<HTMLDivElement>(null);
+
+  const dummyProject: Project = {
+    id: 'demo',
+    title: 'Demo Project',
+    desc: '',
+    startDate: today(getLocalTimeZone()),
+    endDate: today(getLocalTimeZone()).add({ days: 30 }),
+    sprints: createDummySprints()
+  };
+
+  useEffect(() => {
+    if (ganttRef.current) {
+      const tasks = dummyProject.sprints.map((sprint, index) => {
+        const total = sprint.columns.reduce((sum, col) => sum + col.tasks.length, 0);
+        const completed = sprint.columns.find(c => c.title.toLowerCase() === 'done')?.tasks.length ?? 0;
+        const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+        return {
+          id: `sprint-${index}`,
+          name: sprint.title,
+          start: calendarDateToDate(sprint.startDate),
+          end: calendarDateToDate(sprint.endDate),
+          progress,
+          custom_class: 'gantt-sprint-bar'
+        };
+      });
+
+      new Gantt(ganttRef.current, tasks, {
+        view_mode: 'Day',
+        custom_popup_html: (task: any) => `
+          <div style="
+            padding: 8px;
+            max-width: 250px;
+            background: white;
+            border-radius: 4px;
+            font-family: ${theme.typography.fontFamily};
+            color: ${theme.palette.text.primary};
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+          ">
+            <h5 style="margin: 0 0 4px; font-size: 1rem;">${task.name}</h5>
+            <p style="margin: 0 0 2px;"><strong>${task.progress}%</strong> complete</p>
+            <p style="margin: 0;">${task._start.toDateString()} → ${task._end.toDateString()}</p>
+          </div>
+        `
+      });
+    }
+  }, [theme]);
+
   return (
-    <Box sx={{ mb: 4 }}>
-      {/* header */}
-      <Typography variant='h6' fontWeight={500} sx={{ mb: 2 }}>
-        Sprints
+    <Paper elevation={3} sx={{ overflowX: 'auto', borderRadius: 2, p: 3 }}>
+      <Typography variant="h6" fontWeight={600} mb={2}>
+        Sprint Timeline (Demo)
       </Typography>
-
-      {/* grid */}
-      <Box
-        sx={{
-          display: 'grid',
-          gap: 2,
-          gridTemplateColumns: {
-            xs: '1fr',
-            sm: 'repeat(2, 1fr)',
-            md: 'repeat(3, 1fr)',
-            lg: 'repeat(4, 1fr)',
-          },
-        }}
-      >
-        {/* existing sprints */}
-        {dummySprints.map((sprint, idx) => {
-          const totalTasks = sprint.columns.reduce((sum, col) => sum + col.tasks.length, 0);
-          const completedTasks = sprint.columns
-            .find(col => col.title.toLowerCase() === 'done')
-            ?.tasks.length ?? 0;
-
-          return (
-            <SprintCard
-              key={idx}
-              title={sprint.title}
-              desc={sprint.desc}
-              completed={completedTasks}
-              total={totalTasks}
-              onClick={() => {
-                console.log(`Clicked on ${sprint.title}`);
-              }}
-            />
-          );
-        })}
-
-        {/* add sprint */}
-        <Card
-          variant='outlined'
-          sx={{
-            borderStyle: 'dashed',
-            color: 'primary.main',
-            backgroundColor: 'background.default',
-            height: '100%',
-          }}
-        >
-          <CardActionArea
-            onClick={() => {
-              console.log('Add Sprint clicked');
-            }}
-            sx={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', p: 2 }}
-          >
-            <Stack direction='row' alignItems='center' spacing={1}>
-              <AddIcon />
-              <Typography variant='body1' fontWeight={500}>
-                Add Sprint
-              </Typography>
-            </Stack>
-          </CardActionArea>
-        </Card>
-      </Box>
-    </Box>
+      <Box ref={ganttRef} />
+    </Paper>
   );
 }

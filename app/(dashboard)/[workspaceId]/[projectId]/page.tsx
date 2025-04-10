@@ -115,7 +115,7 @@ export default function ProjectPage() {
       <Box>
         {projectDetailsBar()}
         <Divider sx={{ mb: 3 }} />
-        <SprintList project={project} />
+        <SprintList />
       </Box>
     </main>
   );
