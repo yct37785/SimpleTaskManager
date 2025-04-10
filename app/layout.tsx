@@ -10,7 +10,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 // our components
 import Sidebar from '@components/Sidebar/Sidebar';
 import { WorkspacesProvider } from '@contexts/WorkspacesContext';
-// styles
+// global styles
 import '@styles/globals.css';
 
 /**
