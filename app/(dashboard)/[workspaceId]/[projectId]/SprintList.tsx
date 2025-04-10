@@ -9,58 +9,24 @@ import { Box, Typography } from '@mui/material';
 import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date';
 // defines
 import { Project } from '@defines/schemas';
-
-/**
- * convert CalendarDate to JS Date using local time zone
- */
-function calendarDateToDate(cd: CalendarDate): Date {
-  return cd.toDate(getLocalTimeZone());
-}
+// styles
+import styles from './SprintList.module.css';
 
 /**
  * format sprints from project into Gantt-compatible task objects
  */
 function formatSprints(project: Project) {
   return project.sprints.map((sprint, index) => {
-    const total = sprint.columns.reduce((sum, col) => sum + col.tasks.length, 0);
-    const completed = sprint.columns.find(c => c.title.toLowerCase() === 'done')?.tasks.length ?? 0;
-    const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
-
+    const progress = 20;  // hardcode for now
     return {
       id: `sprint-${index}`,
       name: sprint.title,
-      start: calendarDateToDate(sprint.startDate),
-      end: calendarDateToDate(sprint.endDate),
+      start: sprint.startDate.toString(),
+      end: sprint.endDate.toString(),
       progress,
       custom_class: 'gantt-sprint-bar'
     };
   });
-}
-
-/**
- * compute min and max date range for the Gantt view with clamping (±30 days)
- */
-function getClampedDateRange(project: Project): { start: Date; end: Date } {
-  const zone = getLocalTimeZone();
-
-  if (!project.sprints.length) {
-    const now = today(zone);
-    return {
-      start: now.subtract({ days: 30 }).toDate(zone),
-      end: now.add({ days: 30 }).toDate(zone),
-    };
-  }
-
-  const startDates = project.sprints.map(s => s.startDate);
-  const endDates = project.sprints.map(s => s.endDate);
-
-  const minStart = startDates.reduce((a, b) => (a.compare(b) < 0 ? a : b));
-  const maxEnd = endDates.reduce((a, b) => (a.compare(b) > 0 ? a : b));
-
-  return {
-    start: minStart.subtract({ days: 30 }).toDate(zone),
-    end: maxEnd.add({ days: 30 }).toDate(zone),
-  };
 }
 
 /**
@@ -109,20 +75,6 @@ export default function SprintList({ project }: Props) {
     });
 
     gantt.scroll_current();
-
-    // clamp horizontal scroll to start of range
-    const { start } = getClampedDateRange(project);
-    const wrapper = ganttRef.current.querySelector('.gantt .gantt-container') as HTMLElement | null;
-    if (wrapper) {
-      const scrollLeft = wrapper.scrollLeft;
-      const scrollMax = wrapper.scrollWidth;
-      wrapper.scrollLeft = scrollLeft > scrollMax ? scrollMax : scrollLeft;
-    }
-
-    const svg = ganttRef.current.querySelector('svg');
-    if (svg) {
-      svg.setAttribute('width', '100%');
-    }
   }, [project]);
 
   return (
