@@ -112,10 +112,10 @@ export default function ProjectPage() {
 
   return (
     <main style={{ height: '100vh', overflow: 'auto', padding: '2rem' }}>
-      <Box>
+      <Box sx={{ height: '100%' }}>
         {projectDetailsBar()}
         <Divider sx={{ mb: 3 }} />
-        <SprintList />
+        <SprintList project={project} />
       </Box>
     </main>
   );

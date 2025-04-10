@@ -2,103 +2,79 @@
 
 import { useEffect, useRef } from 'react';
 import Gantt from 'frappe-gantt';
-import { Paper, Typography, Box, useTheme } from '@mui/material';
-import { today, getLocalTimeZone, CalendarDate, fromDate } from '@internationalized/date';
-// types
-import { Project, Sprint } from '@defines/schemas';
+import { Project } from '@defines/schemas';
 
-// convert CalendarDate to JS Date
-function calendarDateToDate(cd: CalendarDate): Date {
-  return cd.toDate(getLocalTimeZone());
-}
+type Props = {
+  project: Project;
+};
 
-// dummy sprints for demo
-function createDummySprints(): Sprint[] {
-  const now = today(getLocalTimeZone());
-  const addDays = (base: CalendarDate, days: number) =>
-    new CalendarDate(base.calendar, base.era, base.year, base.month, base.day + days);
+// hardcoded sprints demo
+const fakeSprints = [
+  {
+    id: '1',
+    name: 'Redesign Website',
+    start: '2024-04-01',
+    end: '2024-04-07',
+    progress: 25,
+  },
+  {
+    id: '2',
+    name: 'Build Sprint View',
+    start: '2024-04-08',
+    end: '2024-04-14',
+    progress: 50,
+  },
+  {
+    id: '3',
+    name: 'Launch Marketing',
+    start: '2024-04-15',
+    end: '2024-04-22',
+    progress: 80,
+  },
+];
 
-  return [
-    {
-      title: 'Sprint Alpha',
-      desc: 'Initial implementation phase.',
-      startDate: now,
-      endDate: addDays(now, 7),
-      columns: [
-        { id: 'todo', title: 'TODO', isTodo: true, tasks: Array(3).fill({ id: 't1', title: '', desc: '', addDate: now, dueDate: now, completedDate: undefined, labels: [] }) },
-        { id: 'done', title: 'DONE', isTodo: false, tasks: Array(1).fill({ id: 't4', title: '', desc: '', addDate: now, dueDate: now, completedDate: now, labels: [] }) }
-      ]
-    },
-    {
-      title: 'Sprint Beta',
-      desc: 'Testing and documentation.',
-      startDate: addDays(now, 10),
-      endDate: addDays(now, 17),
-      columns: [
-        { id: 'todo', title: 'TODO', isTodo: true, tasks: Array(4).fill({ id: 't2', title: '', desc: '', addDate: now, dueDate: now, completedDate: undefined, labels: [] }) },
-        { id: 'done', title: 'DONE', isTodo: false, tasks: Array(2).fill({ id: 't5', title: '', desc: '', addDate: now, dueDate: now, completedDate: now, labels: [] }) }
-      ]
-    }
-  ];
-}
-
-export default function SprintList() {
-  const theme = useTheme();
+export default function SprintList({ project }: Props) {
   const ganttRef = useRef<HTMLDivElement>(null);
 
-  const dummyProject: Project = {
-    id: 'demo',
-    title: 'Demo Project',
-    desc: '',
-    startDate: today(getLocalTimeZone()),
-    endDate: today(getLocalTimeZone()).add({ days: 30 }),
-    sprints: createDummySprints()
-  };
-
   useEffect(() => {
-    if (ganttRef.current) {
-      const tasks = dummyProject.sprints.map((sprint, index) => {
-        const total = sprint.columns.reduce((sum, col) => sum + col.tasks.length, 0);
-        const completed = sprint.columns.find(c => c.title.toLowerCase() === 'done')?.tasks.length ?? 0;
-        const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+    const container = ganttRef.current;
+    if (!container) return;
 
-        return {
-          id: `sprint-${index}`,
-          name: sprint.title,
-          start: calendarDateToDate(sprint.startDate),
-          end: calendarDateToDate(sprint.endDate),
-          progress,
-          custom_class: 'gantt-sprint-bar'
-        };
-      });
+    // clear previous chart before creating new one
+    container.innerHTML = '';
 
-      new Gantt(ganttRef.current, tasks, {
-        view_mode: 'Day',
-        custom_popup_html: (task: any) => `
-          <div style="
-            padding: 8px;
-            max-width: 250px;
-            background: white;
-            border-radius: 4px;
-            font-family: ${theme.typography.fontFamily};
-            color: ${theme.palette.text.primary};
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-          ">
-            <h5 style="margin: 0 0 4px; font-size: 1rem;">${task.name}</h5>
-            <p style="margin: 0 0 2px;"><strong>${task.progress}%</strong> complete</p>
-            <p style="margin: 0;">${task._start.toDateString()} → ${task._end.toDateString()}</p>
+    new Gantt(container, fakeSprints, {
+      view_mode: 'Day',
+      custom_popup_html: (task: any) => `
+        <div style="
+          padding: 8px;
+          max-width: 250px;
+          background: white;
+          border-radius: 4px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        ">
+          <div style="font-weight: 600; margin-bottom: 4px;">${task.name}</div>
+          <div style="margin-bottom: 4px;">${task.progress}% complete</div>
+          <div style="font-size: 0.875rem; color: gray;">
+            ${task._start.toDateString()} → ${task._end.toDateString()}
           </div>
-        `
-      });
-    }
-  }, [theme]);
+        </div>
+      `,
+    });
+  }, [project]);
 
   return (
-    <Paper elevation={3} sx={{ overflowX: 'auto', borderRadius: 2, p: 3 }}>
-      <Typography variant="h6" fontWeight={600} mb={2}>
-        Sprint Timeline (Demo)
-      </Typography>
-      <Box ref={ganttRef} />
-    </Paper>
+    <div style={{ flex: 1 }}>
+      <h3 style={{ marginBottom: '1rem' }}>Sprint Timeline</h3>
+
+      <div
+        ref={ganttRef}
+        style={{
+          flex: 1,
+          border: '1px solid #ddd',
+          borderRadius: 8,
+        }}
+      />
+    </div>
   );
 }
