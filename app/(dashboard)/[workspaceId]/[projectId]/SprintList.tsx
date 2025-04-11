@@ -11,13 +11,14 @@ import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date';
 import { Project } from '@defines/schemas';
 
 /**
- * local styles
+ * local styles and layout constants
  */
 const upper_header_height = 45;
 const lower_header_height = 30;
 const bar_height = 40;
 const padding = 16;
 const bottom_buffer = 40;
+const min_container_height = 400;
 
 /**
  * format sprints from project into Gantt-compatible task objects
@@ -69,19 +70,24 @@ export default function SprintList({ project }: Props) {
     const sprints = formatSprints(project);
 
     // calculate gantt container height
-    const container_height = sprints.length * (bar_height + padding) + upper_header_height +
-      lower_header_height + padding + bottom_buffer;
+    const calculatedHeight =
+      sprints.length * (bar_height + padding) +
+      upper_header_height +
+      lower_header_height +
+      padding +
+      bottom_buffer;
+    const container_height = Math.max(calculatedHeight, min_container_height);
 
     // create gantt
     const gantt = new Gantt(ganttRef.current, sprints, {
       infinite_padding: false,
       move_dependencies: false,
       view_mode_select: false,
-      upper_header_height: upper_header_height,
-      lower_header_height: lower_header_height,
-      bar_height: bar_height,
-      padding: padding,
-      container_height: container_height,
+      upper_header_height,
+      lower_header_height,
+      bar_height,
+      padding,
+      container_height,
       lines: 'both',
       popup_on: 'hover',
       view_mode: 'Day',

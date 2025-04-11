@@ -1,3 +1,10 @@
+.gantt-sprint-bar {
+  fill: #1976d2;
+  stroke: #125aa3;
+  rx: 4;
+  ry: 4;
+}
+
 .gantt-tooltip {
   padding: 8px;
   max-width: 250px;
@@ -13,4 +20,15 @@
   font-size: 1rem;
   font-weight: 600;
   margin-bottom: 4px;
+}
+
+/* override Frappe Gantt styles */
+.gantt-container {
+  overflow-y: auto;
+  max-height: 100%;
+}
+
+.gantt {
+  user-select: none;
+  scrollbar-width: thin;
 }
