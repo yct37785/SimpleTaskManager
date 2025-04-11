@@ -1,28 +1,29 @@
 .gantt-sprint-bar {
-  fill: #1976d2;
-  stroke: #125aa3;
-  rx: 4;
-  ry: 4;
+  fill: var(--mui-palette-primary-main, #1976d2);
+  stroke: var(--mui-palette-primary-dark, #125aa3);
+  rx: 6;
+  ry: 6;
 }
 
 .gantt-tooltip {
-  padding: 8px;
-  max-width: 250px;
+  padding: 12px;
+  max-width: 260px;
   background: white;
-  border-radius: 4px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  font-size: 0.875rem;
-  color: #333;
+  border-radius: 8px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+  font-size: 0.85rem;
+  color: rgba(0, 0, 0, 0.87);
+  line-height: 1.4;
 }
 
 .gantt-tooltip strong {
-  display: block;
   font-size: 1rem;
   font-weight: 600;
-  margin-bottom: 4px;
+  display: block;
+  margin-bottom: 6px;
 }
 
-/* override Frappe Gantt styles */
+/* Gantt override: reduce clutter */
 .gantt-container {
   overflow-y: hidden;
   max-height: 100%;
@@ -31,4 +32,12 @@
 .gantt {
   user-select: none;
   scrollbar-width: thin;
+}
+
+.gantt .grid .row .tick {
+  stroke: #ccc;
+}
+
+.gantt .grid .row:nth-child(even) {
+  fill: rgba(0, 0, 0, 0.02);
 }

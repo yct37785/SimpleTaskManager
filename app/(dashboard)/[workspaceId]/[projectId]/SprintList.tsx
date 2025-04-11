@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 // Frappe
 import Gantt from 'frappe-gantt';
 // MUI
-import { Box, Typography, Switch, FormControlLabel } from '@mui/material';
+import { Box, Typography, Switch, FormControlLabel, Button, IconButton, Stack } from '@mui/material';
+import { Add as AddIcon } from '@mui/icons-material';
 // date
 import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date';
 // defines
@@ -113,19 +114,28 @@ export default function SprintList({ project }: Props) {
   }, [editMode]);
 
   return (
-    <Box sx={{ border: '1px solid #ddd', borderRadius: 2, padding: 2, flexDirection: 'column' }}>
-      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant='h6' fontWeight={600}>
-          Sprint Timeline
-        </Typography>
+    <Box
+      sx={{
+        border: '1px solid #ddd',
+        borderRadius: 2,
+        padding: 2,
+        flexDirection: 'column',
+      }}
+    >
+      <Stack direction='row' alignItems='center' spacing={2}>
+        <Typography variant='h6' fontWeight={600}>Sprints</Typography>
+        <IconButton color='primary' size='large'>
+          <AddIcon />
+        </IconButton>
+        <div style={{ flex: 1 }} />
         <FormControlLabel
-          control={<Switch checked={editMode} onChange={() => setEditMode(!editMode)} />}
+          control={
+            <Switch checked={editMode} onChange={() => setEditMode(!editMode)} />
+          }
           label='Edit Mode'
         />
-      </Box>
-      <Box sx={{ flexGrow: 1 }}>
-        <div ref={ganttRef} />
-      </Box>
+      </Stack>
+      <div ref={ganttRef} />
     </Box>
   );
 }
