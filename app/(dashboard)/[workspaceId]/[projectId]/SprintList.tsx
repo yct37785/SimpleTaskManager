@@ -1,28 +1,28 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-// Frappe
+// Frappe Gantt
 import Gantt from 'frappe-gantt';
 // MUI
-import { Box, Typography, Switch, FormControlLabel, Button, IconButton, Stack } from '@mui/material';
+import {
+  Box, Typography, Switch, FormControlLabel, IconButton, Stack, Divider, Tooltip, useTheme
+} from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
-// date
-import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date';
-// defines
+// types
 import { Project } from '@defines/schemas';
 
 /**
- * local styles and layout constants
+ * local styles and layout consts
  */
-const upper_header_height = 45;
-const lower_header_height = 30;
-const bar_height = 40;
+const upperHeaderHeight = 45;
+const lowerHeaderHeight = 30;
+const barHeight = 40;
 const padding = 16;
-const bottom_buffer = 40;
-const min_container_height = 400;
+const bottomBuffer = 60;
+const minHeight = 400;
 
 /**
- * format sprints from project into Gantt-compatible task objects
+ * format sprints into Frappe Gantt-compatible structure
  */
 function formatSprints(project: Project) {
   return project.sprints.map((sprint, index) => ({
@@ -36,7 +36,7 @@ function formatSprints(project: Project) {
 }
 
 /**
- * generate custom tooltip HTML for each task bar
+ * Gantt chart tooltip HTML
  */
 function generatePopupHtml(task: any): string {
   return `
@@ -53,45 +53,40 @@ type Props = {
 };
 
 /**
- * displays all sprints using Frappe Gantt timeline
+ * sprint timeline Gantt chart component
  */
 export default function SprintList({ project }: Props) {
   const ganttRef = useRef<HTMLDivElement>(null);
   const ganttInstance = useRef<any>(null);
   const [editMode, setEditMode] = useState(false);
+  const theme = useTheme();
 
   /**
    * init and render Gantt chart when project changes
    */
   useEffect(() => {
     if (!ganttRef.current) return;
-
-    // clear existing chart
+    // always clear existing chart
     ganttRef.current.innerHTML = '';
 
-    // retrieve sprints
-    const sprints = formatSprints(project);
+    const tasks = formatSprints(project);
 
-    // calculate gantt container height
-    const calculatedHeight =
-      sprints.length * (bar_height + padding) +
-      upper_header_height +
-      lower_header_height +
-      padding +
-      bottom_buffer;
-    const container_height = Math.max(calculatedHeight, min_container_height);
+    // calculate Gantt container height dynamically
+    const height = Math.max(
+      tasks.length * (barHeight + padding) + upperHeaderHeight + lowerHeaderHeight + padding + bottomBuffer,
+      minHeight
+    );
 
-    // create gantt
-    ganttInstance.current = new Gantt(ganttRef.current, sprints, {
+    ganttInstance.current = new Gantt(ganttRef.current, tasks, {
       readonly: !editMode,
       infinite_padding: false,
       move_dependencies: false,
       view_mode_select: false,
-      upper_header_height,
-      lower_header_height,
-      bar_height,
+      upper_header_height: upperHeaderHeight,
+      lower_header_height: lowerHeaderHeight,
+      bar_height: barHeight,
       padding,
-      container_height,
+      container_height: height,
       lines: 'both',
       popup_on: 'hover',
       view_mode: 'Day',
@@ -103,7 +98,7 @@ export default function SprintList({ project }: Props) {
   }, [project]);
 
   /**
-   * update gantt readonly mode
+   * update readonly on toggle
    */
   useEffect(() => {
     if (ganttInstance.current) {
@@ -116,26 +111,57 @@ export default function SprintList({ project }: Props) {
   return (
     <Box
       sx={{
-        border: '1px solid #ddd',
+        border: `1px solid ${theme.palette.divider}`,
         borderRadius: 2,
         padding: 2,
+        display: 'flex',
         flexDirection: 'column',
+        minHeight: 0,
+        overflow: 'hidden',
       }}
     >
-      <Stack direction='row' alignItems='center' spacing={2}>
-        <Typography variant='h6' fontWeight={600}>Sprints</Typography>
-        <IconButton color='primary' size='large'>
-          <AddIcon />
-        </IconButton>
-        <div style={{ flex: 1 }} />
+      {/* top bar */}
+      <Stack
+        direction='row'
+        spacing={2}
+        alignItems='center'
+        justifyContent='space-between'
+        sx={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 1,
+          bgcolor: theme.palette.background.paper,
+        }}
+      >
+        <Stack direction='row' spacing={1} alignItems='center'>
+          <Typography variant='h6' fontWeight={600}>
+            Sprints
+          </Typography>
+          <Tooltip title='Create Sprint'>
+            <IconButton color='primary' size='small' sx={{ ml: 1 }}>
+              <AddIcon />
+            </IconButton>
+          </Tooltip>
+        </Stack>
+
         <FormControlLabel
           control={
-            <Switch checked={editMode} onChange={() => setEditMode(!editMode)} />
+            <Switch
+              checked={editMode}
+              onChange={() => setEditMode(!editMode)}
+              color='primary'
+            />
           }
           label='Edit Mode'
         />
       </Stack>
-      <div ref={ganttRef} />
+
+      <Divider sx={{ my: 2 }} />
+
+      {/* Gantt chart */}
+      <Box sx={{ flexGrow: 1, overflowX: 'auto' }}>
+        <div ref={ganttRef} />
+      </Box>
     </Box>
   );
 }
