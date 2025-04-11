@@ -26,7 +26,7 @@ const minHeight = 400;
  */
 function formatSprints(project: Project) {
   return project.sprints.map((sprint, index) => ({
-    id: `sprint-${index}`,
+    id: `${index}`,
     name: sprint.title,
     start: sprint.startDate.toString(),
     end: sprint.endDate.toString(),
@@ -38,15 +38,17 @@ function formatSprints(project: Project) {
 /**
  * Gantt chart tooltip HTML
  */
-function generatePopupHtml(task: any): string {
+const generatePopupHtml = (project: Project, task: any): string => {
+  const index = parseInt(task.task.id);
+  const sprint = project.sprints[index];
   return `
     <div class='gantt-tooltip'>
-      <strong>${task.name}</strong>
-      <div>${task.progress}% complete</div>
-      <div>${task._start.toDateString()} → ${task._end.toDateString()}</div>
+      <div class='gantt-tooltip-title'>${sprint.title}</div>
+      <div class='gantt-tooltip-progress'>${task.task.progress}% complete</div>
+      <div class='gantt-tooltip-desc'>${sprint?.desc || 'No description available'}</div>
     </div>
   `;
-}
+};
 
 type Props = {
   project: Project;
@@ -90,7 +92,7 @@ export default function SprintList({ project }: Props) {
       lines: 'both',
       popup_on: 'hover',
       view_mode: 'Day',
-      custom_popup_html: generatePopupHtml,
+      popup: (task: any) => generatePopupHtml(project, task),
       date_format: 'DD-MM-YYYY',
     });
 
