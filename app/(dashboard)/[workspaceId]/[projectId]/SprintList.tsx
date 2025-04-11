@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 // Frappe
 import Gantt from 'frappe-gantt';
 // MUI
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, Switch, FormControlLabel } from '@mui/material';
 // date
 import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date';
 // defines
@@ -56,6 +56,8 @@ type Props = {
  */
 export default function SprintList({ project }: Props) {
   const ganttRef = useRef<HTMLDivElement>(null);
+  const ganttInstance = useRef<any>(null);
+  const [editMode, setEditMode] = useState(false);
 
   /**
    * init and render Gantt chart when project changes
@@ -79,7 +81,8 @@ export default function SprintList({ project }: Props) {
     const container_height = Math.max(calculatedHeight, min_container_height);
 
     // create gantt
-    const gantt = new Gantt(ganttRef.current, sprints, {
+    ganttInstance.current = new Gantt(ganttRef.current, sprints, {
+      readonly: !editMode,
       infinite_padding: false,
       move_dependencies: false,
       view_mode_select: false,
@@ -95,15 +98,30 @@ export default function SprintList({ project }: Props) {
       date_format: 'DD-MM-YYYY',
     });
 
-    gantt.scroll_current();
+    ganttInstance.current.scroll_current();
   }, [project]);
+
+  /**
+   * update gantt readonly mode
+   */
+  useEffect(() => {
+    if (ganttInstance.current) {
+      ganttInstance.current.update_options({
+        readonly: !editMode,
+      });
+    }
+  }, [editMode]);
 
   return (
     <Box sx={{ border: '1px solid #ddd', borderRadius: 2, padding: 2, flexDirection: 'column' }}>
-      <Box sx={{ mb: 2 }}>
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Typography variant='h6' fontWeight={600}>
           Sprint Timeline
         </Typography>
+        <FormControlLabel
+          control={<Switch checked={editMode} onChange={() => setEditMode(!editMode)} />}
+          label='Edit Mode'
+        />
       </Box>
       <Box sx={{ flexGrow: 1 }}>
         <div ref={ganttRef} />
