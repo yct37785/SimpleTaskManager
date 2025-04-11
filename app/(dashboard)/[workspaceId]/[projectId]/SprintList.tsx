@@ -9,8 +9,6 @@ import { Box, Typography } from '@mui/material';
 import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date';
 // defines
 import { Project } from '@defines/schemas';
-// styles
-import styles from './SprintList.module.css';
 
 /**
  * format sprints from project into Gantt-compatible task objects
@@ -34,18 +32,10 @@ function formatSprints(project: Project) {
  */
 function generatePopupHtml(task: any): string {
   return `
-    <div style="
-      padding: 8px;
-      max-width: 250px;
-      background: white;
-      border-radius: 4px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    ">
-      <div style="font-weight: 600; margin-bottom: 4px;">${task.name}</div>
-      <div style="margin-bottom: 4px;">${task.progress}% complete</div>
-      <div style="font-size: 0.875rem; color: gray;">
-        ${task._start.toDateString()} → ${task._end.toDateString()}
-      </div>
+    <div class='gantt-tooltip'>
+      <strong>${task.name}</strong>
+      <div>${task.progress}% complete</div>
+      <div>${task._start.toDateString()} → ${task._end.toDateString()}</div>
     </div>
   `;
 }
@@ -79,12 +69,9 @@ export default function SprintList({ project }: Props) {
 
   return (
     <Box sx={{
-      overflow: 'auto',
       border: '1px solid #ddd',
       borderRadius: 2,
       padding: 2,
-      flexGrow: 1,
-      display: 'flex',
       flexDirection: 'column',
       minHeight: 0,
     }}>
