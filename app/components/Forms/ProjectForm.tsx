@@ -8,7 +8,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import BaseFormDialog, { TextInput } from './BaseFormDialog';
 // date
 import dayjs, { Dayjs } from 'dayjs';
-// defines
+// types
 import { Workspace, Project } from '@defines/schemas';
 
 type Props = {

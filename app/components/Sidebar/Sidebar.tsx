@@ -15,9 +15,9 @@ import {
 // our components
 import { useWorkspacesManager } from '@contexts/WorkspacesContext';
 import ProjectForm from '@components/Forms/ProjectForm';
-// defines
-import { sidebar_width, appbar_height, scrollbar_allowance } from '@/app/defines/dimens';
+// types
 import { Workspace, Project } from '@defines/schemas';
+import { sidebar_width, appbar_height, scrollbar_allowance } from '@/app/defines/dimens';
 // utils
 import { dateToCalendarDate } from '@utils/datetimeUtils';
 // styles

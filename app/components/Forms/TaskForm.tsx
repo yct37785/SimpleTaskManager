@@ -12,7 +12,7 @@ import { v4 as uuidv4 } from 'uuid';
 // date
 import dayjs, { Dayjs } from 'dayjs';
 import { today, getLocalTimeZone } from '@internationalized/date';
-// defines
+// types
 import { Task, Label } from '@defines/schemas';
 // utils
 import { dateToCalendarDate } from '@utils/datetimeUtils';

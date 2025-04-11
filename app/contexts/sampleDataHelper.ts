@@ -2,7 +2,7 @@
 import { v4 as uuidv4 } from 'uuid';
 // date
 import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date';
-// defines
+// types
 import { Workspace, Project, Sprint, Column, Task } from '@defines/schemas';
 
 /**

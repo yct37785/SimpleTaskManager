@@ -7,7 +7,7 @@ import { Button, Box, Typography } from '@mui/material';
 import {  Add as AddIcon } from '@mui/icons-material';
 // our components
 import TaskCard from '@components/Cards/TaskCard';
-// defines
+// types
 import { Column } from '@defines/schemas';
 import { task_column_width } from '@/app/defines/dimens';
 
