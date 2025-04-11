@@ -24,7 +24,7 @@
 
 /* override Frappe Gantt styles */
 .gantt-container {
-  overflow-y: auto;
+  overflow-y: hidden;
   max-height: 100%;
 }
 

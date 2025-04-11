@@ -99,10 +99,12 @@ export default function SprintList({ project }: Props) {
   }, [project]);
 
   return (
-    <Box sx={{ border: '1px solid #ddd', borderRadius: 2, padding: 2, flexDirection: 'column', minHeight: 0 }}>
-      <Typography variant='h6' fontWeight={600} sx={{ mb: 2 }}>
-        Sprint Timeline
-      </Typography>
+    <Box sx={{ border: '1px solid #ddd', borderRadius: 2, padding: 2, flexDirection: 'column' }}>
+      <Box sx={{ mb: 2 }}>
+        <Typography variant='h6' fontWeight={600}>
+          Sprint Timeline
+        </Typography>
+      </Box>
       <Box sx={{ flexGrow: 1 }}>
         <div ref={ganttRef} />
       </Box>
