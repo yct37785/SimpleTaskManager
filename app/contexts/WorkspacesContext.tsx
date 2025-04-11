@@ -109,6 +109,7 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
     }
   
     const newSprint: Sprint = {
+      id: uuidv4(),
       title,
       desc,
       startDate,

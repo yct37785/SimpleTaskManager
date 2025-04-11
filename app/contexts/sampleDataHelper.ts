@@ -30,6 +30,7 @@ function genColumn(title: string, isTodo = false): Column {
  */
 export function genSprint(title: string, startDate: CalendarDate, endDate: CalendarDate): Sprint {
   return {
+    id: uuidv4(),
     title,
     desc: `sprint ${title} description here`,
     startDate,
