@@ -44,33 +44,6 @@ export default function ProjectPage() {
         sprints: [...originalProject.sprints]
       };
 
-      // inject fake sprints if empty
-      if (clonedProject.sprints.length === 0) {
-        clonedProject.sprints.push(
-          {
-            title: 'Sprint 1',
-            desc: 'Kickoff and planning',
-            startDate: parseDate('2025-04-01'),
-            endDate: parseDate('2025-04-10'),
-            columns: [],
-          },
-          {
-            title: 'Sprint 2',
-            desc: 'Implementation phase',
-            startDate: parseDate('2025-04-11'),
-            endDate: parseDate('2025-04-20'),
-            columns: [],
-          },
-          {
-            title: 'Sprint 3',
-            desc: 'Testing and polish',
-            startDate: parseDate('2025-04-21'),
-            endDate: parseDate('2025-04-30'),
-            columns: [],
-          }
-        );
-      }
-
       setProjectData(clonedProject);
     } else {
       document.title = 'Task Manager';

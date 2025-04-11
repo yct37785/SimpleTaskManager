@@ -7,6 +7,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { CalendarDate } from '@internationalized/date';
 // defines
 import { Workspace, Project, Sprint, Column, Task } from '@defines/schemas';
+// sample data
+import sampleWorkspaces from './sampleData';
 
 type WorkspacesContextType = {
   workspaces: Record<string, Workspace>;
@@ -36,7 +38,7 @@ export const useWorkspacesManager = () => {
  * provides global state for all workspaces, projects, sprints, columns, and tasks
  */
 export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
-  const [workspaces, setWorkspaces] = useState<Record<string, Workspace>>({});
+  const [workspaces, setWorkspaces] = useState<Record<string, Workspace>>(sampleWorkspaces);
 
   /**
    * create a new workspace
