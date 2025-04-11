@@ -13,7 +13,7 @@ import { WorkspacesProvider } from '@contexts/WorkspacesContext';
 // global styles
 import '@styles/globals.css';
 import '@styles/frappe-gantt.css';
-import '@styles/gantt-tooltip.css';
+import '@styles/frappe-gantt-custom.css';
 
 /**
  * root layout
