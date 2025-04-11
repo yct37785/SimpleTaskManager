@@ -1,25 +1,27 @@
 'use client';
 
 import { useState } from 'react';
-// components
+// next
 import Link from 'next/link';
+// MUI
 import {
   Box, List, ListItemButton, ListItemIcon, ListItemText,
   IconButton, Collapse, Typography, TextField, Divider
 } from '@mui/material';
 import {
-  Add as AddIcon,
-  Folder as FolderIcon,
-  FolderOpen as FolderOpenIcon,
-  InsertDriveFile as InsertDriveFileIcon,
-  ExpandLess,
-  ExpandMore
+  Add as AddIcon, Folder as FolderIcon, FolderOpen as FolderOpenIcon, InsertDriveFile as InsertDriveFileIcon, Send as SendIcon,
+  CalendarMonth as CalendarIcon, Home as HomeIcon, PieChart as PieCharIcon, ExpandLess, ExpandMore
 } from '@mui/icons-material';
-// contexts
-import { useProjectsManager } from '@contexts/ProjectsContext';
-// types
-import { SIDEBAR_WIDTH, TASK_PAGE_APPBAR_HEIGHT, SCROLLBAR_ALLOWANCE, SIDEBAR_BG } from '@defines/consts';
-import { Project } from '@defines/schemas';
+// our components
+import { useWorkspacesManager } from '@contexts/WorkspacesContext';
+import ProjectForm from '@components/Forms/ProjectForm';
+// defines
+import { sidebar_width, appbar_height, scrollbar_allowance } from '@/app/defines/dimens';
+import { Workspace, Project } from '@defines/schemas';
+// utils
+import { dateToCalendarDate } from '@utils/datetimeUtils';
+// styles
+import styles from './sidebar.module.css';
 
 /**
  * text input reusable component
@@ -32,15 +34,8 @@ function InlineTextInput({ placeholder, value, setValue, onSubmit }: {
 }) {
   return (
     <Box>
-      <TextField
-        autoFocus
-        size='small'
-        fullWidth
-        placeholder={placeholder}
-        variant='outlined'
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        onBlur={onSubmit}
+      <TextField autoFocus size='small' fullWidth placeholder={placeholder} variant='outlined' value={value}
+        onChange={(e) => setValue(e.target.value)} onBlur={onSubmit}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             e.preventDefault();
@@ -50,69 +45,53 @@ function InlineTextInput({ placeholder, value, setValue, onSubmit }: {
       />
     </Box>
   );
-}
+};
 
 /**
- * render a single project row
+ * render a single workspace row
  */
-function ProjectListItem({ proj, isOpen, onAddSprint, toggleOpen }: {
-  proj: Project;
+function WorkspaceListItem({ workspace, isOpen, onClickCreateProject, toggleOpen }: {
+  workspace: Workspace;
   isOpen: boolean;
+  onClickCreateProject: (e: React.MouseEvent, workspaceId: string) => void;
   toggleOpen: () => void;
-  onAddSprint: (e: React.MouseEvent) => void;
 }) {
   return (
     <ListItemButton onClick={toggleOpen}>
       <ListItemIcon>
         {isOpen ? <FolderOpenIcon /> : <FolderIcon />}
       </ListItemIcon>
-      <ListItemText primary={proj.title} />
-      <IconButton onClick={onAddSprint} size='small'>
+      <ListItemText primary={workspace.title} />
+      <IconButton onClick={(e) => onClickCreateProject(e, workspace.id)} size='small'>
         <AddIcon fontSize='small' />
       </IconButton>
       {isOpen ? <ExpandLess /> : <ExpandMore />}
     </ListItemButton>
   );
-}
+};
 
 /**
- * render all sprints inside a project
+ * render all projects inside a workspace
  */
-function SprintList({ proj, isOpen, sprintInputForProject, sprintName, setSprintName, handleCreateSprint }: {
-  proj: Project;
+function ProjectsList({ workspace, isOpen }: {
+  workspace: Workspace;
   isOpen: boolean;
-  sprintInputForProject: string | null;
-  sprintName: string;
-  setSprintName: (val: string) => void;
-  handleCreateSprint: (projId: string) => void;
 }) {
   return (
     <Collapse in={isOpen} timeout='auto' unmountOnExit>
-      {/* sprint name input */}
-      {sprintInputForProject === proj.id && (
-        <Box sx={{ pl: 4, mt: 1 }}>
-          <InlineTextInput
-            placeholder='Sprint name'
-            value={sprintName}
-            setValue={setSprintName}
-            onSubmit={() => handleCreateSprint(proj.id)}
-          />
-        </Box>
-      )}
-
-      {/* sprint list */}
-      {Object.keys(proj.sprints).length > 0 ? (
+      {/* project list */}
+      {Object.keys(workspace.projects).length > 0 ? (
         <List sx={{ pl: 2 }} disablePadding>
-          {Object.values(proj.sprints).map((sprint) => (
+          {Object.values(workspace.projects).map((proj) => (
             <Link
-              key={sprint.id}
-              href={`/${proj.id}/${sprint.id}`}
+              key={proj.id}
+              href={`/${workspace.id}/${proj.id}`}
               passHref
               legacyBehavior
             >
               <ListItemButton>
                 <ListItemIcon><InsertDriveFileIcon /></ListItemIcon>
-                <ListItemText primary={sprint.title} />
+                <ListItemText primary={proj.title} />
               </ListItemButton>
             </Link>
           ))}
@@ -127,98 +106,132 @@ function SprintList({ proj, isOpen, sprintInputForProject, sprintName, setSprint
  */
 export default function Sidebar() {
   // context
-  const { projects, createProject, createSprint } = useProjectsManager();
+  const { workspaces, createWorkspace, createProject } = useWorkspacesManager();
 
-  // state
-  const [projectInputVisible, setProjectInputVisible] = useState(false);
-  const [projectName, setProjectName] = useState('');
-  const [sprintInputForProject, setSprintInputForProject] = useState<string | null>(null);
-  const [sprintName, setSprintName] = useState('');
-  const [openProjects, setOpenProjects] = useState<Record<string, boolean>>({});
-
-  /**
-   * create a project from name input
-   */
-  const handleCreateProject = () => {
-    const name = projectName.trim();
-    if (name) createProject(name);
-    setProjectName('');
-    setProjectInputVisible(false);
-  };
+  // creat workspace
+  const [workspaceInputVisible, setWorkspaceInputVisible] = useState(false);
+  const [workspaceTitle, setWorkspaceTitle] = useState('');
+  // create project
+  const [activeWorkspace, setActiveWorkspace] = useState<string | null>(null);
+  const [projectDialogOpen, setProjectDialogOpen] = useState(false);
+  // workspace open/close tracking
+  const [openWorkspaces, setOpenWorkspaces] = useState<Record<string, boolean>>({});
 
   /**
-   * create a sprint for a project from name input
+   * create a workspace from name input
    */
-  const handleCreateSprint = (projectId: string) => {
-    const name = sprintName.trim();
-    if (name) createSprint(projectId, name);
-    setSprintName('');
-    setSprintInputForProject(null);
+  const handleCreateWorkspace = () => {
+    const title = workspaceTitle.trim();
+    if (title) {
+      createWorkspace(title);
+    }
+    setWorkspaceTitle('');
+    setWorkspaceInputVisible(false);
   };
-
-  const toggleOpen = (id: string) => {
-    setOpenProjects((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  const handleAddSprintClick = (e: React.MouseEvent, projId: string) => {
+  
+  /**
+   * launch project creation dialog
+   */
+  const onClickCreateProject = (e: React.MouseEvent, workspaceId: string) => {
     e.stopPropagation();
-    setOpenProjects((prev) => ({ ...prev, [projId]: true }));
-    setSprintInputForProject(projId);
+    setOpenWorkspaces((prev) => ({ ...prev, [workspaceId]: true }));
+    setProjectDialogOpen(true);
+    setActiveWorkspace(workspaceId);
+  };
+
+  /**
+   * create project
+   */
+  const handleCreateProject = (title: string, desc: string, endDate: Date) => {
+    if (activeWorkspace && title) {
+      createProject(activeWorkspace, title, desc, dateToCalendarDate(new Date()), dateToCalendarDate(endDate));
+    }
+  };
+
+  /**
+   * expand workspace
+   */
+  const toggleOpen = (id: string) => {
+    setOpenWorkspaces((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   return (
-    <Box sx={{ width: SIDEBAR_WIDTH, bgcolor: SIDEBAR_BG, display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ width: sidebar_width }} className={styles.sidebar}>
       {/* header */}
       <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
-        <Box sx={{ height: TASK_PAGE_APPBAR_HEIGHT }}>
-          <Typography variant='h6' color='#55F' sx={{ fontWeight: 600, textAlign: 'left', mt: 1, ml: 2 }} gutterBottom>
-            TASK MANAGER
-          </Typography>
+        <Box sx={{ height: appbar_height }}>
+          <Link href='/' style={{ textDecoration: 'none' }}>
+            <Typography variant='h6' color='primary' gutterBottom
+              sx={{ fontWeight: 600, textAlign: 'left', mt: 1, ml: 2, cursor: 'pointer' }}>
+              TASK MANAGER
+            </Typography>
+          </Link>
         </Box>
+
         <Divider />
-        <ListItemButton onClick={() => setProjectInputVisible(true)}>
+
+        {/* projects management */}
+        <List>
+          <ListItemButton>
+            <ListItemIcon><CalendarIcon /></ListItemIcon>
+            <ListItemText primary='Timeline' />
+          </ListItemButton>
+          <ListItemButton>
+            <ListItemIcon><PieCharIcon /></ListItemIcon>
+            <ListItemText primary='Metrics' />
+          </ListItemButton>
+        </List>
+
+        <Divider />
+
+        {/* add workspace */}
+        <ListItemButton onClick={() => setWorkspaceInputVisible(true)}>
           <ListItemIcon><AddIcon color='primary' /></ListItemIcon>
-          <ListItemText primary='Add Project' />
+          <ListItemText primary='Add Workspace' />
         </ListItemButton>
       </Box>
 
-      {/* project list */}
+      {/* workspace list */}
       <List sx={{ flex: 1, overflowY: 'auto', pb: 2 }}>
-        <Box sx={{ width: SIDEBAR_WIDTH - SCROLLBAR_ALLOWANCE }}>
+        <Box sx={{ width: sidebar_width - scrollbar_allowance }}>
 
-          {/* project input */}
-          {projectInputVisible && (
+          {/* workspace input */}
+          {workspaceInputVisible && (
             <Box sx={{ ml: 2 }}>
               <InlineTextInput
-                placeholder='Project name'
-                value={projectName}
-                setValue={setProjectName}
-                onSubmit={handleCreateProject}
+                placeholder='Workspace title'
+                value={workspaceTitle}
+                setValue={setWorkspaceTitle}
+                onSubmit={handleCreateWorkspace}
               />
             </Box>
           )}
 
-          {/* each project */}
-          {Object.values(projects).map((proj) => (
-            <div key={proj.id}>
-              <ProjectListItem
-                proj={proj}
-                isOpen={openProjects[proj.id] || false}
-                toggleOpen={() => toggleOpen(proj.id)}
-                onAddSprint={(e) => handleAddSprintClick(e, proj.id)}
+          {/* each workspace */}
+          {Object.values(workspaces).map((ws) => (
+            <div key={ws.id}>
+              <WorkspaceListItem
+                workspace={ws}
+                isOpen={openWorkspaces[ws.id] || false}
+                onClickCreateProject={onClickCreateProject}
+                toggleOpen={() => toggleOpen(ws.id)}
               />
-              <SprintList
-                proj={proj}
-                isOpen={openProjects[proj.id] || false}
-                sprintInputForProject={sprintInputForProject}
-                sprintName={sprintName}
-                setSprintName={setSprintName}
-                handleCreateSprint={handleCreateSprint}
+              <ProjectsList
+                workspace={ws}
+                isOpen={openWorkspaces[ws.id] || false}
               />
             </div>
           ))}
         </Box>
       </List>
+
+      {/* create project form */}
+      {activeWorkspace ? <ProjectForm
+        workspace={workspaces[activeWorkspace]}
+        projectDialogOpen={projectDialogOpen}
+        handleCreateProject={handleCreateProject}
+        closeProjectDialog={() => setProjectDialogOpen(false)} /> : null}
+      
     </Box>
   );
 };

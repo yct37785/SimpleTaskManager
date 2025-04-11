@@ -1,12 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-// components
-import {
-  Button, TextField, TextFieldProps, Dialog, DialogActions, DialogContent,
-  DialogTitle, Chip, Autocomplete, Stack, Typography
-} from '@mui/material';
-// types
+// MUI
+import { TextField, Chip, Autocomplete } from '@mui/material';
+// defines
 import { Task, Label } from '@defines/schemas';
 
 type Props = {

@@ -13,6 +13,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "typeRoots": ["./types", "./node_modules/@types"],
     "plugins": [
       {
         "name": "next"
@@ -23,7 +24,9 @@
       "@/*": ["./*"],
       "@components/*": ["app/components/*"],
       "@defines/*": ["app/defines/*"],
-      "@contexts/*": ["app/contexts/*"]
+      "@contexts/*": ["app/contexts/*"],
+      "@styles/*": ["app/styles/*"],
+      "@utils/*": ["app/utils/*"],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

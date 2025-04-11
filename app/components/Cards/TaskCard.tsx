@@ -1,9 +1,10 @@
 'use client';
 
-// components
+// DND
 import { Draggable } from '@hello-pangea/dnd';
+// MUI
 import { Box } from '@mui/material';
-// types
+// defines
 import { Task } from '@defines/schemas';
 
 type Props = {

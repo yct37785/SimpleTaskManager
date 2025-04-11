@@ -1,0 +1,59 @@
+.dayOfWeek {
+  color: var(--calendar-header);
+}
+
+.cellWrapper {
+  position: relative;
+  user-select: none;
+}
+
+.cellTd {
+  padding: 4px 0 4px 0;
+}
+
+.cellInner {
+  border-radius: 100px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cellInner:hover {
+  background-color: var(--calendar-hover-bg);
+}
+
+.knob {
+  background-color: var(--calendar-accent);
+  color: #fff;
+}
+
+.knob:hover {
+  background-color: var(--calendar-accent-hover);
+}
+
+.selected {
+  background-color: var(--calendar-accent-light);
+}
+
+.disabled {
+  cursor: default;
+  pointer-events: none;
+  opacity: var(--disabled-opacity);
+  color: var(--disabled-text);
+}
+
+.focusVisible {
+  border-radius: 100;
+  outline: 2px solid var(--calendar-accent);
+}
+
+.roundedLeft {
+  border-top-left-radius: 100px;
+  border-bottom-left-radius: 100px;
+}
+
+.roundedRight {
+  border-top-right-radius: 100px;
+  border-bottom-right-radius: 100px;
+}

@@ -1,14 +1,19 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-// components
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
+// MUI
 import { Stack, Box, Divider, CssBaseline } from '@mui/material';
-import Sidebar from '@components/Sidebar/Sidebar';
-// contexts
-import { ProjectsProvider } from '@contexts/ProjectsContext';
 import { LocalizationProvider } from '@mui/x-date-pickers';
+// MUI providers
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+// our components
+import Sidebar from '@components/Sidebar/Sidebar';
+import { WorkspacesProvider } from '@contexts/WorkspacesContext';
+// global styles
+import '@styles/globals.css';
+import '@styles/frappe-gantt.css';
+import '@styles/frappe-gantt-custom.css';
 
 /**
  * root layout
@@ -18,12 +23,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang='en'>
       <head>
         <meta name='viewport' content='initial-scale=1, width=device-width' />
-        <link rel="icon" href="/icon.ico" />
+        <link rel='icon' href='/icon.ico' />
       </head>
       <body>
         <CssBaseline />
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <ProjectsProvider>
+          <WorkspacesProvider>
             <AppRouterCacheProvider options={{ enableCssLayer: true }}>
               <Stack direction='row' sx={{ height: '100vh' }}>
 
@@ -39,7 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
               </Stack>
             </AppRouterCacheProvider>
-          </ProjectsProvider>
+          </WorkspacesProvider>
         </LocalizationProvider>
       </body>
     </html>

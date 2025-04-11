@@ -1,15 +1,15 @@
 'use client';
 
-// components
+// DND
 import { Droppable } from '@hello-pangea/dnd';
+// MUI
 import { Button, Box, Typography } from '@mui/material';
-import TaskCard from '../TaskCard/TaskCard';
-import { 
-  Add as AddIcon
-} from '@mui/icons-material';
-// types
+import {  Add as AddIcon } from '@mui/icons-material';
+// our components
+import TaskCard from '@components/Cards/TaskCard';
+// defines
 import { Column } from '@defines/schemas';
-import { TASK_COLUMN_WIDTH } from '@defines/consts';
+import { task_column_width } from '@/app/defines/dimens';
 
 type Props = {
   column: Column;
@@ -24,7 +24,7 @@ export default function TaskColumn({ column, setOpenColumn }: Props) {
     <Box>
       <Typography variant='body2'>{column.title}</Typography>
       <Box sx={{
-        border: '2px dashed #ccc', width: TASK_COLUMN_WIDTH, borderRadius: 2, p: 2,
+        border: '2px dashed #ccc', width: task_column_width, borderRadius: 2, p: 2,
         mt: 1, textAlign: 'center', flexDirection: 'column'
       }}>
         <Droppable droppableId={column.id}>
