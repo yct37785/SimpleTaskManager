@@ -52,7 +52,7 @@
 
 /* Gantt chart container */
 .gantt-container {
-  overflow-y: hidden;
+  /* overflow-y: hidden; */
   max-height: 100%;
 }
 

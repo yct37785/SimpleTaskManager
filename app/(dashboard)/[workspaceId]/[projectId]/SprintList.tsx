@@ -8,18 +8,11 @@ import {
   Box, Typography, Switch, FormControlLabel, IconButton, Stack, Divider, Tooltip, useTheme
 } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
+// hooks
+import { useWindowHeight } from '@hooks/useWindowHeight';
 // types
 import { Project } from '@defines/schemas';
-
-/**
- * local styles and layout consts
- */
-const upperHeaderHeight = 45;
-const lowerHeaderHeight = 30;
-const barHeight = 40;
-const padding = 16;
-const bottomBuffer = 60;
-const minHeight = 400;
+import { project_details_bar_height } from '@defines/dimens';
 
 /**
  * format sprints into Frappe Gantt-compatible structure
@@ -61,6 +54,7 @@ export default function SprintList({ project }: Props) {
   const ganttRef = useRef<HTMLDivElement>(null);
   const ganttInstance = useRef<any>(null);
   const [editMode, setEditMode] = useState(false);
+  const windowHeight = useWindowHeight();
   const theme = useTheme();
 
   /**
@@ -73,31 +67,24 @@ export default function SprintList({ project }: Props) {
 
     const tasks = formatSprints(project);
 
-    // calculate Gantt container height dynamically
-    const height = Math.max(
-      tasks.length * (barHeight + padding) + upperHeaderHeight + lowerHeaderHeight + padding + bottomBuffer,
-      minHeight
-    );
-
     ganttInstance.current = new Gantt(ganttRef.current, tasks, {
       readonly: !editMode,
       infinite_padding: false,
       move_dependencies: false,
       view_mode_select: false,
-      upper_header_height: upperHeaderHeight,
-      lower_header_height: lowerHeaderHeight,
-      bar_height: barHeight,
-      padding,
-      container_height: height,
+      upper_header_height: 45,
+      lower_header_height: 30,
+      bar_height: 40,
+      padding: 16,
+      container_height: windowHeight - project_details_bar_height - 130,
       lines: 'both',
       popup_on: 'hover',
       view_mode: 'Day',
       popup: (task: any) => generatePopupHtml(project, task),
       date_format: 'DD-MM-YYYY',
     });
-
     ganttInstance.current.scroll_current();
-  }, [project]);
+  }, [project, windowHeight]);
 
   /**
    * update readonly on toggle
@@ -111,57 +98,52 @@ export default function SprintList({ project }: Props) {
   }, [editMode]);
 
   return (
-    <Box
-      sx={{
-        border: `1px solid ${theme.palette.divider}`,
-        borderRadius: 2,
-        padding: 2,
-        display: 'flex',
-        flexDirection: 'column',
-        minHeight: 0,
-        overflow: 'hidden',
-      }}
-    >
-      {/* top bar */}
-      <Stack
-        direction='row'
-        spacing={2}
-        alignItems='center'
-        justifyContent='space-between'
+    <Box sx={{ px: 2, pb: 2 }}>
+      <Box
         sx={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 1,
-          bgcolor: theme.palette.background.paper,
+          border: `1px solid ${theme.palette.divider}`,
+          borderRadius: 2,
+          padding: 2
         }}
       >
-        <Stack direction='row' spacing={1} alignItems='center'>
-          <Typography variant='h6' fontWeight={600}>
-            Sprints
-          </Typography>
-          <Tooltip title='Create Sprint'>
-            <IconButton color='primary' size='small' sx={{ ml: 1 }}>
-              <AddIcon />
-            </IconButton>
-          </Tooltip>
+        {/* top bar */}
+        <Stack
+          direction='row'
+          alignItems='center'
+          justifyContent='space-between'
+          sx={{
+            position: 'sticky',
+            top: 0,
+            zIndex: 1,
+            bgcolor: theme.palette.background.paper,
+          }}
+        >
+          <Stack direction='row'alignItems='center'>
+            <Typography variant='h6' fontWeight={600}>
+              Sprints
+            </Typography>
+            <Tooltip title='Create Sprint'>
+              <IconButton color='primary' size='small' sx={{ ml: 1 }}>
+                <AddIcon />
+              </IconButton>
+            </Tooltip>
+          </Stack>
+
+          <FormControlLabel
+            control={
+              <Switch
+                checked={editMode}
+                onChange={() => setEditMode(!editMode)}
+                color='primary'
+              />
+            }
+            label='Edit Mode'
+          />
         </Stack>
 
-        <FormControlLabel
-          control={
-            <Switch
-              checked={editMode}
-              onChange={() => setEditMode(!editMode)}
-              color='primary'
-            />
-          }
-          label='Edit Mode'
-        />
-      </Stack>
+        <Divider sx={{ mt: 1, mb: 2 }} />
 
-      <Divider sx={{ my: 2 }} />
-
-      {/* Gantt chart */}
-      <Box sx={{ flexGrow: 1, overflowX: 'auto' }}>
+        {/* Gantt chart */}
         <div ref={ganttRef} />
       </Box>
     </Box>

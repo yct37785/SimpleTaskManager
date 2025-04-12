@@ -17,6 +17,7 @@ import SprintList from './SprintList';
 import { useWorkspacesManager } from '@contexts/WorkspacesContext';
 // types
 import { Project } from '@defines/schemas';
+import { project_details_bar_height } from '@defines/dimens';
 // styles
 import styles from './ProjectPage.module.css';
 
@@ -87,9 +88,10 @@ export default function ProjectPage() {
     const formattedDue = `${dueDate.month}/${dueDate.day}/${dueDate.year}`;
     const relativeDue = getRelativeTime(now, dueDate);
     const description = originalProject.desc || fallbackDesc;
+    // const description = fallbackDesc;
 
     return (
-      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', p: 3, minHeight: project_details_bar_height }}>
         <Box sx={{ flex: 1 }}>
           <Typography variant='h5' fontWeight={600}>
             {`${workspace.title} - ${originalProject.title}`}
@@ -117,13 +119,9 @@ export default function ProjectPage() {
   };
 
   return (
-    <Box sx={{ height: '100vh', overflow: 'auto', p: 3 }}>
-      <Box sx={{ height: '100%' }}>
-        {projectDetailsBar()}
-        <Box sx={{ pb: 3, mt: 3 }}>
-          {projectData && <SprintList project={projectData} />}
-        </Box>
-      </Box>
+    <Box>
+      {projectDetailsBar()}
+      {projectData && <SprintList project={projectData} />}
     </Box>
   );
 }
