@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 // next
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 const NextLink = Link;
 // MUI
@@ -78,6 +79,7 @@ function ProjectsList({ workspace, isOpen }: {
   workspace: Workspace;
   isOpen: boolean;
 }) {
+  const { projectId } = useParams() as { projectId?: string };
   return (
     <Collapse in={isOpen} timeout='auto' unmountOnExit>
       {/* project list */}
@@ -88,6 +90,7 @@ function ProjectsList({ workspace, isOpen }: {
               key={proj.id}
               component={NextLink}
               href={`/${workspace.id}/${proj.id}`}
+              selected={projectId === proj.id}
             >
               <ListItemIcon>
                 <InsertDriveFileIcon />
