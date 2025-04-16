@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 // MUI
 import { TextField, Chip, Autocomplete } from '@mui/material';
-// types
+// schemas
 import { Task, Label } from '@schemas';
 
 type Props = {

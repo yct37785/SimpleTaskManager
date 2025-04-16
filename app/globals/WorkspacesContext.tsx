@@ -5,7 +5,7 @@ import { createContext, useContext, useState, ReactNode } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 // date
 import { CalendarDate } from '@internationalized/date';
-// types
+// schemas
 import { Workspace, Project, Sprint, Column, Task } from '@schemas';
 // sample data
 import sampleWorkspaces from './sampleData';

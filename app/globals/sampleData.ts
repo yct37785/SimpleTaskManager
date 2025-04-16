@@ -1,6 +1,6 @@
 import { genWorkspace } from './sampleDataHelper';
 import { v4 as uuidv4 } from 'uuid';
-// types
+// schemas
 import { Workspace } from '@schemas';
 
 // generate workspaces

@@ -10,11 +10,12 @@ import {
 import { Add as AddIcon } from '@mui/icons-material';
 // hooks
 import { useWindowHeight } from '@hooks/useWindowHeight';
-// types
+// schemas
 import { Project } from '@schemas';
-import { project_details_bar_height } from '@defines/dimens';
 // utils
 import { disableHorizontalWheelScroll } from '@utils/UI';
+// styles
+import { project_details_bar_height } from '@defines/dimens';
 
 /**
  * format sprints into Frappe Gantt-compatible structure

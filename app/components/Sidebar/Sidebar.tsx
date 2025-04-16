@@ -17,12 +17,12 @@ import {
 // our components
 import { useWorkspacesManager } from '@globals/WorkspacesContext';
 import ProjectForm from '@components/Forms/ProjectForm';
-// types
+// schemas
 import { Workspace, Project } from '@schemas';
-import { sidebar_width, appbar_height, scrollbar_allowance } from '@/app/defines/dimens';
 // utils
 import { dateToCalendarDate } from '@utils/datetime';
 // styles
+import { sidebar_width, appbar_height, scrollbar_allowance } from '@/app/defines/dimens';
 import styles from './sidebar.module.css';
 
 /**
