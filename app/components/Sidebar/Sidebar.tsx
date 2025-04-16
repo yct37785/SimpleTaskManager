@@ -3,6 +3,7 @@
 import { useState } from 'react';
 // next
 import Link from 'next/link';
+const NextLink = Link;
 // MUI
 import {
   Box, List, ListItemButton, ListItemIcon, ListItemText,
@@ -83,16 +84,16 @@ function ProjectsList({ workspace, isOpen }: {
       {Object.keys(workspace.projects).length > 0 ? (
         <List sx={{ pl: 2 }} disablePadding>
           {Object.values(workspace.projects).map((proj) => (
-            <Link
+            <ListItemButton
               key={proj.id}
+              component={NextLink}
               href={`/${workspace.id}/${proj.id}`}
-              passHref
             >
-              <ListItemButton>
-                <ListItemIcon><InsertDriveFileIcon /></ListItemIcon>
-                <ListItemText primary={proj.title} />
-              </ListItemButton>
-            </Link>
+              <ListItemIcon>
+                <InsertDriveFileIcon />
+              </ListItemIcon>
+              <ListItemText primary={proj.title} />
+            </ListItemButton>
           ))}
         </List>
       ) : null}
