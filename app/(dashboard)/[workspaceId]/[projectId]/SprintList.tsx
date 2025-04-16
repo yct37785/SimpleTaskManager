@@ -13,6 +13,8 @@ import { useWindowHeight } from '@hooks/useWindowHeight';
 // types
 import { Project } from '@defines/schemas';
 import { project_details_bar_height } from '@defines/dimens';
+// utils
+import { disableHorizontalWheelScroll } from '@utils/UI';
 
 /**
  * format sprints into Frappe Gantt-compatible structure
@@ -83,7 +85,13 @@ export default function SprintList({ project }: Props) {
       popup: (task: any) => generatePopupHtml(project, task),
       date_format: 'DD-MM-YYYY',
     });
+    // scroll to current day
     ganttInstance.current.scroll_current();
+    // disable horizontal scrollwheel
+    const cleanupWheel = disableHorizontalWheelScroll(ganttRef.current.querySelector('.gantt-container'));
+    return () => {
+      cleanupWheel();
+    };
   }, [project, windowHeight]);
 
   /**
