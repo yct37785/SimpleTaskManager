@@ -69,7 +69,7 @@ export default function SprintList({ project }: Props) {
 
     ganttInstance.current = new Gantt(ganttRef.current, tasks, {
       readonly: !editMode,
-      infinite_padding: false,
+      infinite_padding: true,
       move_dependencies: false,
       view_mode_select: false,
       upper_header_height: 45,
