@@ -87,7 +87,6 @@ function ProjectsList({ workspace, isOpen }: {
               key={proj.id}
               href={`/${workspace.id}/${proj.id}`}
               passHref
-              legacyBehavior
             >
               <ListItemButton>
                 <ListItemIcon><InsertDriveFileIcon /></ListItemIcon>
