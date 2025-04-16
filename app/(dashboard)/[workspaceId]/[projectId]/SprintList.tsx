@@ -11,7 +11,7 @@ import { Add as AddIcon } from '@mui/icons-material';
 // hooks
 import { useWindowHeight } from '@hooks/useWindowHeight';
 // types
-import { Project } from '@defines/schemas';
+import { Project } from '@schemas';
 import { project_details_bar_height } from '@defines/dimens';
 // utils
 import { disableHorizontalWheelScroll } from '@utils/UI';

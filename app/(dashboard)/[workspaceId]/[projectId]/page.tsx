@@ -11,12 +11,12 @@ import { Edit as EditIcon, CalendarMonth as CalendarMonthIcon } from '@mui/icons
 // date
 import { getLocalTimeZone, today, CalendarDate, parseDate } from '@internationalized/date';
 // utils
-import { getRelativeTime } from '@utils/datetimeUtils';
+import { getRelativeTime } from '@utils/datetime';
 // our components
 import SprintList from './SprintList';
-import { useWorkspacesManager } from '@contexts/WorkspacesContext';
+import { useWorkspacesManager } from '@globals/WorkspacesContext';
 // types
-import { Project } from '@defines/schemas';
+import { Project } from '@schemas';
 import { project_details_bar_height } from '@defines/dimens';
 // styles
 import styles from './ProjectPage.module.css';

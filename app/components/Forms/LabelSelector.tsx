@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 // MUI
 import { TextField, Chip, Autocomplete } from '@mui/material';
 // types
-import { Task, Label } from '@defines/schemas';
+import { Task, Label } from '@schemas';
 
 type Props = {
   labels: Label[];

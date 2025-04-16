@@ -5,7 +5,7 @@ import { Draggable } from '@hello-pangea/dnd';
 // MUI
 import { Box } from '@mui/material';
 // types
-import { Task } from '@defines/schemas';
+import { Task } from '@schemas';
 
 type Props = {
   task: Task;

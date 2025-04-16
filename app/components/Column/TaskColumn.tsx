@@ -8,7 +8,7 @@ import {  Add as AddIcon } from '@mui/icons-material';
 // our components
 import TaskCard from '@components/Cards/TaskCard';
 // types
-import { Column } from '@defines/schemas';
+import { Column } from '@schemas';
 import { task_column_width } from '@/app/defines/dimens';
 
 type Props = {

@@ -15,13 +15,13 @@ import {
   CalendarMonth as CalendarIcon, Home as HomeIcon, PieChart as PieCharIcon, ExpandLess, ExpandMore
 } from '@mui/icons-material';
 // our components
-import { useWorkspacesManager } from '@contexts/WorkspacesContext';
+import { useWorkspacesManager } from '@globals/WorkspacesContext';
 import ProjectForm from '@components/Forms/ProjectForm';
 // types
-import { Workspace, Project } from '@defines/schemas';
+import { Workspace, Project } from '@schemas';
 import { sidebar_width, appbar_height, scrollbar_allowance } from '@/app/defines/dimens';
 // utils
-import { dateToCalendarDate } from '@utils/datetimeUtils';
+import { dateToCalendarDate } from '@utils/datetime';
 // styles
 import styles from './sidebar.module.css';
 

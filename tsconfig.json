@@ -24,10 +24,11 @@
       "@/*": ["./*"],
       "@components/*": ["app/components/*"],
       "@defines/*": ["app/defines/*"],
-      "@contexts/*": ["app/contexts/*"],
+      "@globals/*": ["app/globals/*"],
       "@styles/*": ["app/styles/*"],
       "@utils/*": ["app/utils/*"],
       "@hooks/*": ["app/hooks/*"],
+      "@schemas": ["app/schemas.ts"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

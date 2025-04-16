@@ -9,7 +9,7 @@ import BaseFormDialog, { TextInput } from './BaseFormDialog';
 // date
 import dayjs, { Dayjs } from 'dayjs';
 // types
-import { Workspace, Project } from '@defines/schemas';
+import { Workspace, Project } from '@schemas';
 
 type Props = {
   workspace: Workspace;

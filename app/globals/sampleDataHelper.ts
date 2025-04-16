@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 // date
 import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date';
 // types
-import { Workspace, Project, Sprint, Column, Task } from '@defines/schemas';
+import { Workspace, Project, Sprint, Column, Task } from '@schemas';
 
 /**
  * add days to a CalendarDate
