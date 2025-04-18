@@ -10,7 +10,7 @@ import TaskCard from '@components/Cards/TaskCard';
 // schemas
 import { Column } from '@schemas';
 // styles
-import { task_column_width } from '@/app/defines/dimens';
+import { task_column_width } from '@/app/styles/dimens';
 
 type Props = {
   column: Column;

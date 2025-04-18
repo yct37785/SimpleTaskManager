@@ -15,7 +15,7 @@ import { Project } from '@schemas';
 // utils
 import { disableHorizontalWheelScroll } from '@utils/UI';
 // styles
-import { project_details_bar_height } from '@defines/dimens';
+import { project_details_bar_height } from '@styles/dimens';
 
 /**
  * adds a vertical red line to mark the project's end date on the Gantt chart

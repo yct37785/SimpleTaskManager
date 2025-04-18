@@ -22,7 +22,7 @@ import { Workspace, Project } from '@schemas';
 // utils
 import { dateToCalendarDate } from '@utils/datetime';
 // styles
-import { sidebar_width, appbar_height, scrollbar_allowance } from '@/app/defines/dimens';
+import { sidebar_width, appbar_height, scrollbar_allowance } from '@/app/styles/dimens';
 import styles from './sidebar.module.css';
 
 /**

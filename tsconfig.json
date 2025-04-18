@@ -23,7 +23,6 @@
     "paths": {
       "@/*": ["./*"],
       "@components/*": ["app/components/*"],
-      "@defines/*": ["app/defines/*"],
       "@globals/*": ["app/globals/*"],
       "@styles/*": ["app/styles/*"],
       "@utils/*": ["app/utils/*"],
