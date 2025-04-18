@@ -16,6 +16,7 @@ import { Project } from '@schemas';
 import { disableHorizontalWheelScroll } from '@utils/UI';
 // styles
 import { project_details_bar_height } from '@styles/dimens';
+const column_width = 45;
 
 /**
  * adds a vertical red line to mark the project's end date on the Gantt chart
@@ -33,13 +34,11 @@ export function markProjectDeadline(gantt: any, containerEl: HTMLElement | null,
   const svgEl = containerEl.querySelector('svg.gantt') as SVGSVGElement | null;
   const svgHeight = svgEl?.getAttribute('height') ?? '372'; // fallback to default 372px
 
-  const columnWidth = 45;
-
   // red vertical line
   const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-  line.setAttribute('x1', `${index * columnWidth}`);
+  line.setAttribute('x1', `${index * column_width}`);
   line.setAttribute('y1', '0');
-  line.setAttribute('x2', `${index * columnWidth}`);
+  line.setAttribute('x2', `${index * column_width}`);
   line.setAttribute('y2', svgHeight);
   line.setAttribute('class', 'gantt-deadline-line');
 
@@ -105,6 +104,7 @@ export default function SprintList({ project }: Props) {
       infinite_padding: true,
       move_dependencies: false,
       view_mode_select: false,
+      column_width,
       upper_header_height: 45,
       lower_header_height: 30,
       bar_height: 40,
