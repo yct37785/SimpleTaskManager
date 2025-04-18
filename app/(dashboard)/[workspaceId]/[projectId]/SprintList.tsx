@@ -20,25 +20,28 @@ import { project_details_bar_height } from '@defines/dimens';
 /**
  * adds a vertical red line to mark the project's end date on the Gantt chart
  */
-export function markProjectDeadline(gantt: any, project: Project) {
-  if (!gantt || !project?.endDate || !gantt.dates || !gantt.options) return;
+export function markProjectDeadline(gantt: any, containerEl: HTMLElement | null, project: Project) {
+  if (!gantt || !project?.endDate || !gantt.dates || !gantt.options || !containerEl) return;
 
+  // find index of date
   const index = gantt.dates.findIndex((d: Date) =>
     d.toISOString().split('T')[0] === project.endDate.toString()
   );
   if (index === -1) return;
 
-  const x = index * 45;
+  // get actual SVG element
+  const svgEl = containerEl.querySelector('svg.gantt') as SVGSVGElement | null;
+  const svgHeight = svgEl?.getAttribute('height') ?? '372'; // fallback to default 372px
+
+  const columnWidth = 45;
 
   // red vertical line
   const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-  line.setAttribute('x1', `${x}`);
+  line.setAttribute('x1', `${index * columnWidth}`);
   line.setAttribute('y1', '0');
-  line.setAttribute('x2', `${x}`);
-  line.setAttribute('y2', `${gantt.options.container_height}`);
-  line.setAttribute('stroke', 'red');
-  line.setAttribute('stroke-width', '2');
-  line.setAttribute('stroke-dasharray', '4');
+  line.setAttribute('x2', `${index * columnWidth}`);
+  line.setAttribute('y2', svgHeight);
+  line.setAttribute('class', 'gantt-deadline-line');
 
   // append to SVG grid layer
   gantt.layers.grid.appendChild(line);
@@ -116,7 +119,7 @@ export default function SprintList({ project }: Props) {
     // scroll to current day
     ganttInstance.current.scroll_current();
     // mark deadline
-    markProjectDeadline(ganttInstance.current, project);
+    markProjectDeadline(ganttInstance.current, ganttRef.current, project);
     // disable horizontal scrollwheel
     const cleanupWheel = disableHorizontalWheelScroll(ganttRef.current.querySelector('.gantt-container'));
     return () => {

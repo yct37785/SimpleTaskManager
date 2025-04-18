@@ -70,3 +70,11 @@
 .gantt .grid .row:nth-child(even) {
   fill: rgba(0, 0, 0, 0.025);
 }
+
+/* vertical deadline line */
+.gantt-deadline-line {
+  stroke: red;
+  stroke-width: 2;
+  stroke-dasharray: 4;
+  pointer-events: none;
+}
