@@ -24,14 +24,13 @@ export function getRelativeTime(from: CalendarDate, to: CalendarDate): string {
   const diffDays = Math.abs(toEpoch - fromEpoch);
 
   const weeks = Math.floor(diffDays / 7);
-  const days = diffDays % 7;
-  const months = Math.floor(diffDays / 30); // rough approx
+  const months = Math.floor(diffDays / 30); // rough approx 30 days per mth
 
   let result = '';
   if (months >= 1) {
-    result = `${months} month${months !== 1 ? 's' : ''}`;
+    result = `~${months} month${months !== 1 ? 's' : ''}`;
   } else if (weeks >= 1) {
-    result = `${weeks} week${weeks !== 1 ? 's' : ''}`;
+    result = `~${weeks} week${weeks !== 1 ? 's' : ''}`;
   } else {
     result = `${diffDays} day${diffDays !== 1 ? 's' : ''}`;
   }

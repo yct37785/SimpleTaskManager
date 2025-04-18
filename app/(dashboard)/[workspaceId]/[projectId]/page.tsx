@@ -85,7 +85,7 @@ export default function ProjectPage() {
     const dueDate: CalendarDate = originalProject.endDate;
     const now: CalendarDate = today(getLocalTimeZone());
 
-    const formattedDue = `${dueDate.month}/${dueDate.day}/${dueDate.year}`;
+    const formattedDue = `${dueDate.day}/${dueDate.month}/${dueDate.year}`;
     const relativeDue = getRelativeTime(now, dueDate);
     const description = originalProject.desc || fallbackDesc;
     // const description = fallbackDesc;
