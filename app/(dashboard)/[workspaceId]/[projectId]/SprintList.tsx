@@ -93,7 +93,7 @@ export default function SprintList({ project }: Props) {
    * init and render Gantt chart when project changes
    */
   useEffect(() => {
-    if (!ganttRef.current || windowHeight == 0) return;
+    if (!project || !ganttRef.current || windowHeight == 0) return;
     // always clear existing chart
     ganttRef.current.innerHTML = '';
 
