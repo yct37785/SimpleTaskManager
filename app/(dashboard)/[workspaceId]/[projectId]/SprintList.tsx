@@ -43,7 +43,7 @@ export function markProjectDeadline(gantt: any, containerEl: HTMLElement | null,
   line.setAttribute('y2', svgHeight);
   line.setAttribute('class', 'gantt-deadline-line');
 
-  // append to SVG grid layer
+  // append to grid layer
   gantt.layers.grid.appendChild(line);
 }
 
@@ -94,7 +94,7 @@ export default function SprintList({ project }: Props) {
    * init and render Gantt chart when project changes
    */
   useEffect(() => {
-    if (!ganttRef.current) return;
+    if (!ganttRef.current || windowHeight == 0) return;
     // always clear existing chart
     ganttRef.current.innerHTML = '';
 
