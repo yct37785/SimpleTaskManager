@@ -6,7 +6,7 @@ import Image from 'next/image';
 // MUI
 import { Box, Typography } from '@mui/material';
 // our components
-import { useWorkspacesManager } from '@contexts/WorkspacesContext';
+import { useWorkspacesManager } from '@globals/WorkspacesContext';
 
 /**
  * home dashboard

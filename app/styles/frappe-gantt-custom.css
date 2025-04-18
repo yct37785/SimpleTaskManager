@@ -1,34 +1,72 @@
+/* Gantt bar */
 .gantt-sprint-bar {
-  fill: #1976d2;
-  stroke: #125aa3;
-  rx: 4;
-  ry: 4;
+  fill: var(--mui-palette-primary-main, #1976d2);
+  stroke: var(--mui-palette-primary-dark, #125aa3);
+  rx: 6;
+  ry: 6;
+  transition: fill 0.2s ease, filter 0.2s ease;
 }
 
+.gantt-sprint-bar:hover {
+  fill: var(--mui-palette-primary-dark, #115293);
+  filter: brightness(0.95);
+  cursor: pointer;
+}
+
+/* Gantt bar text */
+.gantt .bar-text {
+  fill: #ffffff;
+  font-weight: 500;
+  font-size: 0.75rem;
+  pointer-events: none;
+}
+
+/* Gantt tooltip */
 .gantt-tooltip {
-  padding: 8px;
-  max-width: 250px;
+  padding: 4px;
+  max-width: 280px;
   background: white;
-  border-radius: 4px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  color: rgba(0, 0, 0, 0.87);
   font-size: 0.875rem;
-  color: #333;
+  line-height: 1.5;
 }
 
-.gantt-tooltip strong {
-  display: block;
-  font-size: 1rem;
+.gantt-tooltip-title {
   font-weight: 600;
+  font-size: 1rem;
   margin-bottom: 4px;
 }
 
-/* override Frappe Gantt styles */
+.gantt-tooltip-progress {
+  font-size: 0.875rem;
+  color: var(--mui-palette-primary-dark, #125aa3);
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.gantt-tooltip-desc {
+  font-size: 0.8rem;
+  color: #666;
+  white-space: normal;
+}
+
+/* Gantt chart container */
 .gantt-container {
-  overflow-y: hidden;
+  /* overflow-y: hidden; */
   max-height: 100%;
 }
 
+/* Gantt chart */
 .gantt {
   user-select: none;
   scrollbar-width: thin;
+}
+
+/* grid lines and bg */
+.gantt .grid .row .tick {
+  stroke: #ccc;
+}
+
+.gantt .grid .row:nth-child(even) {
+  fill: rgba(0, 0, 0, 0.025);
 }

@@ -3,8 +3,8 @@
 import React, { useState } from 'react';
 // MUI
 import { TextField, Chip, Autocomplete } from '@mui/material';
-// defines
-import { Task, Label } from '@defines/schemas';
+// schemas
+import { Task, Label } from '@schemas';
 
 type Props = {
   labels: Label[];

@@ -5,8 +5,8 @@ import { createContext, useContext, useState, ReactNode } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 // date
 import { CalendarDate } from '@internationalized/date';
-// defines
-import { Workspace, Project, Sprint, Column, Task } from '@defines/schemas';
+// schemas
+import { Workspace, Project, Sprint, Column, Task } from '@schemas';
 // sample data
 import sampleWorkspaces from './sampleData';
 
@@ -109,6 +109,7 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
     }
   
     const newSprint: Sprint = {
+      id: uuidv4(),
       title,
       desc,
       startDate,

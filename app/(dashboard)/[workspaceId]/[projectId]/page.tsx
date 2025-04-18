@@ -11,13 +11,14 @@ import { Edit as EditIcon, CalendarMonth as CalendarMonthIcon } from '@mui/icons
 // date
 import { getLocalTimeZone, today, CalendarDate, parseDate } from '@internationalized/date';
 // utils
-import { getRelativeTime } from '@utils/datetimeUtils';
+import { getRelativeTime } from '@utils/datetime';
 // our components
 import SprintList from './SprintList';
-import { useWorkspacesManager } from '@contexts/WorkspacesContext';
-// types
-import { Project } from '@defines/schemas';
+import { useWorkspacesManager } from '@globals/WorkspacesContext';
+// schemas
+import { Project } from '@schemas';
 // styles
+import { project_details_bar_height } from '@defines/dimens';
 import styles from './ProjectPage.module.css';
 
 const fallbackDesc = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
@@ -87,9 +88,10 @@ export default function ProjectPage() {
     const formattedDue = `${dueDate.month}/${dueDate.day}/${dueDate.year}`;
     const relativeDue = getRelativeTime(now, dueDate);
     const description = originalProject.desc || fallbackDesc;
+    // const description = fallbackDesc;
 
     return (
-      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', p: 3, minHeight: project_details_bar_height }}>
         <Box sx={{ flex: 1 }}>
           <Typography variant='h5' fontWeight={600}>
             {`${workspace.title} - ${originalProject.title}`}
@@ -117,13 +119,9 @@ export default function ProjectPage() {
   };
 
   return (
-    <Box sx={{ height: '100vh', overflow: 'auto', p: 3 }}>
-      <Box sx={{ height: '100%' }}>
-        {projectDetailsBar()}
-        <Box sx={{ pb: 3, mt: 3 }}>
-          {projectData && <SprintList project={projectData} />}
-        </Box>
-      </Box>
+    <Box>
+      {projectDetailsBar()}
+      {projectData && <SprintList project={projectData} />}
     </Box>
   );
 }

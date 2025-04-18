@@ -9,7 +9,7 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 // our components
 import Sidebar from '@components/Sidebar/Sidebar';
-import { WorkspacesProvider } from '@contexts/WorkspacesContext';
+import { WorkspacesProvider } from '@globals/WorkspacesContext';
 // global styles
 import '@styles/globals.css';
 import '@styles/frappe-gantt.css';

@@ -2,7 +2,9 @@
 
 import { useState } from 'react';
 // next
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
+const NextLink = Link;
 // MUI
 import {
   Box, List, ListItemButton, ListItemIcon, ListItemText,
@@ -13,14 +15,14 @@ import {
   CalendarMonth as CalendarIcon, Home as HomeIcon, PieChart as PieCharIcon, ExpandLess, ExpandMore
 } from '@mui/icons-material';
 // our components
-import { useWorkspacesManager } from '@contexts/WorkspacesContext';
+import { useWorkspacesManager } from '@globals/WorkspacesContext';
 import ProjectForm from '@components/Forms/ProjectForm';
-// defines
-import { sidebar_width, appbar_height, scrollbar_allowance } from '@/app/defines/dimens';
-import { Workspace, Project } from '@defines/schemas';
+// schemas
+import { Workspace, Project } from '@schemas';
 // utils
-import { dateToCalendarDate } from '@utils/datetimeUtils';
+import { dateToCalendarDate } from '@utils/datetime';
 // styles
+import { sidebar_width, appbar_height, scrollbar_allowance } from '@/app/defines/dimens';
 import styles from './sidebar.module.css';
 
 /**
@@ -77,23 +79,24 @@ function ProjectsList({ workspace, isOpen }: {
   workspace: Workspace;
   isOpen: boolean;
 }) {
+  const { projectId } = useParams() as { projectId?: string };
   return (
     <Collapse in={isOpen} timeout='auto' unmountOnExit>
       {/* project list */}
       {Object.keys(workspace.projects).length > 0 ? (
         <List sx={{ pl: 2 }} disablePadding>
           {Object.values(workspace.projects).map((proj) => (
-            <Link
+            <ListItemButton
               key={proj.id}
+              component={NextLink}
               href={`/${workspace.id}/${proj.id}`}
-              passHref
-              legacyBehavior
+              selected={projectId === proj.id}
             >
-              <ListItemButton>
-                <ListItemIcon><InsertDriveFileIcon /></ListItemIcon>
-                <ListItemText primary={proj.title} />
-              </ListItemButton>
-            </Link>
+              <ListItemIcon>
+                <InsertDriveFileIcon />
+              </ListItemIcon>
+              <ListItemText primary={proj.title} />
+            </ListItemButton>
           ))}
         </List>
       ) : null}

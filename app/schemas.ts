@@ -37,6 +37,7 @@ export type Column = {
  * - ordered
  */
 export type Sprint = {
+  id: string;
   title: string;
   desc: string;
   startDate: CalendarDate;

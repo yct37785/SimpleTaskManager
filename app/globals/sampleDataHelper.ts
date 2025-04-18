@@ -2,8 +2,8 @@
 import { v4 as uuidv4 } from 'uuid';
 // date
 import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date';
-// defines
-import { Workspace, Project, Sprint, Column, Task } from '@defines/schemas';
+// schemas
+import { Workspace, Project, Sprint, Column, Task } from '@schemas';
 
 /**
  * add days to a CalendarDate
@@ -30,6 +30,7 @@ function genColumn(title: string, isTodo = false): Column {
  */
 export function genSprint(title: string, startDate: CalendarDate, endDate: CalendarDate): Sprint {
   return {
+    id: uuidv4(),
     title,
     desc: `sprint ${title} description here`,
     startDate,

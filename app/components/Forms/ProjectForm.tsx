@@ -8,8 +8,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import BaseFormDialog, { TextInput } from './BaseFormDialog';
 // date
 import dayjs, { Dayjs } from 'dayjs';
-// defines
-import { Workspace, Project } from '@defines/schemas';
+// schemas
+import { Workspace, Project } from '@schemas';
 
 type Props = {
   workspace: Workspace;
