@@ -5,9 +5,9 @@ import { useEffect, useRef, useState } from 'react';
 import Gantt from 'frappe-gantt';
 // MUI
 import {
-  Box, Typography, Switch, FormControlLabel, IconButton, Stack, Divider, Tooltip, useTheme
+  Box, Typography, Switch, FormControlLabel, IconButton, Stack, Divider, Tooltip, useTheme, Button
 } from '@mui/material';
-import { Add as AddIcon } from '@mui/icons-material';
+import { Add as AddIcon, Check as CheckIcon, Close as CloseIcon } from '@mui/icons-material';
 // date
 import { CalendarDate } from '@internationalized/date';
 // hooks
@@ -23,8 +23,8 @@ const column_width = 45;
 export type GanttTask = {
   id: string;
   name: string;
-  start: string;
-  end: string;
+  start: string;  // yyy-mm-dd
+  end: string;    // yyy-mm-dd
   progress: number;
   custom_class?: string;
 };
@@ -70,12 +70,15 @@ function markDeadline(gantt: any, containerEl: HTMLElement | null, deadline: Cal
 export default function GanttChart({ title = 'Timeline', tasks, deadline, onCreateClick }: Props) {
   const ganttRef = useRef<HTMLDivElement>(null);
   const ganttInstance = useRef<any>(null);
+
   const [editMode, setEditMode] = useState(false);
+  const [updatedTasks, setUpdatedTasks] = useState<Map<string, GanttTask>>(new Map());
+
   const windowHeight = useWindowHeight();
   const theme = useTheme();
   
   /**
-   * inject styles
+   * inject styles when state changes
    */
   function injectStyles() {
     if (deadline && ganttInstance.current && ganttRef.current) {
@@ -83,14 +86,39 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
     }
   }
 
-  /**
-   * init Gantt chart
-   */
-  function initGanttChart() {
-    if (!ganttRef.current) return;
-    // always clear existing chart
-    ganttRef.current.innerHTML = ''
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      injectStyles();
+    });
+  }, [editMode, deadline]);
 
+  /**
+   * hold updated tasks when their date values are edited
+   */
+  function handleDateChange(task: GanttTask, start: Date, end: Date) {
+    const updatedTask: GanttTask = {
+      ...task,
+      start: start.toISOString().split('T')[0],
+      end: end.toISOString().split('T')[0],
+    };
+  
+    setUpdatedTasks(prev => {
+      const updated = new Map(prev);
+      updated.set(task.id, updatedTask);
+      return updated;
+    });
+  }
+
+  /**
+   * init Gantt chart once
+   */
+  useEffect(() => {
+    if (!windowHeight || !ganttRef.current || ganttInstance.current) return;
+  
+    // clear existing chart
+    ganttRef.current.innerHTML = '';
+  
+    // create Gantt chart
     ganttInstance.current = new Gantt(ganttRef.current, tasks, {
       readonly: !editMode,
       column_width,
@@ -103,35 +131,32 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
       padding: 16,
       container_height: windowHeight - project_details_bar_height - 130,
       lines: 'both',
-      popup_on: 'hover',
+      popup_on: 'click',
       view_mode: 'Day',
-      date_format: 'DD-MM-YYYY'
+      date_format: 'DD-MM-YYYY',
+      snap_at: '1d',
+      on_date_change: (task: GanttTask, start: Date, end: Date) => handleDateChange(task, start, end),
     });
-
-    // scroll to current day
+  
     ganttInstance.current.scroll_current();
-
-    // inject styles
-    injectStyles();
-    
-    // disable horizontal scrollwheel
-    const cleanupWheel = disableHorizontalWheelScroll(ganttRef.current.querySelector('.gantt-container'));
-    return () => cleanupWheel();
-  }
-
-  /**
-   * initial Gantt chart creation
-   */
-  useEffect(() => {
-    if (!windowHeight || !ganttRef.current) return;
-    const cleanup = initGanttChart();
+  
+    // inject styles (defer to ensure SVG is rendered)
+    requestAnimationFrame(() => {
+      injectStyles();
+    });
+  
+    // disable horizontal scroll
+    const cleanupWheel = disableHorizontalWheelScroll(
+      ganttRef.current.querySelector('.gantt-container')
+    );
+  
     return () => {
-      if (cleanup) cleanup();
+      cleanupWheel();
     };
-  }, [tasks, windowHeight, deadline]);
+  }, [tasks, windowHeight, deadline]);  
 
   /**
-   * update readonly on toggle
+   * toggle readonly for Gantt chart
    */
   useEffect(() => {
     if (ganttInstance.current) {
@@ -140,11 +165,28 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
   }, [editMode]);
 
   /**
-   * inject styles again when state changes
+   * once edits are confirmed
    */
-  useEffect(() => {
-    injectStyles();
-  });
+  function handleConfirmEdits() {
+    if (!ganttInstance.current) return;
+  
+    updatedTasks.forEach((updatedTask) => {
+      console.log('asdasdasd');
+      ganttInstance.current.update_task(updatedTask.id, updatedTask);
+    });
+
+    // clear edit mode and updates
+    setUpdatedTasks(new Map());
+    setEditMode(false);
+  }
+
+  /**
+   * edits to be discarded
+   */
+  function handleCancelEdits() {
+    setUpdatedTasks(new Map());
+    setEditMode(false);
+  }
 
   return (
     <Box sx={{ px: 2, pb: 2 }}>
@@ -163,16 +205,27 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
               </Tooltip>
             )}
           </Stack>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={editMode}
-                onChange={() => setEditMode(!editMode)}
-                color='primary'
-              />
-            }
-            label='Edit Mode'
-          />
+          {!editMode ? (
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={editMode}
+                  onChange={() => setEditMode(prev => !prev)}
+                  color='primary'
+                />
+              }
+              label='Edit Mode'
+            />
+          ) : (
+            <Stack direction='row' spacing={1}>
+              <Button onClick={handleConfirmEdits} color='primary' variant='outlined' size='small' startIcon={<CheckIcon />}>
+                Confirm
+              </Button>
+              <Button onClick={handleCancelEdits} color='inherit' variant='outlined' size='small' startIcon={<CloseIcon />}>
+                Cancel
+              </Button>
+            </Stack>
+          )}
         </Stack>
 
         <Divider sx={{ mt: 1, mb: 2 }} />
