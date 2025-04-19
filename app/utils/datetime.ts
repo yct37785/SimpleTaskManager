@@ -48,3 +48,19 @@ export function dateToCalendarDate(from: Date): CalendarDate {
     from.getDate()
   );
 }
+
+/**
+ * format Date to YYYY-MM-DD in local time
+ */
+export function formatDateToISO(date: Date): string {
+  return date.toLocaleDateString('sv-SE'); // 'sv-SE' gives ISO-like format: YYYY-MM-DD
+}
+
+/**
+ * add one day to a given Date
+ */
+export function addOneDay(date: Date): Date {
+  const result = new Date(date);
+  result.setDate(result.getDate() + 1);
+  return result;
+}

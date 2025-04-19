@@ -14,7 +14,7 @@ import { CalendarDate } from '@internationalized/date';
 import { useWindowHeight } from '@hooks/useWindowHeight';
 // utils
 import { disableHorizontalWheelScroll } from '@utils/UI';
-import { formatDateToISO } from '@utils/datetime';
+import { formatDateToISO, addOneDay } from '@utils/datetime';
 // styles
 import { project_details_bar_height } from '@styles/dimens';
 import './frappe-gantt.css';
@@ -100,8 +100,8 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
   function handleDateChange(task: GanttTask, start: Date, end: Date) {
     const updatedTask: GanttTask = {
       ...task,
-      start: start.toISOString().split('T')[0],
-      end: end.toISOString().split('T')[0],
+      start: formatDateToISO(start),
+      end: formatDateToISO(addOneDay(end)), // +1 day as end is exclusive
     };
   
     setUpdatedTasks(prev => {
