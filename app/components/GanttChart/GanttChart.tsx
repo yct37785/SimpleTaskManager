@@ -112,7 +112,6 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
     });
   }
 
-
   /**
    * init Gantt instance
    */
@@ -185,9 +184,12 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
 
     // re-init Gantt and scroll to bottom
     initGanttInstance(newTasks);
+    
+    // scroll to bottom of .gantt-container after render
     requestAnimationFrame(() => {
-      if (ganttRef.current) {
-        ganttRef.current.scrollTop = ganttRef.current.scrollHeight;
+      const container = ganttRef.current?.querySelector('.gantt-container') as HTMLElement;
+      if (container) {
+        container.scrollTop = container.scrollHeight;
       }
     });
   }
