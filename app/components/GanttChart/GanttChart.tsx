@@ -115,7 +115,7 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
   /**
    * init Gantt instance
    */
-  function initGanttInstance(taskList: GanttTask[]) {
+  function initGanttInstance(taskList: GanttTask[], scrollTo: string = 'today', startScrollFromBottom: boolean = false) {
     if (!ganttRef.current) return;
 
     // clear existing chart
@@ -140,15 +140,16 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
       snap_at: '1d',
       on_date_change: (task: GanttTask, start: Date, end: Date) => handleDateChange(task, start, end),
     });
-
+    
     // inject styles
     injectStyles();
 
-    // disable horizontal scroll
-    const cleanupWheel = disableHorizontalWheelScroll(
-      ganttRef.current.querySelector('.gantt-container')
-    );
+    // manually do scroll
+    const container = ganttRef.current.querySelector('.gantt-container') as HTMLElement;
+    container?.scrollTo({ top: container.scrollHeight, left: 45 * 20, behavior: 'smooth' });
 
+    // disable horizontal scrollwheel
+    const cleanupWheel = disableHorizontalWheelScroll(container);
     return () => cleanupWheel();
   }
 
@@ -159,7 +160,6 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
     // only trigger init once
     if (!windowHeight || !ganttRef.current || ganttInstance.current) return;
     initGanttInstance(committedTasks);
-    ganttInstance.current.scroll_current();
   }, [tasks, windowHeight, deadline]);
 
   /**
@@ -182,16 +182,12 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
     const newTasks = [...committedTasks, newTask];
     setCommittedTasks(newTasks);
 
-    // re-init Gantt and scroll to bottom
-    initGanttInstance(newTasks);
-    
-    // scroll to bottom of .gantt-container after render
-    requestAnimationFrame(() => {
-      const container = ganttRef.current?.querySelector('.gantt-container') as HTMLElement;
-      if (container) {
-        container.scrollTop = container.scrollHeight;
-      }
-    });
+    // scroll to one day before the new task starts
+    const scrollTarget = new Date(now);
+    scrollTarget.setDate(scrollTarget.getDate() - 1);
+
+    // re-init Gantt
+    initGanttInstance(newTasks, formatDateToISO(scrollTarget), true);
   }
 
   /**
