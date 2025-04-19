@@ -74,11 +74,12 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
   const ganttInstance = useRef<any>(null);
 
   const [editMode, setEditMode] = useState(false);
+  const [committedTasks, setCommittedTasks] = useState<GanttTask[]>(tasks);
   const [updatedTasks, setUpdatedTasks] = useState<Map<string, GanttTask>>(new Map());
 
   const windowHeight = useWindowHeight();
   const theme = useTheme();
-  
+
   /**
    * inject styles when state changes
    */
@@ -103,7 +104,7 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
       start: formatDateToISO(start),
       end: formatDateToISO(addOneDay(end)), // +1 day as end is exclusive
     };
-  
+
     setUpdatedTasks(prev => {
       const updated = new Map(prev);
       updated.set(task.id, updatedTask);
@@ -111,18 +112,18 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
     });
   }
 
-  
+
   /**
    * init Gantt instance
    */
-  function initGanttInstance(tasks: GanttTask[]) {
+  function initGanttInstance(taskList: GanttTask[]) {
     if (!ganttRef.current) return;
-  
+
     // clear existing chart
     ganttRef.current.innerHTML = '';
-  
+
     // create Gantt chart
-    ganttInstance.current = new Gantt(ganttRef.current, tasks, {
+    ganttInstance.current = new Gantt(ganttRef.current, taskList, {
       readonly: !editMode,
       column_width,
       infinite_padding: true,
@@ -140,20 +141,16 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
       snap_at: '1d',
       on_date_change: (task: GanttTask, start: Date, end: Date) => handleDateChange(task, start, end),
     });
-  
+
     // inject styles (defer to ensure SVG is rendered)
-    requestAnimationFrame(() => {
-      injectStyles();
-    });
-  
+    requestAnimationFrame(() => injectStyles());
+
     // disable horizontal scroll
     const cleanupWheel = disableHorizontalWheelScroll(
       ganttRef.current.querySelector('.gantt-container')
     );
-  
-    return () => {
-      cleanupWheel();
-    };
+
+    return () => cleanupWheel();
   }
 
   /**
@@ -162,11 +159,38 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
   useEffect(() => {
     // only trigger init once
     if (!windowHeight || !ganttRef.current || ganttInstance.current) return;
-
-    initGanttInstance(tasks);
-    // scroll to current day
+    initGanttInstance(committedTasks);
     ganttInstance.current.scroll_current();
   }, [tasks, windowHeight, deadline]);
+
+  /**
+   * add task
+   */
+  function handleAddTask() {
+    const now = new Date();
+    const fiveDaysLater = new Date();
+    fiveDaysLater.setDate(now.getDate() + 5);
+
+    const newTask: GanttTask = {
+      id: `task-${Date.now()}`,
+      name: `New Task`,
+      start: formatDateToISO(now),
+      end: formatDateToISO(addOneDay(fiveDaysLater)),
+      progress: 0,
+      custom_class: 'gantt-sprint-bar',
+    };
+
+    const newTasks = [...committedTasks, newTask];
+    setCommittedTasks(newTasks);
+
+    // re-init Gantt and scroll to bottom
+    initGanttInstance(newTasks);
+    requestAnimationFrame(() => {
+      if (ganttRef.current) {
+        ganttRef.current.scrollTop = ganttRef.current.scrollHeight;
+      }
+    });
+  }
 
   /**
    * toggle readonly for Gantt chart
@@ -182,9 +206,8 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
    */
   function handleConfirmEdits() {
     if (!ganttInstance.current) return;
-  
+
     updatedTasks.forEach((updatedTask) => {
-      console.log('asdasdasd');
       ganttInstance.current.update_task(updatedTask.id, updatedTask);
     });
 
@@ -211,13 +234,11 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
             <Typography variant='h6' fontWeight={600}>
               {title}
             </Typography>
-            {onCreateClick && (
-              <Tooltip title='Create'>
-                <IconButton size='small' color='primary' sx={{ ml: 1 }} onClick={onCreateClick}>
-                  <AddIcon />
-                </IconButton>
-              </Tooltip>
-            )}
+            <Tooltip title='Create'>
+              <IconButton size='small' color='primary' sx={{ ml: 1 }} onClick={handleAddTask}>
+                <AddIcon />
+              </IconButton>
+            </Tooltip>
           </Stack>
           {!editMode ? (
             <Button
