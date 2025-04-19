@@ -16,6 +16,8 @@ import { useWindowHeight } from '@hooks/useWindowHeight';
 import { disableHorizontalWheelScroll } from '@utils/UI';
 // styles
 import { project_details_bar_height } from '@styles/dimens';
+import './frappe-gantt.css';
+import './frappe-gantt-custom.css';
 const column_width = 45;
 
 export type GanttTask = {

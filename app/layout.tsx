@@ -12,8 +12,6 @@ import Sidebar from '@components/Sidebar/Sidebar';
 import { WorkspacesProvider } from '@globals/WorkspacesContext';
 // global styles
 import '@styles/globals.css';
-import '@styles/frappe-gantt.css';
-import '@styles/frappe-gantt-custom.css';
 
 /**
  * root layout
