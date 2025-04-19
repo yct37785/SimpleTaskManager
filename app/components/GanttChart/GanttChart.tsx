@@ -5,9 +5,9 @@ import { useEffect, useRef, useState } from 'react';
 import Gantt from 'frappe-gantt';
 // MUI
 import {
-  Box, Typography, Switch, FormControlLabel, IconButton, Stack, Divider, Tooltip, useTheme, Button
+  Box, Typography, IconButton, Stack, Divider, Tooltip, useTheme, Button
 } from '@mui/material';
-import { Add as AddIcon, Check as CheckIcon, Close as CloseIcon } from '@mui/icons-material';
+import { Add as AddIcon, Edit as EditIcon, Check as CheckIcon, Close as CloseIcon } from '@mui/icons-material';
 // date
 import { CalendarDate } from '@internationalized/date';
 // hooks
@@ -209,16 +209,14 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
             )}
           </Stack>
           {!editMode ? (
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={editMode}
-                  onChange={() => setEditMode(prev => !prev)}
-                  color='primary'
-                />
-              }
-              label='Edit Mode'
-            />
+            <Button
+              onClick={() => setEditMode(true)}
+              variant='text'
+              size='small'
+              startIcon={<EditIcon />}
+            >
+              Edit
+            </Button>
           ) : (
             <Stack direction='row' spacing={1}>
               <Button onClick={handleConfirmEdits} color='primary' variant='outlined' size='small' startIcon={<CheckIcon />}>
