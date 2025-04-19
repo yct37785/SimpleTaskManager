@@ -76,5 +76,6 @@
   stroke: red;
   stroke-width: 2;
   stroke-dasharray: 4;
+  shape-rendering: crispEdges; /* improves pixel alignment */
   pointer-events: none;
 }
