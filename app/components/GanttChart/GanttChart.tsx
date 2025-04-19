@@ -85,14 +85,14 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
    */
   function injectStyles() {
     if (deadline && ganttInstance.current && ganttRef.current) {
-      markDeadline(ganttInstance.current, ganttRef.current, deadline);
+      requestAnimationFrame(() => {
+        markDeadline(ganttInstance.current, ganttRef.current, deadline);
+      });
     }
   }
 
   useEffect(() => {
-    requestAnimationFrame(() => {
-      injectStyles();
-    });
+    injectStyles();
   }, [editMode, deadline]);
 
   /**
@@ -142,8 +142,8 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
       on_date_change: (task: GanttTask, start: Date, end: Date) => handleDateChange(task, start, end),
     });
 
-    // inject styles (defer to ensure SVG is rendered)
-    requestAnimationFrame(() => injectStyles());
+    // inject styles
+    injectStyles();
 
     // disable horizontal scroll
     const cleanupWheel = disableHorizontalWheelScroll(
