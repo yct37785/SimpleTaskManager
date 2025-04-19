@@ -111,11 +111,12 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
     });
   }
 
+  
   /**
-   * init Gantt chart once
+   * init Gantt instance
    */
-  useEffect(() => {
-    if (!windowHeight || !ganttRef.current || ganttInstance.current) return;
+  function initGanttInstance(tasks: GanttTask[]) {
+    if (!ganttRef.current) return;
   
     // clear existing chart
     ganttRef.current.innerHTML = '';
@@ -140,8 +141,6 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
       on_date_change: (task: GanttTask, start: Date, end: Date) => handleDateChange(task, start, end),
     });
   
-    ganttInstance.current.scroll_current();
-  
     // inject styles (defer to ensure SVG is rendered)
     requestAnimationFrame(() => {
       injectStyles();
@@ -155,7 +154,19 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
     return () => {
       cleanupWheel();
     };
-  }, [tasks, windowHeight, deadline]);  
+  }
+
+  /**
+   * init Gantt chart once
+   */
+  useEffect(() => {
+    // only trigger init once
+    if (!windowHeight || !ganttRef.current || ganttInstance.current) return;
+
+    initGanttInstance(tasks);
+    // scroll to current day
+    ganttInstance.current.scroll_current();
+  }, [tasks, windowHeight, deadline]);
 
   /**
    * toggle readonly for Gantt chart
