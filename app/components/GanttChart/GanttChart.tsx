@@ -14,10 +14,12 @@ import { CalendarDate } from '@internationalized/date';
 import { useWindowHeight } from '@hooks/useWindowHeight';
 // utils
 import { disableHorizontalWheelScroll } from '@utils/UI';
+import { formatDateToISO } from '@utils/datetime';
 // styles
 import { project_details_bar_height } from '@styles/dimens';
 import './frappe-gantt.css';
 import './frappe-gantt-custom.css';
+const chart_top_bar_height = 45;
 const column_width = 45;
 
 export type GanttTask = {
@@ -129,7 +131,7 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
       lower_header_height: 30,
       bar_height: 40,
       padding: 16,
-      container_height: windowHeight - project_details_bar_height - 130,
+      container_height: windowHeight - project_details_bar_height - chart_top_bar_height - 100,
       lines: 'both',
       popup_on: 'click',
       view_mode: 'Day',
@@ -191,8 +193,9 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
   return (
     <Box sx={{ px: 2, pb: 2 }}>
       <Box sx={{ border: `1px solid ${theme.palette.divider}`, borderRadius: 2, padding: 2 }}>
+
         {/* top bar */}
-        <Stack direction='row' justifyContent='space-between' alignItems='center'>
+        <Stack direction='row' justifyContent='space-between' alignItems='center' sx={{ height: chart_top_bar_height }}>
           <Stack direction='row' alignItems='center'>
             <Typography variant='h6' fontWeight={600}>
               {title}
