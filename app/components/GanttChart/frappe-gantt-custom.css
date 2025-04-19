@@ -74,8 +74,8 @@
 /* vertical deadline line */
 .gantt-deadline-line {
   stroke: red;
-  stroke-width: 2;
+  stroke-width: 2.5;
   stroke-dasharray: 4;
-  shape-rendering: geometricPrecision; /* improves pixel alignment */
+  shape-rendering: crispEdges; /* improves pixel alignment */
   pointer-events: none;
 }
