@@ -73,14 +73,23 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
   const [editMode, setEditMode] = useState(false);
   const windowHeight = useWindowHeight();
   const theme = useTheme();
+  
+  /**
+   * inject styles
+   */
+  function injectStyles() {
+    if (deadline && ganttInstance.current && ganttRef.current) {
+      markDeadline(ganttInstance.current, ganttRef.current, deadline);
+    }
+  }
 
   /**
-   * init and render Gantt chart when project changes
+   * init Gantt chart
    */
-  useEffect(() => {
-    if (!ganttRef.current || windowHeight === 0) return;
+  function initGanttChart() {
+    if (!ganttRef.current) return;
     // always clear existing chart
-    ganttRef.current.innerHTML = '';
+    ganttRef.current.innerHTML = ''
 
     ganttInstance.current = new Gantt(ganttRef.current, tasks, {
       readonly: !editMode,
@@ -98,23 +107,44 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
       view_mode: 'Day',
       date_format: 'DD-MM-YYYY'
     });
+
     // scroll to current day
     ganttInstance.current.scroll_current();
-    // mark deadline
-    if (deadline) {
-      markDeadline(ganttInstance.current, ganttRef.current, deadline);
-    }
+
+    // inject styles
+    injectStyles();
+    
     // disable horizontal scrollwheel
     const cleanupWheel = disableHorizontalWheelScroll(ganttRef.current.querySelector('.gantt-container'));
     return () => cleanupWheel();
+  }
+
+  /**
+   * initial Gantt chart creation
+   */
+  useEffect(() => {
+    if (!windowHeight || !ganttRef.current) return;
+    const cleanup = initGanttChart();
+    return () => {
+      if (cleanup) cleanup();
+    };
   }, [tasks, windowHeight, deadline]);
 
   /**
    * update readonly on toggle
    */
   useEffect(() => {
-    ganttInstance.current?.update_options({ readonly: !editMode });
+    if (ganttInstance.current) {
+      ganttInstance.current.update_options({ readonly: !editMode });
+    }
   }, [editMode]);
+
+  /**
+   * inject styles again when state changes
+   */
+  useEffect(() => {
+    injectStyles();
+  });
 
   return (
     <Box sx={{ px: 2, pb: 2 }}>
