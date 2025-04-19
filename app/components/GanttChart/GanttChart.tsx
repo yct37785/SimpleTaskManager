@@ -8,31 +8,47 @@ import {
   Box, Typography, Switch, FormControlLabel, IconButton, Stack, Divider, Tooltip, useTheme
 } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
+// date
+import { CalendarDate } from '@internationalized/date';
 // hooks
 import { useWindowHeight } from '@hooks/useWindowHeight';
-// schemas
-import { Project } from '@schemas';
 // utils
 import { disableHorizontalWheelScroll } from '@utils/UI';
 // styles
 import { project_details_bar_height } from '@styles/dimens';
 const column_width = 45;
 
+export type GanttTask = {
+  id: string;
+  name: string;
+  start: string;
+  end: string;
+  progress: number;
+  custom_class?: string;
+};
+
+type Props = {
+  title?: string;
+  tasks: GanttTask[];
+  deadline?: CalendarDate;
+  onCreateClick: () => void;
+};
+
 /**
- * adds a vertical red line to mark the project's end date on the Gantt chart
+ * injects a vertical deadline marker to Gantt chart
  */
-export function markProjectDeadline(gantt: any, containerEl: HTMLElement | null, project: Project) {
-  if (!gantt || !project?.endDate || !gantt.dates || !gantt.options || !containerEl) return;
+function markDeadline(gantt: any, containerEl: HTMLElement | null, deadline: CalendarDate) {
+  if (!gantt || !deadline || !gantt.dates || !containerEl) return;
 
   // find index of date
   const index = gantt.dates.findIndex((d: Date) =>
-    d.toISOString().split('T')[0] === project.endDate.toString()
+    d.toISOString().split('T')[0] === deadline.toString()
   );
   if (index === -1) return;
 
   // get actual SVG element
   const svgEl = containerEl.querySelector('svg.gantt') as SVGSVGElement | null;
-  const svgHeight = svgEl?.getAttribute('height') ?? '372'; // fallback to default 372px
+  const svgHeight = svgEl?.getAttribute('height') ?? '372';
 
   // red vertical line
   const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
@@ -47,42 +63,21 @@ export function markProjectDeadline(gantt: any, containerEl: HTMLElement | null,
 }
 
 /**
- * format sprints into Frappe Gantt-compatible structure
- */
-function formatSprints(project: Project) {
-  return project.sprints.map((sprint, index) => ({
-    id: `${index}`,
-    name: sprint.title,
-    start: sprint.startDate.toString(),
-    end: sprint.endDate.toString(),
-    progress: 20, // placeholder
-    custom_class: 'gantt-sprint-bar',
-  }));
-}
-
-/**
  * Gantt chart tooltip HTML
  */
-const generatePopupHtml = (project: Project, task: any): string => {
-  const index = parseInt(task.task.id);
-  const sprint = project.sprints[index];
+const generatePopupHtml = (task: any): string => {
   return `
-    <div class='gantt-tooltip'>
-      <div class='gantt-tooltip-title'>${sprint.title}</div>
-      <div class='gantt-tooltip-progress'>${task.task.progress}% complete</div>
-      <div class='gantt-tooltip-desc'>${sprint?.desc || 'No description available'}</div>
-    </div>
-  `;
-};
-
-type Props = {
-  project: Project;
+        <div class='gantt-tooltip'>
+          <div class='gantt-tooltip-title'>${task.name}</div>
+          <div class='gantt-tooltip-progress'>${task.progress}% complete</div>
+        </div>
+      `
 };
 
 /**
- * sprint timeline Gantt chart component
+ * reusable Frappe Gantt chart component
  */
-export default function SprintList({ project }: Props) {
+export default function GanttChart({ title = 'Timeline', tasks, deadline, onCreateClick }: Props) {
   const ganttRef = useRef<HTMLDivElement>(null);
   const ganttInstance = useRef<any>(null);
   const [editMode, setEditMode] = useState(false);
@@ -93,18 +88,16 @@ export default function SprintList({ project }: Props) {
    * init and render Gantt chart when project changes
    */
   useEffect(() => {
-    if (!project || !ganttRef.current || windowHeight == 0) return;
+    if (!ganttRef.current || windowHeight === 0) return;
     // always clear existing chart
     ganttRef.current.innerHTML = '';
 
-    const tasks = formatSprints(project);
-
     ganttInstance.current = new Gantt(ganttRef.current, tasks, {
       readonly: !editMode,
+      column_width,
       infinite_padding: true,
       move_dependencies: false,
       view_mode_select: false,
-      column_width,
       upper_header_height: 45,
       lower_header_height: 30,
       bar_height: 40,
@@ -113,63 +106,44 @@ export default function SprintList({ project }: Props) {
       lines: 'both',
       popup_on: 'hover',
       view_mode: 'Day',
-      popup: (task: any) => generatePopupHtml(project, task),
       date_format: 'DD-MM-YYYY',
+      popup: generatePopupHtml,
     });
     // scroll to current day
     ganttInstance.current.scroll_current();
     // mark deadline
-    markProjectDeadline(ganttInstance.current, ganttRef.current, project);
+    if (deadline) {
+      markDeadline(ganttInstance.current, ganttRef.current, deadline);
+    }
     // disable horizontal scrollwheel
     const cleanupWheel = disableHorizontalWheelScroll(ganttRef.current.querySelector('.gantt-container'));
-    return () => {
-      cleanupWheel();
-    };
-  }, [project, windowHeight]);
+    return () => cleanupWheel();
+  }, [tasks, windowHeight, deadline]);
 
   /**
    * update readonly on toggle
    */
   useEffect(() => {
-    if (ganttInstance.current) {
-      ganttInstance.current.update_options({
-        readonly: !editMode,
-      });
-    }
+    ganttInstance.current?.update_options({ readonly: !editMode });
   }, [editMode]);
 
   return (
     <Box sx={{ px: 2, pb: 2 }}>
-      <Box
-        sx={{
-          border: `1px solid ${theme.palette.divider}`,
-          borderRadius: 2,
-          padding: 2
-        }}
-      >
+      <Box sx={{ border: `1px solid ${theme.palette.divider}`, borderRadius: 2, padding: 2 }}>
         {/* top bar */}
-        <Stack
-          direction='row'
-          alignItems='center'
-          justifyContent='space-between'
-          sx={{
-            position: 'sticky',
-            top: 0,
-            zIndex: 1,
-            bgcolor: theme.palette.background.paper,
-          }}
-        >
-          <Stack direction='row'alignItems='center'>
+        <Stack direction='row' justifyContent='space-between' alignItems='center'>
+          <Stack direction='row' alignItems='center'>
             <Typography variant='h6' fontWeight={600}>
-              Sprints
+              {title}
             </Typography>
-            <Tooltip title='Create Sprint'>
-              <IconButton color='primary' size='small' sx={{ ml: 1 }}>
-                <AddIcon />
-              </IconButton>
-            </Tooltip>
+            {onCreateClick && (
+              <Tooltip title='Create'>
+                <IconButton size='small' color='primary' sx={{ ml: 1 }} onClick={onCreateClick}>
+                  <AddIcon />
+                </IconButton>
+              </Tooltip>
+            )}
           </Stack>
-
           <FormControlLabel
             control={
               <Switch

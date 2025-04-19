@@ -4,16 +4,14 @@ import { useState, useEffect } from 'react';
 // next
 import { useParams } from 'next/navigation';
 // MUI
-import {
-  Box, Typography, Divider, Tooltip, IconButton, Stack
-} from '@mui/material';
+import { Box, Typography, Tooltip, IconButton, Stack } from '@mui/material';
 import { Edit as EditIcon, CalendarMonth as CalendarMonthIcon } from '@mui/icons-material';
 // date
 import { getLocalTimeZone, today, CalendarDate, parseDate } from '@internationalized/date';
 // utils
 import { getRelativeTime } from '@utils/datetime';
 // our components
-import SprintList from './SprintList';
+import GanttChart, { GanttTask } from '@components/GanttChart/GanttChart';
 import { useWorkspacesManager } from '@globals/WorkspacesContext';
 // schemas
 import { Project } from '@schemas';
@@ -22,6 +20,20 @@ import { project_details_bar_height } from '@styles/dimens';
 import styles from './ProjectPage.module.css';
 
 const fallbackDesc = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+
+/**
+ * format sprints into Frappe Gantt-compatible structure
+ */
+function formatSprints(project: Project) {
+  return project.sprints.map((sprint, index) => ({
+    id: `${index}`,
+    name: sprint.title,
+    start: sprint.startDate.toString(),
+    end: sprint.endDate.toString(),
+    progress: 20, // placeholder
+    custom_class: 'gantt-sprint-bar',
+  }));
+}
 
 /**
  * project dashboard
@@ -121,7 +133,12 @@ export default function ProjectPage() {
   return (
     <Box>
       {projectDetailsBar()}
-      {projectData && <SprintList project={projectData} />}
+      {projectData && <GanttChart
+        title='Sprints'
+        tasks={formatSprints(projectData)}
+        deadline={projectData.endDate}
+        onCreateClick={() => console.log('Create new sprint')}
+      />}
     </Box>
   );
 }
