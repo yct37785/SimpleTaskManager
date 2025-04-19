@@ -65,18 +65,6 @@ function markDeadline(gantt: any, containerEl: HTMLElement | null, deadline: Cal
 }
 
 /**
- * Gantt chart tooltip HTML
- */
-const generatePopupHtml = (task: any): string => {
-  return `
-        <div class='gantt-tooltip'>
-          <div class='gantt-tooltip-title'>${task.name}</div>
-          <div class='gantt-tooltip-progress'>${task.progress}% complete</div>
-        </div>
-      `
-};
-
-/**
  * reusable Frappe Gantt chart component
  */
 export default function GanttChart({ title = 'Timeline', tasks, deadline, onCreateClick }: Props) {
@@ -108,8 +96,7 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
       lines: 'both',
       popup_on: 'hover',
       view_mode: 'Day',
-      date_format: 'DD-MM-YYYY',
-      popup: generatePopupHtml,
+      date_format: 'DD-MM-YYYY'
     });
     // scroll to current day
     ganttInstance.current.scroll_current();
