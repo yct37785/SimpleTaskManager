@@ -186,7 +186,7 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
       start: formatDateToISO(startDate),
       end: formatDateToISO(endDate),
       progress: 0,
-      custom_class: 'gantt-sprint-bar',
+      custom_class: 'gantt-task-bar-new',
     };
 
     const newTasks = [...committedTasks, newTask];

@@ -31,7 +31,7 @@ function formatSprints(project: Project) {
     start: sprint.startDate.toString(),
     end: sprint.endDate.toString(),
     progress: 20, // placeholder
-    custom_class: 'gantt-sprint-bar',
+    custom_class: 'gantt-task-bar',
   }));
 }
 

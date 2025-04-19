@@ -1,5 +1,5 @@
 /* Gantt bar */
-.gantt-sprint-bar {
+.gantt-task-bar {
   fill: var(--mui-palette-primary-main, #1976d2);
   stroke: var(--mui-palette-primary-dark, #125aa3);
   rx: 6;
@@ -7,7 +7,25 @@
   transition: fill 0.2s ease, filter 0.2s ease;
 }
 
-.gantt-sprint-bar:hover {
+/* animate border stroke on new task */
+.gantt-task-bar-new {
+  fill: var(--mui-palette-primary-main, #1976d2);
+  stroke: var(--mui-palette-primary-dark, #125aa3);
+  rx: 6;
+  ry: 6;
+  transition: fill 0.2s ease, filter 0.2s ease;
+  stroke: orange !important;
+  stroke-width: 3px;
+  animation: taskBlink 1.5s ease-in-out 0s 3;
+}
+
+@keyframes taskBlink {
+  0%   { stroke-opacity: 1; }
+  50%  { stroke-opacity: 0.2; }
+  100% { stroke-opacity: 1; }
+}
+
+.gantt-task-bar:hover {
   fill: var(--mui-palette-primary-dark, #115293);
   filter: brightness(0.95);
   cursor: pointer;
