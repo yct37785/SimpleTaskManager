@@ -57,10 +57,22 @@ export function formatDateToISO(date: Date): string {
 }
 
 /**
- * add one day to a given Date
+ * add given number of days to a given Date
  */
-export function addOneDay(date: Date): Date {
+export function addDays(date: Date, days: number): Date {
   const result = new Date(date);
-  result.setDate(result.getDate() + 1);
+  result.setDate(result.getDate() + days);
   return result;
+}
+
+/**
+ * returns the number of days between two dates
+ * e.g. (May 2 - May 4) returns 2
+ */
+export function getDaysBetween(start: Date, end: Date): number {
+  const startTime = start.setHours(0, 0, 0, 0);
+  const endTime = end.setHours(0, 0, 0, 0);
+  const diffInMs = Math.abs(endTime - startTime);
+  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+  return diffInDays;
 }

@@ -14,7 +14,7 @@ import { CalendarDate } from '@internationalized/date';
 import { useWindowHeight } from '@hooks/useWindowHeight';
 // utils
 import { disableHorizontalWheelScroll } from '@utils/UI';
-import { formatDateToISO, addOneDay } from '@utils/datetime';
+import { formatDateToISO, addDays, getDaysBetween } from '@utils/datetime';
 // styles
 import { project_details_bar_height } from '@styles/dimens';
 import './frappe-gantt.css';
@@ -102,7 +102,7 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
     const updatedTask: GanttTask = {
       ...task,
       start: formatDateToISO(start),
-      end: formatDateToISO(addOneDay(end)), // +1 day as end is exclusive
+      end: formatDateToISO(addDays(end, 1)), // +1 day as end is exclusive
     };
 
     setUpdatedTasks(prev => {
@@ -115,7 +115,7 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
   /**
    * init Gantt instance
    */
-  function initGanttInstance(taskList: GanttTask[], scrollTo: string = 'today', startScrollFromBottom: boolean = false) {
+  function initGanttInstance(taskList: GanttTask[], scrollTo: Date, scrollToBottom: boolean = false) {
     if (!ganttRef.current) return;
 
     // clear existing chart
@@ -143,14 +143,22 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
     
     // inject styles
     injectStyles();
-
-    // manually do scroll
+    
+    // DOM manipulation
     const container = ganttRef.current.querySelector('.gantt-container') as HTMLElement;
-    container?.scrollTo({ top: container.scrollHeight, left: 45 * 20, behavior: 'smooth' });
-
-    // disable horizontal scrollwheel
-    const cleanupWheel = disableHorizontalWheelScroll(container);
-    return () => cleanupWheel();
+    if (container) {
+      // manually do scroll
+      if (ganttInstance.current.dates && ganttInstance.current.dates.length > 0) {
+        container.scrollTo({ 
+          top: scrollToBottom ? container.scrollHeight : 0, 
+          left: column_width * (getDaysBetween(ganttInstance.current.dates[0], scrollTo)),
+          behavior: 'smooth'
+        });
+      }
+      // disable horizontal scrollwheel
+      const cleanupWheel = disableHorizontalWheelScroll(container);
+      return () => cleanupWheel();
+    }
   }
 
   /**
@@ -159,7 +167,7 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
   useEffect(() => {
     // only trigger init once
     if (!windowHeight || !ganttRef.current || ganttInstance.current) return;
-    initGanttInstance(committedTasks);
+    initGanttInstance(committedTasks, new Date());
   }, [tasks, windowHeight, deadline]);
 
   /**
@@ -167,14 +175,16 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
    */
   function handleAddTask() {
     const now = new Date();
-    const fiveDaysLater = new Date();
-    fiveDaysLater.setDate(now.getDate() + 5);
+    const startDate = new Date();
+    const endDate = new Date();
+    startDate.setDate(now.getDate() + 5);
+    endDate.setDate(now.getDate() + 12);
 
     const newTask: GanttTask = {
       id: `task-${Date.now()}`,
       name: `New Task`,
-      start: formatDateToISO(now),
-      end: formatDateToISO(addOneDay(fiveDaysLater)),
+      start: formatDateToISO(startDate),
+      end: formatDateToISO(endDate),
       progress: 0,
       custom_class: 'gantt-sprint-bar',
     };
@@ -182,12 +192,8 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
     const newTasks = [...committedTasks, newTask];
     setCommittedTasks(newTasks);
 
-    // scroll to one day before the new task starts
-    const scrollTarget = new Date(now);
-    scrollTarget.setDate(scrollTarget.getDate() - 1);
-
     // re-init Gantt
-    initGanttInstance(newTasks, formatDateToISO(scrollTarget), true);
+    initGanttInstance(newTasks, startDate, true);
   }
 
   /**
