@@ -83,9 +83,8 @@ function renderAppBar() {
             U
           </Avatar>
         </Toolbar>
+        <Divider />
       </AppBar>
-
-      <Divider />
     </>
   );
 }
@@ -114,7 +113,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Stack direction='row' sx={{ height: '100vh' }}>
 
                   {/* sidebar */}
-                  <Sidebar />
+                  <Box sx={{
+                    position: 'sticky',
+                    top: appbar_height,
+                    height: `calc(100vh - ${appbar_height}px)`,
+                    zIndex: (theme) => theme.zIndex.drawer,
+                  }}>
+                    <Sidebar />
+                  </Box>
 
                   <Divider orientation='vertical' flexItem />
 

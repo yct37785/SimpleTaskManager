@@ -159,7 +159,7 @@ export default function Sidebar() {
    * render
    ******************************************************************************************************************/
   return (
-    <Box sx={{ width: sidebar_width }} className={styles.sidebar}>
+    <Box sx={{ width: sidebar_width, height: '100%' }} className={styles.sidebar}>
       {/* header */}
       <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
 
