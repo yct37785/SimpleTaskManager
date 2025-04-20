@@ -4,10 +4,8 @@
  */
 .gantt-task-bar .bar {
   fill: #f7e6ff !important;
-  stroke: none !important;
   rx: 6;
   ry: 6;
-  transition: filter 0.2s ease, opacity 0.2s ease;
 }
 
 .gantt-task-bar .bar-progress {
@@ -25,25 +23,14 @@
  * animation highlight for newly added task
  */
  .gantt-task-bar.gantt-task-bar-new .bar {
-  stroke: orange !important;
-  stroke-width: 3px !important;
-  animation: taskBlink 1.5s ease-in-out 0s 3;
-  animation-fill-mode: forwards;
+  animation: fadeInOutIn 1.5s ease-in-out 0s 1;
 }
 
-@keyframes taskBlink {
-  0% {
-    stroke-opacity: 1;
-  }
-
-  50% {
-    stroke-opacity: 0.2;
-  }
-
-  100% {
-    stroke: var(--mui-palette-primary-dark, #125aa3);
-    stroke-opacity: 1;
-  }
+@keyframes fadeInOutIn {
+  0%   { opacity: 0.2; }
+  50%  { opacity: 1; }
+  75%  { opacity: 0.2; }
+  100% { opacity: 1; }
 }
 
 /**
