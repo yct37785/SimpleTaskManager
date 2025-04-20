@@ -30,7 +30,7 @@ function formatSprints(project: Project) {
     name: sprint.title,
     start: sprint.startDate.toString(),
     end: sprint.endDate.toString(),
-    progress: 20, // placeholder
+    progress: 70, // placeholder
     custom_class: 'gantt-task-bar',
   }));
 }
