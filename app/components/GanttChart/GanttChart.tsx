@@ -13,8 +13,8 @@ import { CalendarDate } from '@internationalized/date';
 // hooks
 import { useWindowHeight } from '@hooks/useWindowHeight';
 // utils
-import { disableHorizontalWheelScroll } from '@utils/UI';
 import { formatDateToISO, addDays, getDaysBetween } from '@utils/datetime';
+import { markDeadline, highlightLastTaskBar, injectCustomBehaviour } from './GanttChartUtils';
 // styles
 import { project_details_bar_height } from '@styles/dimens';
 import './frappe-gantt.css';
@@ -39,34 +39,6 @@ type Props = {
 };
 
 /**
- * injects a vertical deadline marker to Gantt chart
- */
-function markDeadline(gantt: any, containerEl: HTMLElement | null, deadline: CalendarDate) {
-  if (!gantt || !deadline || !gantt.dates || !containerEl) return;
-
-  // find index of date
-  const index = gantt.dates.findIndex((d: Date) =>
-    d.toISOString().split('T')[0] === deadline.toString()
-  );
-  if (index === -1) return;
-
-  // get actual SVG element
-  const svgEl = containerEl.querySelector('svg.gantt') as SVGSVGElement | null;
-  const svgHeight = svgEl?.getAttribute('height') ?? '372';
-
-  // red vertical line
-  const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-  line.setAttribute('x1', `${index * column_width}`);
-  line.setAttribute('y1', '0');
-  line.setAttribute('x2', `${index * column_width}`);
-  line.setAttribute('y2', svgHeight);
-  line.setAttribute('class', 'gantt-deadline-line');
-
-  // append to grid layer
-  gantt.layers.grid.appendChild(line);
-}
-
-/**
  * reusable Frappe Gantt chart component
  */
 export default function GanttChart({ title = 'Timeline', tasks, deadline, onCreateClick }: Props) {
@@ -84,10 +56,8 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
    * inject styles when state changes
    */
   function injectStyles() {
-    if (deadline && ganttInstance.current && ganttRef.current) {
-      requestAnimationFrame(() => {
-        markDeadline(ganttInstance.current, ganttRef.current, deadline);
-      });
+    if (deadline) {
+      markDeadline(ganttInstance.current, ganttRef.current, deadline, column_width);
     }
   }
 
@@ -145,20 +115,13 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
     injectStyles();
     
     // DOM manipulation
-    const container = ganttRef.current.querySelector('.gantt-container') as HTMLElement;
-    if (container) {
-      // manually do scroll
-      if (ganttInstance.current.dates && ganttInstance.current.dates.length > 0) {
-        container.scrollTo({ 
-          top: scrollToBottom ? container.scrollHeight : 0, 
-          left: column_width * (getDaysBetween(ganttInstance.current.dates[0], scrollTo)),
-          behavior: 'smooth'
-        });
-      }
-      // disable horizontal scrollwheel
-      const cleanupWheel = disableHorizontalWheelScroll(container);
-      return () => cleanupWheel();
-    }
+    injectCustomBehaviour(
+      ganttRef.current,
+      ganttInstance.current.dates,
+      column_width,
+      scrollTo,
+      scrollToBottom
+    );
   }
 
   /**
@@ -169,27 +132,6 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
     if (!windowHeight || !ganttRef.current || ganttInstance.current) return;
     initGanttInstance(committedTasks, new Date());
   }, [tasks, windowHeight, deadline]);
-
-  /**
-   * add a highlight to newly added task bar
-   */
-  function highlightLastTaskBar() {
-    const container = document.querySelector('.gantt-container');
-    if (!container) return;
-  
-    const bars = container.querySelectorAll<SVGRectElement>('.bar .gantt-task-bar');
-    if (bars.length === 0) return;
-  
-    const lastBar = bars[bars.length - 1];
-    if (!lastBar) return;
-  
-    lastBar.classList.add('gantt-task-bar-new');
-  
-    // auto-remove highlight after animation
-    lastBar.addEventListener('animationend', () => {
-      lastBar.classList.remove('gantt-task-bar-new');
-    }, { once: true });
-  }
   
   /**
    * add task
@@ -217,9 +159,7 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
     initGanttInstance(newTasks, startDate, true);
 
     // highlight new task bar
-    requestAnimationFrame(() => {
-      highlightLastTaskBar();
-    });
+    highlightLastTaskBar(ganttRef.current);
   }
 
   /**
