@@ -162,16 +162,6 @@ export default function Sidebar() {
     <Box sx={{ width: sidebar_width }} className={styles.sidebar}>
       {/* header */}
       <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
-        <Box sx={{ height: appbar_height }}>
-          <Link href='/' style={{ textDecoration: 'none' }}>
-            <Typography variant='h6' color='primary' gutterBottom
-              sx={{ fontWeight: 600, textAlign: 'left', mt: 1, ml: 2, cursor: 'pointer' }}>
-              TASK MANAGER
-            </Typography>
-          </Link>
-        </Box>
-
-        <Divider />
 
         {/* projects management */}
         <List>
