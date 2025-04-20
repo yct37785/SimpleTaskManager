@@ -171,6 +171,27 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
   }, [tasks, windowHeight, deadline]);
 
   /**
+   * add a highlight to newly added task bar
+   */
+  function highlightLastTaskBar() {
+    const container = document.querySelector('.gantt-container');
+    if (!container) return;
+  
+    const bars = container.querySelectorAll<SVGRectElement>('.bar .gantt-task-bar');
+    if (bars.length === 0) return;
+  
+    const lastBar = bars[bars.length - 1];
+    if (!lastBar) return;
+  
+    lastBar.classList.add('gantt-task-bar-new');
+  
+    // auto-remove highlight after animation
+    lastBar.addEventListener('animationend', () => {
+      lastBar.classList.remove('gantt-task-bar-new');
+    }, { once: true });
+  }
+  
+  /**
    * add task
    */
   function handleAddTask() {
@@ -186,7 +207,7 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
       start: formatDateToISO(startDate),
       end: formatDateToISO(endDate),
       progress: 0,
-      custom_class: 'gantt-task-bar-new',
+      custom_class: 'gantt-task-bar',
     };
 
     const newTasks = [...committedTasks, newTask];
@@ -194,6 +215,11 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
 
     // re-init Gantt
     initGanttInstance(newTasks, startDate, true);
+
+    // highlight new task bar
+    requestAnimationFrame(() => {
+      highlightLastTaskBar();
+    });
   }
 
   /**
