@@ -16,6 +16,7 @@ import { WorkspacesProvider } from '@globals/WorkspacesContext';
 // tyles
 import { appbar_height } from '@styles/dimens';
 import '@styles/globals.css';
+import appBarStyles from '@styles/AppBar.module.css';
 
 /********************************************************************************************************************
  * app bar component
@@ -46,36 +47,15 @@ function renderAppBar() {
             </Typography>
           </Link>
 
-          {/* Search input */}
+          {/* input search bar button */}
           <Box
-            sx={{
-              position: 'relative',
-              borderRadius: 1,
-              backgroundColor: (theme) => alpha(theme.palette.action.selected, 0.1),
-              '&:hover': {
-                backgroundColor: (theme) => alpha(theme.palette.action.selected, 0.2),
-              },
-              width: '100%',
-              maxWidth: 300,
-              mx: 2,
-            }}
+            onClick={() => { }}
+            role='button'
+            tabIndex={0}
+            className={appBarStyles.searchButton}
           >
-            <Box
-              sx={{
-                position: 'absolute',
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                pl: 1,
-                color: 'text.secondary',
-              }}
-            >
-              <SearchIcon fontSize='small' />
-            </Box>
-            <InputBase
-              placeholder='Search…'
-              sx={{ color: 'inherit', pl: 4, pr: 1, py: 0.5, width: '100%', fontSize: '0.875rem' }}
-            />
+            <SearchIcon fontSize='small' sx={{ mr: 1, color: 'action.active' }} />
+            Search…
           </Box>
 
           {/* user */}

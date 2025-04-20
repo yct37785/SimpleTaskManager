@@ -1,0 +1,25 @@
+/**
+ * search input btn
+ */
+ .searchButton {
+  display: flex;
+  align-items: center;
+  padding: 6px 16px;
+  width: 100%;
+  max-width: 420px;
+  border-radius: 12px;
+  background-color: rgba(0, 0, 0, 0.05); /* fallback */
+  border: 1px solid var(--mui-palette-divider);
+  transition: background-color 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  color: var(--mui-palette-text-secondary);
+  font-size: 0.875rem;
+}
+
+.searchButton:hover {
+  background-color: rgba(0, 0, 0, 0.1); /* fallback for hover */
+}
+
+.searchButton:focus {
+  outline: 2px solid var(--mui-palette-primary-light);
+}
