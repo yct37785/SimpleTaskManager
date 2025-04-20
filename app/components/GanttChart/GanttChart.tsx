@@ -154,7 +154,7 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
     setCommittedTasks(newTasks);
 
     // re-init Gantt
-    initGanttInstance(newTasks, startDate, true);
+    initGanttInstance(newTasks, addDays(startDate, -1), true);
 
     highlightLastTaskBar(ganttRef.current);
   }

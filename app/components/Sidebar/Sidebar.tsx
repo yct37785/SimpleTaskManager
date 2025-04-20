@@ -176,10 +176,6 @@ export default function Sidebar() {
         {/* projects management */}
         <List>
           <ListItemButton>
-            <ListItemIcon><CalendarIcon /></ListItemIcon>
-            <ListItemText primary='Timeline' />
-          </ListItemButton>
-          <ListItemButton>
             <ListItemIcon><PieCharIcon /></ListItemIcon>
             <ListItemText primary='Metrics' />
           </ListItemButton>
