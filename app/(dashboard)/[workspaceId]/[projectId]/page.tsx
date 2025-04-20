@@ -108,7 +108,7 @@ export default function ProjectPage() {
     // const description = fallbackDesc;
 
     return (
-      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', p: 3, minHeight: project_details_bar_height }}>
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', p: 2, minHeight: project_details_bar_height }}>
         <Box sx={{ flex: 1 }}>
           <Typography variant='h5' fontWeight={600}>
             {`${workspace.title} - ${originalProject.title}`}
