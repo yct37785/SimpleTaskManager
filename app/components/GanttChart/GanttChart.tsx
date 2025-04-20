@@ -16,7 +16,7 @@ import { useWindowHeight } from '@hooks/useWindowHeight';
 import { formatDateToISO, addDays } from '@utils/datetime';
 import { markDeadline, highlightLastTaskBar, injectCustomBehaviour } from './GanttChartUtils';
 // styles
-import { project_details_bar_height } from '@styles/dimens';
+import { project_details_bar_height, appbar_height } from '@styles/dimens';
 import './frappe-gantt.css';
 import './frappe-gantt-custom.css';
 const chart_top_bar_height = 45;
@@ -40,13 +40,14 @@ type Props = {
   title?: string;
   tasks: GanttTask[];
   deadline?: CalendarDate;
+  heightOffset?: number;
   onCreateClick: () => void;
 };
 
 /********************************************************************************************************************
  * reusable Frappe Gantt chart component
  ********************************************************************************************************************/
-export default function GanttChart({ title = 'Timeline', tasks, deadline, onCreateClick }: Props) {
+export default function GanttChart({ title = 'Timeline', tasks, deadline, heightOffset = 0, onCreateClick }: Props) {
   const ganttRef = useRef<HTMLDivElement>(null);
   const ganttInstance = useRef<any>(null);
 
@@ -90,7 +91,7 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
       lower_header_height,
       bar_height: 40,
       padding: 16,
-      container_height: windowHeight - project_details_bar_height - chart_top_bar_height - upper_header_height - lower_header_height + 40,
+      container_height: windowHeight - chart_top_bar_height - upper_header_height - lower_header_height - heightOffset + 40,
       lines: 'both',
       popup_on: 'click',
       view_mode: 'Day',

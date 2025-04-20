@@ -13,9 +13,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 // our components
 import Sidebar from '@components/Sidebar/Sidebar';
 import { WorkspacesProvider } from '@globals/WorkspacesContext';
-// global styles
+// tyles
+import { appbar_height } from '@styles/dimens';
 import '@styles/globals.css';
-const appBarHeight = 48;
 
 /********************************************************************************************************************
  * app bar component
@@ -25,7 +25,7 @@ function renderAppBar() {
     <>
       <AppBar position='sticky' color='default'
         sx={{
-          height: appBarHeight,
+          height: appbar_height,
           justifyContent: 'center',
           bgcolor: 'background.paper',
           boxShadow: 'none',
