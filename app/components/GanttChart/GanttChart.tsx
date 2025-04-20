@@ -113,9 +113,9 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
     if (windowHeight && ganttRef.current) {
       // trigger init Gantt chart once at start
       // trigger on windowHeight change
-      initGanttInstance(committedTasks, new Date());
+      initGanttInstance(tasks, new Date());
     }
-  }, [committedTasks, windowHeight]);
+  }, [windowHeight]);
 
   /******************************************************************************************************************
    * handle task manipulations
