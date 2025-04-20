@@ -22,6 +22,9 @@ import './frappe-gantt-custom.css';
 const chart_top_bar_height = 45;
 const column_width = 45;
 
+/********************************************************************************************************************
+ * props
+ ********************************************************************************************************************/
 export type GanttTask = {
   id: string;
   name: string;
@@ -38,9 +41,9 @@ type Props = {
   onCreateClick: () => void;
 };
 
-/**
+/********************************************************************************************************************
  * reusable Frappe Gantt chart component
- */
+ ********************************************************************************************************************/
 export default function GanttChart({ title = 'Timeline', tasks, deadline, onCreateClick }: Props) {
   const ganttRef = useRef<HTMLDivElement>(null);
   const ganttInstance = useRef<any>(null);
@@ -52,9 +55,9 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
   const windowHeight = useWindowHeight();
   const theme = useTheme();
 
-  /**
-   * inject styles when state changes
-   */
+  /******************************************************************************************************************
+   * inject styles
+   ******************************************************************************************************************/
   function injectStyles() {
     if (deadline) {
       markDeadline(ganttInstance.current, ganttRef.current, deadline, column_width);
@@ -65,29 +68,11 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
     injectStyles();
   }, [editMode, deadline]);
 
-  /**
-   * hold updated tasks when their date values are edited
-   */
-  function handleDateChange(task: GanttTask, start: Date, end: Date) {
-    const updatedTask: GanttTask = {
-      ...task,
-      start: formatDateToISO(start),
-      end: formatDateToISO(addDays(end, 1)), // +1 day as end is exclusive
-    };
-
-    setUpdatedTasks(prev => {
-      const updated = new Map(prev);
-      updated.set(task.id, updatedTask);
-      return updated;
-    });
-  }
-
-  /**
-   * init Gantt instance
-   */
+  /******************************************************************************************************************
+   * Gantt instance
+   ******************************************************************************************************************/
   function initGanttInstance(taskList: GanttTask[], scrollTo: Date, scrollToBottom: boolean = false) {
     if (!ganttRef.current) return;
-
     // clear existing chart
     ganttRef.current.innerHTML = '';
 
@@ -111,7 +96,6 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
       on_date_change: (task: GanttTask, start: Date, end: Date) => handleDateChange(task, start, end),
     });
     
-    // inject styles
     injectStyles();
     
     // DOM manipulation
@@ -124,18 +108,29 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
     );
   }
 
-  /**
-   * init Gantt chart once
-   */
+  // trigger init Gantt chart once
   useEffect(() => {
-    // only trigger init once
     if (!windowHeight || !ganttRef.current || ganttInstance.current) return;
     initGanttInstance(committedTasks, new Date());
-  }, [tasks, windowHeight, deadline]);
-  
-  /**
-   * add task
-   */
+  }, [committedTasks, windowHeight]);
+
+  /******************************************************************************************************************
+   * handle task manipulations
+   ******************************************************************************************************************/
+  function handleDateChange(task: GanttTask, start: Date, end: Date) {
+    const updatedTask: GanttTask = {
+      ...task,
+      start: formatDateToISO(start),
+      end: formatDateToISO(addDays(end, 1)), // +1 day as end is exclusive
+    };
+
+    setUpdatedTasks(prev => {
+      const updated = new Map(prev);
+      updated.set(task.id, updatedTask);
+      return updated;
+    });
+  }
+
   function handleAddTask() {
     const now = new Date();
     const startDate = new Date();
@@ -158,22 +153,18 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
     // re-init Gantt
     initGanttInstance(newTasks, startDate, true);
 
-    // highlight new task bar
     highlightLastTaskBar(ganttRef.current);
   }
 
-  /**
-   * toggle readonly for Gantt chart
-   */
+  /******************************************************************************************************************
+   * UI
+   ******************************************************************************************************************/
   useEffect(() => {
     if (ganttInstance.current) {
       ganttInstance.current.update_options({ readonly: !editMode });
     }
   }, [editMode]);
 
-  /**
-   * once edits are confirmed
-   */
   function handleConfirmEdits() {
     if (!ganttInstance.current) return;
 
@@ -186,14 +177,14 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
     setEditMode(false);
   }
 
-  /**
-   * edits to be discarded
-   */
   function handleCancelEdits() {
     setUpdatedTasks(new Map());
     setEditMode(false);
   }
 
+  /******************************************************************************************************************
+   * render
+   ******************************************************************************************************************/
   return (
     <Box sx={{ px: 2, pb: 2 }}>
       <Box sx={{ border: `1px solid ${theme.palette.divider}`, borderRadius: 2, padding: 2 }}>

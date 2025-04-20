@@ -10,9 +10,9 @@ import { getDaysBetween } from '@utils/datetime';
 import './frappe-gantt.css';
 import './frappe-gantt-custom.css';
 
-/**
+/********************************************************************************************************************
  * injects a vertical deadline marker to Gantt chart
- */
+ ********************************************************************************************************************/
 export function markDeadline(gantt: any, containerEl: HTMLElement | null, deadline: CalendarDate, column_width: number) {
   requestAnimationFrame(() => {
     if (!gantt || !gantt.dates || !containerEl || !deadline) return;
@@ -37,9 +37,9 @@ export function markDeadline(gantt: any, containerEl: HTMLElement | null, deadli
   });
 }
 
-/**
+/********************************************************************************************************************
  * add a highlight to newly added task bar
- */
+ ********************************************************************************************************************/
 export function highlightLastTaskBar(containerEl: HTMLElement | null) {
   requestAnimationFrame(() => {
     if (!containerEl) return;
@@ -62,9 +62,9 @@ export function highlightLastTaskBar(containerEl: HTMLElement | null) {
   });
 }
 
-/**
+/********************************************************************************************************************
  * inject custom behaviour to DOM
- */
+ ********************************************************************************************************************/
 export function injectCustomBehaviour(containerEl: HTMLElement | null, ganttDates: Date[] | null,
   column_width: number, scrollTo: Date, scrollToBottom: boolean
 ) {

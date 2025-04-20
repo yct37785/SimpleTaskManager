@@ -21,9 +21,9 @@ import styles from './ProjectPage.module.css';
 
 const fallbackDesc = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
 
-/**
+/********************************************************************************************************************
  * format sprints into Frappe Gantt-compatible structure
- */
+ ********************************************************************************************************************/
 function formatSprints(project: Project) {
   return project.sprints.map((sprint, index) => ({
     id: `${index}`,
@@ -35,9 +35,9 @@ function formatSprints(project: Project) {
   }));
 }
 
-/**
+/********************************************************************************************************************
  * project dashboard
- */
+ ********************************************************************************************************************/
 export default function ProjectPage() {
   const { workspaceId, projectId } = useParams() as { workspaceId: string, projectId: string };
   const { workspaces } = useWorkspacesManager();
@@ -49,7 +49,9 @@ export default function ProjectPage() {
   const [showFullDesc, setShowFullDesc] = useState(false);
   const [projectData, setProjectData] = useState<Project | null>(null);
 
-  // inject demo sprints into local state
+  /******************************************************************************************************************
+   * inject demo sprints into local state
+   ******************************************************************************************************************/
   useEffect(() => {
     if (workspace && originalProject) {
       document.title = `${workspace.title} - ${originalProject.title} | Task Manager`;
@@ -70,6 +72,9 @@ export default function ProjectPage() {
     return <div>Invalid workspace or project</div>;
   }
 
+  /******************************************************************************************************************
+   * project details
+   ******************************************************************************************************************/
   const projectDesc = (description: string) => (
     <Box>
       <Typography
@@ -130,6 +135,9 @@ export default function ProjectPage() {
     );
   };
 
+  /******************************************************************************************************************
+   * render
+   ******************************************************************************************************************/
   return (
     <Box>
       {projectDetailsBar()}
