@@ -13,13 +13,15 @@ import { CalendarDate } from '@internationalized/date';
 // hooks
 import { useWindowHeight } from '@hooks/useWindowHeight';
 // utils
-import { formatDateToISO, addDays, getDaysBetween } from '@utils/datetime';
+import { formatDateToISO, addDays } from '@utils/datetime';
 import { markDeadline, highlightLastTaskBar, injectCustomBehaviour } from './GanttChartUtils';
 // styles
 import { project_details_bar_height } from '@styles/dimens';
 import './frappe-gantt.css';
 import './frappe-gantt-custom.css';
 const chart_top_bar_height = 45;
+const upper_header_height = 40;
+const lower_header_height = 30;
 const column_width = 45;
 
 /********************************************************************************************************************
@@ -84,11 +86,11 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
       infinite_padding: true,
       move_dependencies: false,
       view_mode_select: false,
-      upper_header_height: 45,
-      lower_header_height: 30,
+      upper_header_height,
+      lower_header_height,
       bar_height: 40,
       padding: 16,
-      container_height: windowHeight - project_details_bar_height - chart_top_bar_height - 100,
+      container_height: windowHeight - project_details_bar_height - chart_top_bar_height - upper_header_height - lower_header_height + 24,
       lines: 'both',
       popup_on: 'click',
       view_mode: 'Day',
@@ -190,12 +192,12 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
    ******************************************************************************************************************/
   return (
     <Box sx={{ px: 2, pb: 2 }}>
-      <Box sx={{ border: `1px solid ${theme.palette.divider}`, borderRadius: 2, padding: 2 }}>
+      <Box sx={{ border: `1px solid ${theme.palette.divider}`, borderRadius: 2 }}>
 
         {/* top bar */}
-        <Stack direction='row' justifyContent='space-between' alignItems='center' sx={{ height: chart_top_bar_height }}>
+        <Stack direction='row' justifyContent='space-between' alignItems='center' sx={{ height: chart_top_bar_height, px: 2 }}>
           <Stack direction='row' alignItems='center'>
-            <Typography variant='h6' fontWeight={600}>
+            <Typography variant='subtitle1' fontWeight={600}>
               {title}
             </Typography>
             <Tooltip title='Create'>
@@ -225,10 +227,12 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
           )}
         </Stack>
 
-        <Divider sx={{ mt: 1, mb: 2 }} />
+        <Divider />
 
         {/* Gantt chart */}
-        <div ref={ganttRef} />
+        <Box sx={{ px: 2, pb: 1 }}>
+          <div ref={ganttRef} />
+        </Box>
       </Box>
     </Box>
   );
