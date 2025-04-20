@@ -16,7 +16,6 @@ import { useWindowHeight } from '@hooks/useWindowHeight';
 import { formatDateToISO, addDays } from '@utils/datetime';
 import { markDeadline, highlightLastTaskBar, injectCustomBehaviour } from './GanttChartUtils';
 // styles
-import { project_details_bar_height, appbar_height } from '@styles/dimens';
 import './frappe-gantt.css';
 import './frappe-gantt-custom.css';
 const chart_top_bar_height = 45;
@@ -52,7 +51,7 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, height
   const ganttInstance = useRef<any>(null);
 
   const [editMode, setEditMode] = useState(false);
-  const [committedTasks, setCommittedTasks] = useState<GanttTask[]>(tasks);
+  const [committedTasks, setCommittedTasks] = useState<GanttTask[]>(tasks); // TODO: remove, parent track task persistence
   const [updatedTasks, setUpdatedTasks] = useState<Map<string, GanttTask>>(new Map());
 
   const windowHeight = useWindowHeight();
@@ -116,7 +115,7 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, height
     if (windowHeight && ganttRef.current) {
       // trigger init Gantt chart once at start
       // trigger on windowHeight change
-      initGanttInstance(tasks, new Date());
+      initGanttInstance(committedTasks, new Date());
     }
   }, [windowHeight]);
 
