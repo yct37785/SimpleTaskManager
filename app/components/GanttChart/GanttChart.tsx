@@ -75,7 +75,8 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
     if (!ganttRef.current) return;
     // clear existing chart
     ganttRef.current.innerHTML = '';
-
+    console.log("Gantt init");
+    
     // create Gantt chart
     ganttInstance.current = new Gantt(ganttRef.current, taskList, {
       readonly: !editMode,
@@ -108,10 +109,12 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, onCrea
     );
   }
 
-  // trigger init Gantt chart once
   useEffect(() => {
-    if (!windowHeight || !ganttRef.current || ganttInstance.current) return;
-    initGanttInstance(committedTasks, new Date());
+    if (windowHeight && ganttRef.current) {
+      // trigger init Gantt chart once at start
+      // trigger on windowHeight change
+      initGanttInstance(committedTasks, new Date());
+    }
   }, [committedTasks, windowHeight]);
 
   /******************************************************************************************************************
