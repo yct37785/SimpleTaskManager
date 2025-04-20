@@ -10,6 +10,9 @@ import { Workspace, Project, Sprint, Column, Task } from '@schemas';
 // sample data
 import sampleWorkspaces from './sampleData';
 
+/********************************************************************************************************************
+ * types
+ ********************************************************************************************************************/
 type WorkspacesContextType = {
   workspaces: Record<string, Workspace>;
   setWorkspaces: React.Dispatch<React.SetStateAction<Record<string, Workspace>>>;
@@ -23,9 +26,9 @@ type WorkspacesContextType = {
 
 const WorkspacesContext = createContext<WorkspacesContextType | undefined>(undefined);
 
-/**
- * hook to use the WorkspacesContext
- */
+/********************************************************************************************************************
+ * context hook
+ ********************************************************************************************************************/
 export const useWorkspacesManager = () => {
   const context = useContext(WorkspacesContext);
   if (!context) {
@@ -34,15 +37,15 @@ export const useWorkspacesManager = () => {
   return context;
 };
 
-/**
- * provides global state for all workspaces, projects, sprints, columns, and tasks
- */
+/********************************************************************************************************************
+ * provider
+ ********************************************************************************************************************/
 export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
   const [workspaces, setWorkspaces] = useState<Record<string, Workspace>>(sampleWorkspaces);
 
-  /**
+  /******************************************************************************************************************
    * create a new workspace
-   */
+   ******************************************************************************************************************/
   const createWorkspace = (title: string) => {
     const id = uuidv4();
     const newWorkspace: Workspace = {
@@ -53,9 +56,9 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
     setWorkspaces((prev) => ({ ...prev, [id]: newWorkspace }));
   };
 
-  /**
+  /******************************************************************************************************************
    * create a project under a workspace with defined bounds
-   */
+   ******************************************************************************************************************/
   const createProject = (workspaceId: string, title: string, desc: string, startDate: CalendarDate, endDate: CalendarDate) => {
     const projectId = uuidv4();
     const newProject: Project = {
@@ -79,10 +82,10 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
     }));
   };
 
-  /**
+  /******************************************************************************************************************
    * create a sprint under a project with default columns
    * - returns false if invalid date range or overlapping
-   */
+   ******************************************************************************************************************/
   const createSprint = (
     workspaceId: string,
     projectId: string,
@@ -146,9 +149,9 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
     return true;
   };
 
-  /**
+  /******************************************************************************************************************
    * add a task to a column inside a sprint
-   */
+   ******************************************************************************************************************/
   const addTask = (
     workspaceId: string,
     projectId: string,
@@ -190,9 +193,9 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  /**
+  /******************************************************************************************************************
    * move a task from one column to another (or reorder within same column)
-   */
+   ******************************************************************************************************************/
   const moveTask = (
     workspaceId: string,
     projectId: string,
@@ -231,6 +234,9 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  /******************************************************************************************************************
+   * render
+   ******************************************************************************************************************/
   return (
     <WorkspacesContext.Provider
       value={{

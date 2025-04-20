@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 
+/********************************************************************************************************************
+ * retrieve dynamic height of window
+ ********************************************************************************************************************/
 export function useWindowHeight(): number {
   const [height, setHeight] = useState(0);
 

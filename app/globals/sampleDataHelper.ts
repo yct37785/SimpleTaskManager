@@ -5,17 +5,16 @@ import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date';
 // schemas
 import { Workspace, Project, Sprint, Column, Task } from '@schemas';
 
-/**
- * add days to a CalendarDate
- */
+/********************************************************************************************************************
+ * utils
+ ********************************************************************************************************************/
 function addDays(date: CalendarDate, days: number): CalendarDate {
   return date.add({ days });
 }
 
-
-/**
+/********************************************************************************************************************
  * generate column for sprint
- */
+ ********************************************************************************************************************/
 function genColumn(title: string, isTodo = false): Column {
   return {
     id: uuidv4(),
@@ -25,9 +24,9 @@ function genColumn(title: string, isTodo = false): Column {
   };
 }
 
-/**
+/********************************************************************************************************************
  * generate a sprint
- */
+ ********************************************************************************************************************/
 export function genSprint(title: string, startDate: CalendarDate, endDate: CalendarDate): Sprint {
   return {
     id: uuidv4(),
@@ -43,9 +42,9 @@ export function genSprint(title: string, startDate: CalendarDate, endDate: Calen
   };
 }
 
-/**
+/********************************************************************************************************************
  * generate a project
- */
+ ********************************************************************************************************************/
 export function genProject(title: string, endDate: CalendarDate): Project {
   const projectStart = today(getLocalTimeZone());
   const projectEnd = endDate;
@@ -84,9 +83,9 @@ export function genProject(title: string, endDate: CalendarDate): Project {
   };
 }
 
-/**
+/********************************************************************************************************************
  * generate a workspace with randomized projects
- */
+ ********************************************************************************************************************/
 export function genWorkspace(title: string, id: string): Workspace {
   const workspace: Workspace = {
     id: id,

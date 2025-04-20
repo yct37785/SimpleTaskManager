@@ -1,8 +1,8 @@
 import { CalendarDate } from '@internationalized/date';
 
-/**
+/********************************************************************************************************************
  * conversion from CalendarDate to number of days since year 0
- */
+ ********************************************************************************************************************/
 function calendarDateToEpochDays(date: CalendarDate): number {
   const y = date.year;
   const m = date.month;
@@ -12,9 +12,9 @@ function calendarDateToEpochDays(date: CalendarDate): number {
   return y * 365 + Math.floor((y + 3) / 4) - Math.floor((y + 99) / 100) + Math.floor((y + 399) / 400) + (m - 1) * 30 + d;
 }
 
-/**
+/********************************************************************************************************************
  * get duration of 'from' - 'to' in months/weeks/days
- */
+ ********************************************************************************************************************/
 export function getRelativeTime(from: CalendarDate, to: CalendarDate): string {
   const past = to.compare(from) < 0;
 
@@ -38,9 +38,9 @@ export function getRelativeTime(from: CalendarDate, to: CalendarDate): string {
   return past ? `${result} ago` : `in ${result}`;
 }
 
-/**
+/********************************************************************************************************************
  * convert Date to CalendarDate
- */
+ ********************************************************************************************************************/
 export function dateToCalendarDate(from: Date): CalendarDate {
   return new CalendarDate(
     from.getFullYear(),
@@ -49,26 +49,26 @@ export function dateToCalendarDate(from: Date): CalendarDate {
   );
 }
 
-/**
+/********************************************************************************************************************
  * format Date to YYYY-MM-DD in local time
- */
+ ********************************************************************************************************************/
 export function formatDateToISO(date: Date): string {
   return date.toLocaleDateString('sv-SE'); // 'sv-SE' gives ISO-like format: YYYY-MM-DD
 }
 
-/**
+/********************************************************************************************************************
  * add given number of days to a given Date
- */
+ ********************************************************************************************************************/
 export function addDays(date: Date, days: number): Date {
   const result = new Date(date);
   result.setDate(result.getDate() + days);
   return result;
 }
 
-/**
+/********************************************************************************************************************
  * returns the number of days between two dates
  * e.g. (May 2 - May 4) returns 2
- */
+ ********************************************************************************************************************/
 export function getDaysBetween(start: Date, end: Date): number {
   const startTime = start.setHours(0, 0, 0, 0);
   const endTime = end.setHours(0, 0, 0, 0);

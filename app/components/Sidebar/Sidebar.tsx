@@ -25,9 +25,9 @@ import { dateToCalendarDate } from '@utils/datetime';
 import { sidebar_width, appbar_height, scrollbar_allowance } from '@/app/styles/dimens';
 import styles from './sidebar.module.css';
 
-/**
+/********************************************************************************************************************
  * text input reusable component
- */
+ ********************************************************************************************************************/
 function InlineTextInput({ placeholder, value, setValue, onSubmit }: {
   placeholder: string;
   value: string;
@@ -49,9 +49,9 @@ function InlineTextInput({ placeholder, value, setValue, onSubmit }: {
   );
 };
 
-/**
+/********************************************************************************************************************
  * render a single workspace row
- */
+ ********************************************************************************************************************/
 function WorkspaceListItem({ workspace, isOpen, onClickCreateProject, toggleOpen }: {
   workspace: Workspace;
   isOpen: boolean;
@@ -72,9 +72,9 @@ function WorkspaceListItem({ workspace, isOpen, onClickCreateProject, toggleOpen
   );
 };
 
-/**
+/********************************************************************************************************************
  * render all projects inside a workspace
- */
+ ********************************************************************************************************************/
 function ProjectsList({ workspace, isOpen }: {
   workspace: Workspace;
   isOpen: boolean;
@@ -104,9 +104,9 @@ function ProjectsList({ workspace, isOpen }: {
   );
 }
 
-/**
+/********************************************************************************************************************
  * sidebar component
- */
+ ********************************************************************************************************************/
 export default function Sidebar() {
   // context
   const { workspaces, createWorkspace, createProject } = useWorkspacesManager();
@@ -120,9 +120,9 @@ export default function Sidebar() {
   // workspace open/close tracking
   const [openWorkspaces, setOpenWorkspaces] = useState<Record<string, boolean>>({});
 
-  /**
-   * create a workspace from name input
-   */
+  /******************************************************************************************************************
+   * handle workspaces
+   ******************************************************************************************************************/
   const handleCreateWorkspace = () => {
     const title = workspaceTitle.trim();
     if (title) {
@@ -132,9 +132,9 @@ export default function Sidebar() {
     setWorkspaceInputVisible(false);
   };
   
-  /**
-   * launch project creation dialog
-   */
+  /******************************************************************************************************************
+   * handle projects
+   ******************************************************************************************************************/
   const onClickCreateProject = (e: React.MouseEvent, workspaceId: string) => {
     e.stopPropagation();
     setOpenWorkspaces((prev) => ({ ...prev, [workspaceId]: true }));
@@ -142,22 +142,22 @@ export default function Sidebar() {
     setActiveWorkspace(workspaceId);
   };
 
-  /**
-   * create project
-   */
   const handleCreateProject = (title: string, desc: string, endDate: Date) => {
     if (activeWorkspace && title) {
       createProject(activeWorkspace, title, desc, dateToCalendarDate(new Date()), dateToCalendarDate(endDate));
     }
   };
 
-  /**
-   * expand workspace
-   */
+  /******************************************************************************************************************
+   * UI
+   ******************************************************************************************************************/
   const toggleOpen = (id: string) => {
     setOpenWorkspaces((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
+  /******************************************************************************************************************
+   * render
+   ******************************************************************************************************************/
   return (
     <Box sx={{ width: sidebar_width }} className={styles.sidebar}>
       {/* header */}

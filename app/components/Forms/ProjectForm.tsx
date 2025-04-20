@@ -11,6 +11,9 @@ import dayjs, { Dayjs } from 'dayjs';
 // schemas
 import { Workspace, Project } from '@schemas';
 
+/********************************************************************************************************************
+ * types
+ ********************************************************************************************************************/
 type Props = {
   workspace: Workspace;
   projectDialogOpen: boolean;
@@ -18,14 +21,17 @@ type Props = {
   closeProjectDialog: () => void;
 };
 
-/**
- * form
- */
+/********************************************************************************************************************
+ * project creation form
+ ********************************************************************************************************************/
 export default function ProjectForm({ workspace, projectDialogOpen, handleCreateProject, closeProjectDialog }: Props) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState<Dayjs | null>(dayjs());
 
+  /******************************************************************************************************************
+   * submit
+   ******************************************************************************************************************/
   const handleSubmit = () => {
     if (!title.trim() || !description.trim() || !dueDate) return;
 
@@ -36,6 +42,9 @@ export default function ProjectForm({ workspace, projectDialogOpen, handleCreate
     closeProjectDialog();
   };
 
+  /******************************************************************************************************************
+   * render
+   ******************************************************************************************************************/
   return (
     <BaseFormDialog
       open={projectDialogOpen}

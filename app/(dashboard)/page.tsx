@@ -8,9 +8,9 @@ import { Box, Typography } from '@mui/material';
 // our components
 import { useWorkspacesManager } from '@globals/WorkspacesContext';
 
-/**
+/********************************************************************************************************************
  * home dashboard
- */
+ ********************************************************************************************************************/
 export default function Home() {
   const { workspaces } = useWorkspacesManager();
 
@@ -22,6 +22,9 @@ export default function Home() {
     document.title = 'Task Manager';
   }, []);
 
+  /******************************************************************************************************************
+   * render
+   ******************************************************************************************************************/
   return (
     <main style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
 

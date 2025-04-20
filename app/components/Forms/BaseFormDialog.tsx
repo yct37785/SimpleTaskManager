@@ -4,17 +4,9 @@ import React, { ReactNode } from 'react';
 // MUI
 import { Dialog, DialogTitle, DialogActions, DialogContent, Button, Stack, TextField, TextFieldProps } from '@mui/material';
 
-/**
- * form optimized input
- */
-export function TextInput(props: TextFieldProps) {
-  return (
-    <TextField fullWidth multiline variant='outlined'
-      {...props}
-    />
-  );
-};
-
+/********************************************************************************************************************
+ * types
+ ********************************************************************************************************************/
 type Props = {
   open: boolean;
   onClose: () => void;
@@ -25,9 +17,20 @@ type Props = {
   children: ReactNode;
 };
 
-/**
+/********************************************************************************************************************
+ * UI components
+ ********************************************************************************************************************/
+export function TextInput(props: TextFieldProps) {
+  return (
+    <TextField fullWidth multiline variant='outlined'
+      {...props}
+    />
+  );
+};
+
+/********************************************************************************************************************
  * form dialog base component
- */
+ ********************************************************************************************************************/
 export default function BaseFormDialog({
   open,
   onClose,

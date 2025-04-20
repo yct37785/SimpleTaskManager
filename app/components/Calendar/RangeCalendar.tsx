@@ -13,6 +13,9 @@ import CalendarHeader from './CalendarHeader';
 import CalendarGrid from './CalendarGrid';
 import { HighlightRange } from './CalendarCell';
 
+/********************************************************************************************************************
+ * types
+ ********************************************************************************************************************/
 type Props = {
   cellSize?: number;
   dayOfWeekFontSize?: string;
@@ -20,9 +23,9 @@ type Props = {
   highlightRanges?: HighlightRange[];
 };
 
-/**
+/********************************************************************************************************************
  * range calendar component
- */
+ ********************************************************************************************************************/
 export default function RangeCalendar({
   cellSize = 40,
   dayOfWeekFontSize = '1.2rem',
@@ -47,6 +50,9 @@ export default function RangeCalendar({
     title
   } = useRangeCalendar({ minValue: today(getLocalTimeZone()) }, state, ref);
 
+  /******************************************************************************************************************
+   * render
+   ******************************************************************************************************************/
   return (
     <Box {...calendarProps} ref={ref} sx={{ width: 'fit-content', maxWidth: '100%' }}>
       {/* header */}

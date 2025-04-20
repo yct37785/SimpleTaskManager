@@ -13,6 +13,9 @@ import CalendarHeader from './CalendarHeader';
 import CalendarGrid from './CalendarGrid';
 import { HighlightRange } from './CalendarCell';
 
+/********************************************************************************************************************
+ * types
+ ********************************************************************************************************************/
 type Props = {
   cellSize?: number;
   dayOfWeekFontSize?: string;
@@ -20,9 +23,9 @@ type Props = {
   highlightRanges?: HighlightRange[];
 };
 
-/**
+/********************************************************************************************************************
  * calendar date picker component
- */
+ ********************************************************************************************************************/
 export default function CalendarPicker({
   cellSize = 40,
   dayOfWeekFontSize = '1.2rem',
@@ -46,6 +49,9 @@ export default function CalendarPicker({
     title
   } = useCalendar({ minValue: today(getLocalTimeZone()) }, state);
 
+  /******************************************************************************************************************
+   * render
+   ******************************************************************************************************************/
   return (
     <Box {...calendarProps} sx={{ width: 'fit-content', maxWidth: '100%' }}>
       {/* header */}

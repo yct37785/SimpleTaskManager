@@ -1,4 +1,3 @@
-// dimensions
 export const sidebar_width = 280;
 export const scrollbar_allowance = 16;
 export const appbar_height = 48;

@@ -17,21 +17,27 @@ import { Task, Label } from '@schemas';
 // utils
 import { dateToCalendarDate } from '@utils/datetime';
 
+/********************************************************************************************************************
+ * types
+ ********************************************************************************************************************/
 type Props = {
   openColumn: string;
   setOpenColumn: (id: string) => void;
   addTask: (task: Task, columnId: string) => void;
 };
 
-/**
- * form
- */
+/********************************************************************************************************************
+ * task creation form
+ ********************************************************************************************************************/
 export default function TaskForm({ openColumn, setOpenColumn, addTask }: Props) {
   const [title, setTitle] = useState('');
   const [desc, setDesc] = useState('');
   const [dueDate, setDueDate] = useState<Dayjs | null>(dayjs());
   const [labels, setLabels] = useState<Label[]>([]);
 
+  /******************************************************************************************************************
+   * submit
+   ******************************************************************************************************************/
   const handleSubmit = () => {
     if (!title.trim() || !desc.trim() || !dueDate) return;
 
@@ -53,6 +59,9 @@ export default function TaskForm({ openColumn, setOpenColumn, addTask }: Props) 
     setLabels([]);
   };
 
+  /******************************************************************************************************************
+   * render
+   ******************************************************************************************************************/
   return (
     <BaseFormDialog
       open={openColumn !== ''}

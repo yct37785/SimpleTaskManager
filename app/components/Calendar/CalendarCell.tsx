@@ -9,9 +9,9 @@ import { CalendarDate, isSameDay, isSameMonth, getDayOfWeek, getLocalTimeZone } 
 // styles
 import styles from './calendar.module.css';
 
-/**
- * define a range to highlight
- */
+/********************************************************************************************************************
+ * types
+ ********************************************************************************************************************/
 export type HighlightRange = {
   start: Date;
   end: Date;
@@ -27,9 +27,9 @@ type Props<T extends CalendarState | RangeCalendarState> = {
   highlightRanges?: HighlightRange[];
 };
 
-/**
+/********************************************************************************************************************
  * calendar cell component of a single day
- */
+ ********************************************************************************************************************/
 export default function CalendarCell<T extends CalendarState | RangeCalendarState>({
   state,
   date,
