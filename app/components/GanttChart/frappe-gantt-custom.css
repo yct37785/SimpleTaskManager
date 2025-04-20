@@ -1,24 +1,29 @@
 /**
  * task bar
+ * !important overrides inline styles from Frappe Gantt
  */
-.gantt-task-bar {
-  fill: var(--mui-palette-primary-main, #1976d2);
-  stroke: var(--mui-palette-primary-dark, #125aa3);
+ .gantt-task-bar .bar {
+  fill: var(--mui-palette-primary-main, #1976d2) !important;
+  stroke: var(--mui-palette-primary-dark, #125aa3) !important;
   rx: 6;
   ry: 6;
   transition: fill 0.2s ease, filter 0.2s ease;
 }
 
-.gantt-task-bar:hover {
+.gantt-task-bar .bar-progress {
+  fill: rgba(255, 255, 255, 0.4) !important;
+}
+
+.gantt-task-bar:hover .bar {
   fill: var(--mui-palette-primary-dark, #115293);
   filter: brightness(0.95);
   cursor: pointer;
 }
 
 /**
- * task bar newly added
+ * animation highlight for newly added task
  */
- .gantt-task-bar-new {
+.gantt-task-bar-new .bar {
   stroke: orange !important;
   stroke-width: 3px;
   animation: taskBlink 1.5s ease-in-out 0s 3;
@@ -28,7 +33,10 @@
 @keyframes taskBlink {
   0%   { stroke-opacity: 1; }
   50%  { stroke-opacity: 0.2; }
-  100% { stroke: var(--mui-palette-primary-dark, #125aa3); stroke-opacity: 1; }
+  100% {
+    stroke: var(--mui-palette-primary-dark, #125aa3);
+    stroke-opacity: 1;
+  }
 }
 
 /**
