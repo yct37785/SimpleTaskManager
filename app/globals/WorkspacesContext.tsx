@@ -126,11 +126,11 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
     }
 
     // check for overlap
-    const overlaps = project.sprints.some((sprint) => {
-      const noOverlap = endDate.compare(sprint.startDate) < 0 || startDate.compare(sprint.endDate) > 0;
-      return !noOverlap;
-    });
-    if (overlaps) return false;
+    // const overlaps = project.sprints.some((sprint) => {
+    //   const noOverlap = endDate.compare(sprint.startDate) < 0 || startDate.compare(sprint.endDate) > 0;
+    //   return !noOverlap;
+    // });
+    // if (overlaps) return false;
 
     // add sprint
     const newSprint: Sprint = {
@@ -160,7 +160,7 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
         },
       };
     });
-
+  
     return true;
   };
 
