@@ -33,8 +33,14 @@
   100% { opacity: 1; }
 }
 
+/* disable interactions on .handle and .progress */
+.gantt-task-bar .progress {
+  pointer-events: none;
+  user-select: none;
+}
+
 /**
- * bar tex
+ * bar text
  */
 .gantt .bar-text {
   fill: #ffffff;
