@@ -7,9 +7,9 @@ import { useParams } from 'next/navigation';
 import { Box, Typography, Tooltip, IconButton, Stack } from '@mui/material';
 import { Edit as EditIcon, CalendarMonth as CalendarMonthIcon } from '@mui/icons-material';
 // date
-import { getLocalTimeZone, today, CalendarDate, parseDate } from '@internationalized/date';
+import { getLocalTimeZone, today, CalendarDate } from '@internationalized/date';
 // utils
-import { getRelativeTime } from '@utils/datetime';
+import { getRelativeTime, formatISOToDate, dateToCalendarDate } from '@utils/datetime';
 // our components
 import GanttChart, { GanttTask } from '@components/GanttChart/GanttChart';
 import { useWorkspacesManager } from '@globals/WorkspacesContext';
@@ -24,9 +24,9 @@ const fallbackDesc = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, s
 /********************************************************************************************************************
  * format sprints into Frappe Gantt-compatible structure
  ********************************************************************************************************************/
-function formatSprints(project: Project) {
-  return project.sprints.map((sprint, index) => ({
-    id: `${index}`,
+function formatSprintsToTasks(sprints: Project['sprints']): GanttTask[] {
+  return sprints.map((sprint) => ({
+    id: sprint.id,
     name: sprint.title,
     start: sprint.startDate.toString(),
     end: sprint.endDate.toString(),
@@ -39,38 +39,47 @@ function formatSprints(project: Project) {
  * project dashboard
  ********************************************************************************************************************/
 export default function ProjectPage() {
-  const { workspaceId, projectId } = useParams() as { workspaceId: string, projectId: string };
-  const { workspaces } = useWorkspacesManager();
+  const { workspaceId, projectId } = useParams() as { workspaceId: string; projectId: string };
+  const { workspaces, createSprint, updateSprints } = useWorkspacesManager();
 
   const workspace = workspaces[workspaceId];
-  const originalProject = workspace?.projects[projectId];
+  const project = workspace?.projects[projectId];
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [showFullDesc, setShowFullDesc] = useState(false);
-  const [projectData, setProjectData] = useState<Project | null>(null);
 
   /******************************************************************************************************************
    * inject demo sprints into local state
    ******************************************************************************************************************/
   useEffect(() => {
-    if (workspace && originalProject) {
-      document.title = `${workspace.title} - ${originalProject.title} | Task Manager`;
+    document.title = project ? `${workspace.title} - ${project.title} | Task Manager` : 'Task Manager';
+  }, [workspace, project]);
 
-      // clone and safely mutate
-      const clonedProject: Project = {
-        ...originalProject,
-        sprints: [...originalProject.sprints]
-      };
-
-      setProjectData(clonedProject);
-    } else {
-      document.title = 'Task Manager';
-    }
-  }, [workspace, originalProject]);
-
-  if (!workspace || !originalProject) {
+  if (!workspace || !project) {
     return <div>Invalid workspace or project</div>;
   }
+
+  /******************************************************************************************************************
+   * update global project data
+   ******************************************************************************************************************/
+  const handleUpdateSprints = (latestTasks: GanttTask[]) => {
+    const updatedSprints = latestTasks.map((task) => {
+      const existing = project.sprints.find((s) => s.id === task.id);
+      return {
+        ...existing!,
+        title: task.name,
+        startDate: dateToCalendarDate(formatISOToDate(task.start)),
+        endDate: dateToCalendarDate(formatISOToDate(task.end)),
+      };
+    });
+    updateSprints(workspaceId, projectId, updatedSprints);
+  };
+
+  const handleCreateSprint = () => {
+    const start = today(getLocalTimeZone());
+    const end = start.add({ days: 6 });
+    createSprint(workspaceId, projectId, 'New Sprint', 'Auto-generated sprint', start, end);
+  };
 
   /******************************************************************************************************************
    * project details
@@ -99,19 +108,19 @@ export default function ProjectPage() {
   );
 
   const projectDetailsBar = () => {
-    const dueDate: CalendarDate = originalProject.endDate;
+    const dueDate: CalendarDate = project.endDate;
     const now: CalendarDate = today(getLocalTimeZone());
 
     const formattedDue = `${dueDate.day}/${dueDate.month}/${dueDate.year}`;
     const relativeDue = getRelativeTime(now, dueDate);
-    const description = originalProject.desc || fallbackDesc;
+    const description = project.desc || fallbackDesc;
     // const description = fallbackDesc;
 
     return (
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', p: 2, minHeight: project_details_bar_height }}>
         <Box sx={{ flex: 1 }}>
           <Typography variant='h5' fontWeight={600}>
-            {`${workspace.title} - ${originalProject.title}`}
+            {`${workspace.title} - ${project.title}`}
           </Typography>
 
           <Stack direction='row' alignItems='center' spacing={0.5} mt={1}>
@@ -141,13 +150,14 @@ export default function ProjectPage() {
   return (
     <Box>
       {projectDetailsBar()}
-      {projectData && <GanttChart
+      <GanttChart
         title='Sprints'
-        tasks={formatSprints(projectData)}
-        deadline={projectData.endDate}
+        tasks={formatSprintsToTasks(project.sprints)}
+        deadline={project.endDate}
         heightOffset={project_details_bar_height + appbar_height}
-        onCreateClick={() => console.log('Create new sprint')}
-      />}
+        onCreateClick={handleCreateSprint}
+        onTasksUpdated={handleUpdateSprints}
+      />
     </Box>
   );
 }

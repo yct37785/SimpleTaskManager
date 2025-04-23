@@ -57,6 +57,14 @@ export function formatDateToISO(date: Date): string {
 }
 
 /********************************************************************************************************************
+ * convert ISO date string (YYYY-MM-DD) to JS Date object
+ ********************************************************************************************************************/
+export function formatISOToDate(isoString: string): Date {
+  const [year, month, day] = isoString.split('-').map(Number);
+  return new Date(year, month - 1, day); // JS months are 0-based
+}
+
+/********************************************************************************************************************
  * add given number of days to a given Date
  ********************************************************************************************************************/
 export function addDays(date: Date, days: number): Date {

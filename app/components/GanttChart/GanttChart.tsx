@@ -41,17 +41,17 @@ type Props = {
   deadline?: CalendarDate;
   heightOffset?: number;
   onCreateClick: () => void;
+  onTasksUpdated: (latestTasks: GanttTask[]) => void;
 };
 
 /********************************************************************************************************************
  * reusable Frappe Gantt chart component
  ********************************************************************************************************************/
-export default function GanttChart({ title = 'Timeline', tasks, deadline, heightOffset = 0, onCreateClick }: Props) {
+export default function GanttChart({ title = 'Timeline', tasks, deadline, heightOffset = 0, onCreateClick, onTasksUpdated }: Props) {
   const ganttRef = useRef<HTMLDivElement>(null);
   const ganttInstance = useRef<any>(null);
 
   const [editMode, setEditMode] = useState(false);
-  const [committedTasks, setCommittedTasks] = useState<GanttTask[]>(tasks); // TODO: remove, parent track task persistence
   const [updatedTasks, setUpdatedTasks] = useState<Map<string, GanttTask>>(new Map());
 
   const windowHeight = useWindowHeight();
@@ -115,9 +115,9 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, height
     if (windowHeight && ganttRef.current) {
       // trigger init Gantt chart once at start
       // trigger on windowHeight change
-      initGanttInstance(committedTasks, new Date());
+      initGanttInstance(tasks, new Date());
     }
-  }, [windowHeight]);
+  }, [windowHeight, tasks]);
 
   /******************************************************************************************************************
    * handle task manipulations
@@ -137,28 +137,8 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, height
   }
 
   function handleAddTask() {
-    const now = new Date();
-    const startDate = new Date();
-    const endDate = new Date();
-    startDate.setDate(now.getDate() + 5);
-    endDate.setDate(now.getDate() + 12);
-
-    const newTask: GanttTask = {
-      id: `task-${Date.now()}`,
-      name: `New Task`,
-      start: formatDateToISO(startDate),
-      end: formatDateToISO(endDate),
-      progress: 0,
-      custom_class: 'gantt-task-bar',
-    };
-
-    const newTasks = [...committedTasks, newTask];
-    setCommittedTasks(newTasks);
-
-    // re-init Gantt
-    initGanttInstance(newTasks, addDays(startDate, -1), true);
-
-    highlightLastTaskBar(ganttRef.current);
+    // delegate to parent to add task/sprint
+    onCreateClick();
   }
 
   /******************************************************************************************************************
@@ -172,12 +152,17 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, height
 
   function handleConfirmEdits() {
     if (!ganttInstance.current) return;
-
+  
     updatedTasks.forEach((updatedTask) => {
       ganttInstance.current.update_task(updatedTask.id, updatedTask);
     });
-
-    // clear edit mode and updates
+  
+    // call parent to persist updates
+    const latestTasks = tasks.map(task =>
+      updatedTasks.has(task.id) ? updatedTasks.get(task.id)! : task
+    );
+    onTasksUpdated(latestTasks);
+  
     setUpdatedTasks(new Map());
     setEditMode(false);
   }
