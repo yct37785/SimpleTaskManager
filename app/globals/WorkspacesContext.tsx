@@ -1,13 +1,9 @@
 'use client';
 
 import { createContext, useContext, useState, ReactNode } from 'react';
-// others
 import { v4 as uuidv4 } from 'uuid';
-// date
 import { CalendarDate } from '@internationalized/date';
-// schemas
-import { Workspace, Project, Sprint, Column, Task } from '@schemas';
-// sample data
+import { Workspace, Project, Sprint, Task } from '@schemas';
 import sampleWorkspaces from './sampleData';
 
 /********************************************************************************************************************
@@ -17,11 +13,28 @@ type WorkspacesContextType = {
   workspaces: Record<string, Workspace>;
   setWorkspaces: React.Dispatch<React.SetStateAction<Record<string, Workspace>>>;
   createWorkspace: (title: string) => void;
-  createProject: (workspaceId: string, title: string, desc: string, startDate: CalendarDate, endDate: CalendarDate) => void;
-  createSprint: (workspaceId: string, projectId: string, title: string, desc: string, startDate: CalendarDate, endDate: CalendarDate) => boolean;
-  addTask: (workspaceId: string, projectId: string, sprintIdx: number, columnId: string, task: Task) => void;
-  moveTask: (workspaceId: string, projectId: string, sprintIdx: number, sourceColId: string,
-    destColId: string, sourceIndex: number, destIndex: number) => void;
+  createProject: (
+    workspaceId: string,
+    title: string,
+    desc: string,
+    startDate: CalendarDate,
+    endDate: CalendarDate
+  ) => void;
+  createSprint: (
+    workspaceId: string,
+    projectId: string,
+    title: string,
+    desc: string,
+    startDate: CalendarDate,
+    endDate: CalendarDate
+  ) => boolean;
+  updateSprints: (workspaceId: string, projectId: string, sprints: Sprint[]) => void;
+  addTask: (
+    workspaceId: string,
+    projectId: string,
+    sprintId: string,
+    task: Task
+  ) => void;
 };
 
 const WorkspacesContext = createContext<WorkspacesContextType | undefined>(undefined);
@@ -53,13 +66,19 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
       title,
       projects: {},
     };
-    setWorkspaces((prev) => ({ ...prev, [id]: newWorkspace }));
+    setWorkspaces(prev => ({ ...prev, [id]: newWorkspace }));
   };
 
   /******************************************************************************************************************
    * create a project under a workspace with defined bounds
    ******************************************************************************************************************/
-  const createProject = (workspaceId: string, title: string, desc: string, startDate: CalendarDate, endDate: CalendarDate) => {
+  const createProject = (
+    workspaceId: string,
+    title: string,
+    desc: string,
+    startDate: CalendarDate,
+    endDate: CalendarDate
+  ) => {
     const projectId = uuidv4();
     const newProject: Project = {
       id: projectId,
@@ -96,44 +115,40 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
   ): boolean => {
     const project = workspaces[workspaceId]?.projects[projectId];
     if (!project) return false;
-  
-    // validate sprint dates
-    if (startDate.compare(endDate) > 0 || project.startDate.compare(startDate) > 0 || endDate.compare(project.endDate) > 0) {
+
+    // validate sprint bounds
+    if (
+      startDate.compare(endDate) > 0 ||
+      project.startDate.compare(startDate) > 0 ||
+      endDate.compare(project.endDate) > 0
+    ) {
       return false;
     }
-  
-    // check for overlap with existing sprints
+
+    // check for overlap
     const overlaps = project.sprints.some((sprint) => {
       const noOverlap = endDate.compare(sprint.startDate) < 0 || startDate.compare(sprint.endDate) > 0;
       return !noOverlap;
     });
-    if (overlaps) {
-      return false;
-    }
-  
+    if (overlaps) return false;
+
+    // add sprint
     const newSprint: Sprint = {
       id: uuidv4(),
       title,
       desc,
       startDate,
       endDate,
-      columns: [
-        { id: uuidv4(), isTodo: true, title: 'TODO', tasks: [] },
-        { id: uuidv4(), isTodo: false, title: 'IN PROGRESS', tasks: [] },
-        { id: uuidv4(), isTodo: false, title: 'DONE', tasks: [] },
-      ],
+      tasks: []
     };
-  
-    // update state immutably
+
     setWorkspaces(prev => {
       const workspace = prev[workspaceId];
-      const existingProject = workspace.projects[projectId];
-  
       const updatedProject: Project = {
-        ...existingProject,
-        sprints: [...existingProject.sprints, newSprint],
+        ...workspace.projects[projectId],
+        sprints: [...workspace.projects[projectId].sprints, newSprint],
       };
-  
+
       return {
         ...prev,
         [workspaceId]: {
@@ -145,48 +160,28 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
         },
       };
     });
-  
+
     return true;
   };
 
   /******************************************************************************************************************
-   * add a task to a column inside a sprint
+   * replace project sprints list with a new list
    ******************************************************************************************************************/
-  const addTask = (
-    workspaceId: string,
-    projectId: string,
-    sprintIdx: number,
-    columnId: string,
-    task: Task
-  ) => {
+  const updateSprints = (workspaceId: string, projectId: string, sprints: Sprint[]) => {
     setWorkspaces(prev => {
       const workspace = prev[workspaceId];
-      const project = workspace.projects[projectId];
-      const sprint = project.sprints[sprintIdx];
-      
-      // update the columns in the sprint
-      const updatedColumns = sprint.columns.map(col =>
-        col.id === columnId ? { ...col, tasks: [...col.tasks, task] } : col
-      );
+      const updatedProject: Project = {
+        ...workspace.projects[projectId],
+        sprints,
+      };
 
-      // updated sprint
-      const updatedSprint = { ...sprint, columns: updatedColumns };
-
-      // updated sprint array
-      const updatedSprints = [...project.sprints];
-      updatedSprints[sprintIdx] = updatedSprint;
-
-      // return updated workspace
       return {
         ...prev,
         [workspaceId]: {
           ...workspace,
           projects: {
             ...workspace.projects,
-            [projectId]: {
-              ...project,
-              sprints: updatedSprints,
-            },
+            [projectId]: updatedProject,
           },
         },
       };
@@ -194,30 +189,28 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
   };
 
   /******************************************************************************************************************
-   * move a task from one column to another (or reorder within same column)
+   * add a task to a sprint
    ******************************************************************************************************************/
-  const moveTask = (
+  const addTask = (
     workspaceId: string,
     projectId: string,
-    sprintIdx: number,
-    sourceColId: string,
-    destColId: string,
-    sourceIndex: number,
-    destIndex: number
+    sprintId: string,
+    task: Task
   ) => {
     setWorkspaces(prev => {
       const workspace = prev[workspaceId];
       const project = workspace.projects[projectId];
-      const sprint = project.sprints[sprintIdx];
 
-      // columns
-      const sourceCol = sprint.columns.find(col => col.id === sourceColId)!;
-      const destCol = sprint.columns.find(col => col.id === destColId)!;
+      const updatedSprints = project.sprints.map((sprint) =>
+        sprint.id === sprintId
+          ? { ...sprint, tasks: [...sprint.tasks, task] }
+          : sprint
+      );
 
-      // task
-      const task = sourceCol.tasks[sourceIndex];
-      sourceCol.tasks.splice(sourceIndex, 1);
-      destCol.tasks.splice(destIndex, 0, task);
+      const updatedProject: Project = {
+        ...project,
+        sprints: updatedSprints,
+      };
 
       return {
         ...prev,
@@ -225,9 +218,7 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
           ...workspace,
           projects: {
             ...workspace.projects,
-            [projectId]: {
-              ...project
-            },
+            [projectId]: updatedProject,
           },
         },
       };
@@ -245,8 +236,8 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
         createWorkspace,
         createProject,
         createSprint,
+        updateSprints,
         addTask,
-        moveTask,
       }}
     >
       {children}
