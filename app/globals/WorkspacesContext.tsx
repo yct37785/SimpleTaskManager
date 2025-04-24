@@ -115,15 +115,15 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
   ): boolean => {
     const project = workspaces[workspaceId]?.projects[projectId];
     if (!project) return false;
-
+    
     // validate sprint bounds
-    if (
-      startDate.compare(endDate) > 0 ||
-      project.startDate.compare(startDate) > 0 ||
-      endDate.compare(project.endDate) > 0
-    ) {
-      return false;
-    }
+    // if (
+    //   startDate.compare(endDate) > 0 ||
+    //   project.startDate.compare(startDate) > 0 ||
+    //   endDate.compare(project.endDate) > 0
+    // ) {
+    //   return false;
+    // }
 
     // check for overlap
     // const overlaps = project.sprints.some((sprint) => {
