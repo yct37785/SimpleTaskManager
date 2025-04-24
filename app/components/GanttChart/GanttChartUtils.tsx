@@ -2,9 +2,6 @@
 
 // date
 import { CalendarDate } from '@internationalized/date';
-// utils
-import { disableHorizontalWheelScroll } from '@utils/UI';
-import { getDaysBetween } from '@utils/datetime';
 // styles
 import './frappe-gantt.css';
 import './frappe-gantt-custom.css';
@@ -59,25 +56,4 @@ export function highlightLastTaskBar(containerEl: HTMLElement | null) {
       { once: true }
     );
   });
-}
-
-/********************************************************************************************************************
- * inject custom behaviour to DOM
- ********************************************************************************************************************/
-export function injectCustomBehaviour(containerEl: HTMLElement | null, ganttDates: Date[] | null,
-  column_width: number, scrollTo: Date, scrollToBottom: boolean
-) {
-  if (!containerEl || !ganttDates || ganttDates.length == 0) return;
-  const barContainer = containerEl.querySelector('.gantt-container') as HTMLElement | null;
-
-  if (barContainer) {
-    barContainer.scrollTo({
-      top: scrollToBottom ? barContainer.scrollHeight : 0,
-      left: column_width * getDaysBetween(ganttDates[0], scrollTo),
-      behavior: 'smooth',
-    });
-
-    const cleanupWheel = disableHorizontalWheelScroll(barContainer);
-    return () => cleanupWheel();
-  }
 }

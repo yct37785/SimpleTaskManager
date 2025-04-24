@@ -13,8 +13,9 @@ import { CalendarDate } from '@internationalized/date';
 // hooks
 import { useWindowHeight } from '@hooks/useWindowHeight';
 // utils
-import { formatDateToISO, addDays } from '@utils/datetime';
-import { markDeadline, highlightLastTaskBar, injectCustomBehaviour } from './GanttChartUtils';
+import { formatDateToISO, addDays, getDaysBetween } from '@utils/datetime';
+import { disableHorizontalWheelScroll } from '@utils/UI';
+import { markDeadline, highlightLastTaskBar } from './GanttChartUtils';
 // styles
 import './frappe-gantt.css';
 import './frappe-gantt-custom.css';
@@ -51,6 +52,7 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, height
   const ganttRef = useRef<HTMLDivElement>(null);
   const ganttInstance = useRef<any>(null);
 
+  const [initialInit, setInitialInit] = useState(true);
   const [editMode, setEditMode] = useState(false);
   const [updatedTasks, setUpdatedTasks] = useState<Map<string, GanttTask>>(new Map());
 
@@ -72,50 +74,75 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, height
 
   /******************************************************************************************************************
    * Gantt instance
+   * - scroll to current day
+   * - scroll to new task
+   * - persist prevScrollX
    ******************************************************************************************************************/
-  function initGanttInstance(taskList: GanttTask[], scrollTo: Date, scrollToBottom: boolean = false) {
-    if (!ganttRef.current) return;
-    // clear existing chart
-    ganttRef.current.innerHTML = '';
-    console.log("Gantt init");
-    
-    // create Gantt chart
-    ganttInstance.current = new Gantt(ganttRef.current, taskList, {
-      readonly: !editMode,
-      column_width,
-      infinite_padding: true,
-      move_dependencies: false,
-      view_mode_select: false,
-      upper_header_height,
-      lower_header_height,
-      bar_height: 40,
-      padding: 16,
-      container_height: windowHeight - chart_top_bar_height - upper_header_height - lower_header_height - heightOffset + 40,
-      lines: 'both',
-      popup_on: 'click',
-      view_mode: 'Day',
-      date_format: 'DD-MM-YYYY',
-      snap_at: '1d',
-      on_date_change: (task: GanttTask, start: Date, end: Date) => handleDateChange(task, start, end),
+  function initGanttInstance() {
+    requestAnimationFrame(() => {
+      if (!ganttRef.current) return;
+      // prev scroll X
+      let container = ganttRef.current.querySelector('.gantt-container') as HTMLElement | null;
+      let scrollTo = container?.scrollLeft ?? 0;
+      let scrollBehaviour: 'instant' | 'smooth' = 'instant';
+      console.log("prevScrollX: " + scrollTo);
+
+      // clear existing chart
+      ganttRef.current.innerHTML = '';
+
+      // create Gantt chart
+      ganttInstance.current = new Gantt(ganttRef.current, tasks, {
+        readonly: !editMode,
+        column_width,
+        infinite_padding: true,
+        move_dependencies: false,
+        view_mode_select: false,
+        upper_header_height,
+        lower_header_height,
+        bar_height: 40,
+        padding: 16,
+        container_height: windowHeight - chart_top_bar_height - upper_header_height - lower_header_height - heightOffset + 40,
+        lines: 'both',
+        popup_on: 'click',
+        view_mode: 'Day',
+        date_format: 'DD-MM-YYYY',
+        snap_at: '1d',
+        on_date_change: (task: GanttTask, start: Date, end: Date) => handleDateChange(task, start, end),
+      });
+
+      injectStyles();
+
+      // get scroll to pos
+      if (ganttInstance.current.dates && ganttInstance.current.dates.length > 0) {
+        // if initial init, scroll to current day
+        if (initialInit) {
+          scrollTo = column_width * getDaysBetween(ganttInstance.current.dates[0], new Date());
+          scrollBehaviour = 'smooth'
+          setInitialInit(false);
+        }
+        // just edit
+        // new task added
+      }
+
+      // do scroll on DOM
+      container = ganttRef.current.querySelector('.gantt-container') as HTMLElement | null;
+      if (container) {
+        container.scrollTo({
+          //top: scrollToBottom ? container.scrollHeight : 0,
+          left: scrollTo,
+          behavior: scrollBehaviour,
+        });
+      }
+
+      // disable horizontal scroll wheel
+      const cleanupWheel = disableHorizontalWheelScroll(container);
+      return () => cleanupWheel();
     });
-    
-    injectStyles();
-    
-    // DOM manipulation
-    injectCustomBehaviour(
-      ganttRef.current,
-      ganttInstance.current.dates,
-      column_width,
-      scrollTo,
-      scrollToBottom
-    );
   }
 
   useEffect(() => {
-    if (windowHeight && ganttRef.current) {
-      // trigger init Gantt chart once at start
-      // trigger on windowHeight change
-      initGanttInstance(tasks, new Date());
+    if (windowHeight) {
+      initGanttInstance();
     }
   }, [windowHeight, tasks]);
 
