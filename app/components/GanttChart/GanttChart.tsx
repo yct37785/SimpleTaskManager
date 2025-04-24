@@ -13,7 +13,7 @@ import { CalendarDate } from '@internationalized/date';
 // hooks
 import { useWindowHeight } from '@hooks/useWindowHeight';
 // utils
-import { formatDateToISO, addDays, getDaysBetween } from '@utils/datetime';
+import { formatDateToISO, addDays, getDaysBetween, formatISOToDate } from '@utils/datetime';
 import { disableHorizontalWheelScroll } from '@utils/UI';
 import { markDeadline, highlightLastTaskBar } from './GanttChartUtils';
 // styles
@@ -53,6 +53,7 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, height
   const ganttInstance = useRef<any>(null);
 
   const [initialInit, setInitialInit] = useState(true);
+  const [tasksLength, setTasksLength] = useState(tasks.length);
   const [editMode, setEditMode] = useState(false);
   const [updatedTasks, setUpdatedTasks] = useState<Map<string, GanttTask>>(new Map());
 
@@ -83,12 +84,13 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, height
       if (!ganttRef.current) return;
       // prev scroll X
       let container = ganttRef.current.querySelector('.gantt-container') as HTMLElement | null;
-      let scrollTo = container?.scrollLeft ?? 0;
+      let scrollToX = container?.scrollLeft ?? 0;
+      let scrollToY = container?.scrollTop ?? 0;
       let scrollBehaviour: 'instant' | 'smooth' = 'instant';
-      console.log("prevScrollX: " + scrollTo);
 
       // clear existing chart
       ganttRef.current.innerHTML = '';
+      console.log('Gantt init');
 
       // create Gantt chart
       ganttInstance.current = new Gantt(ganttRef.current, tasks, {
@@ -110,29 +112,39 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, height
         on_date_change: (task: GanttTask, start: Date, end: Date) => handleDateChange(task, start, end),
       });
 
+      // inject custom styles
       injectStyles();
 
-      // get scroll to pos
-      if (ganttInstance.current.dates && ganttInstance.current.dates.length > 0) {
-        // if initial init, scroll to current day
-        if (initialInit) {
-          scrollTo = column_width * getDaysBetween(ganttInstance.current.dates[0], new Date());
-          scrollBehaviour = 'smooth'
-          setInitialInit(false);
-        }
-        // just edit
-        // new task added
-      }
-
-      // do scroll on DOM
+      // custom scroll behaviour
       container = ganttRef.current.querySelector('.gantt-container') as HTMLElement | null;
       if (container) {
+        if (ganttInstance.current.dates && ganttInstance.current.dates.length > 0) {
+          // if initial init, scroll to current day
+          if (initialInit) {
+            scrollToX = column_width * getDaysBetween(ganttInstance.current.dates[0], new Date());
+            scrollBehaviour = 'smooth';
+          }
+          // new task added/removed
+          else if (tasks && tasksLength != tasks.length) {
+            const lastTask = tasks.at(-1);
+            const scrollToDate = lastTask ? formatISOToDate(lastTask.start) : new Date();
+            scrollToX = column_width * getDaysBetween(ganttInstance.current.dates[0], scrollToDate);
+            scrollToY = container.scrollHeight;
+            scrollBehaviour = 'smooth';
+            highlightLastTaskBar(container);
+          }
+        }
+
         container.scrollTo({
-          //top: scrollToBottom ? container.scrollHeight : 0,
-          left: scrollTo,
+          left: scrollToX,
+          top: scrollToY,
           behavior: scrollBehaviour,
         });
       }
+
+      // update states
+      setInitialInit(false);
+      setTasksLength(tasks.length);
 
       // disable horizontal scroll wheel
       const cleanupWheel = disableHorizontalWheelScroll(container);

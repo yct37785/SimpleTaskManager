@@ -76,7 +76,8 @@ export default function ProjectPage() {
   };
 
   const handleCreateSprint = () => {
-    const start = today(getLocalTimeZone());
+    const todayDate = today(getLocalTimeZone());
+    const start = todayDate.add({ days: 4 });
     const end = start.add({ days: 6 });
     createSprint(workspaceId, projectId, 'New Sprint', 'Auto-generated sprint', start, end);
   };
