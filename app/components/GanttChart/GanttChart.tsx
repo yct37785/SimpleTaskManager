@@ -39,6 +39,7 @@ export type GanttTask = {
 type Props = {
   title?: string;
   tasks: GanttTask[];
+  retrigger: number;  // retrigger GanttChart if tasks change
   deadline?: CalendarDate;
   heightOffset?: number;
   onCreateClick: () => void;
@@ -48,7 +49,7 @@ type Props = {
 /********************************************************************************************************************
  * reusable Frappe Gantt chart component
  ********************************************************************************************************************/
-export default function GanttChart({ title = 'Timeline', tasks, deadline, heightOffset = 0, onCreateClick, onTasksUpdated }: Props) {
+export default function GanttChart({ title, tasks, retrigger, deadline, heightOffset = 0, onCreateClick, onTasksUpdated }: Props) {
   const ganttRef = useRef<HTMLDivElement>(null);
   const ganttInstance = useRef<any>(null);
 
@@ -153,10 +154,10 @@ export default function GanttChart({ title = 'Timeline', tasks, deadline, height
   }
 
   useEffect(() => {
-    if (windowHeight) {
+    if (windowHeight && retrigger != undefined) {
       initGanttInstance();
     }
-  }, [windowHeight, tasks]);
+  }, [windowHeight, retrigger]);
 
   /******************************************************************************************************************
    * handle task manipulations

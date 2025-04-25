@@ -49,6 +49,7 @@ export default function ProjectPage() {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [showFullDesc, setShowFullDesc] = useState(false);
   const [sprintDialogOpen, setSprintDialogOpen] = useState(false);
+  const [retriggerChart, setretriggerChart] = useState(0);
 
   /******************************************************************************************************************
    * inject demo sprints into local state
@@ -156,6 +157,7 @@ export default function ProjectPage() {
       <GanttChart
         title='Sprints'
         tasks={formatSprintsToTasks(project.sprints)}
+        retrigger={retriggerChart}
         deadline={project.endDate}
         heightOffset={project_details_bar_height + appbar_height}
         onCreateClick={() => setSprintDialogOpen(true)}
