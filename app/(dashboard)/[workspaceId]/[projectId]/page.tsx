@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 // next
 import { useParams } from 'next/navigation';
 // MUI
@@ -13,6 +13,7 @@ import { getRelativeTime, formatISOToDate, dateToCalendarDate } from '@utils/dat
 // our components
 import GanttChart, { GanttTask } from '@components/GanttChart/GanttChart';
 import { useWorkspacesManager } from '@globals/WorkspacesContext';
+import SprintForm from '@components/Forms/SprintForm';
 // schemas
 import { Project } from '@schemas';
 // styles
@@ -47,6 +48,7 @@ export default function ProjectPage() {
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [showFullDesc, setShowFullDesc] = useState(false);
+  const [sprintDialogOpen, setSprintDialogOpen] = useState(false);
 
   /******************************************************************************************************************
    * inject demo sprints into local state
@@ -156,9 +158,15 @@ export default function ProjectPage() {
         tasks={formatSprintsToTasks(project.sprints)}
         deadline={project.endDate}
         heightOffset={project_details_bar_height + appbar_height}
-        onCreateClick={handleCreateSprint}
+        onCreateClick={() => setSprintDialogOpen(true)}
         onTasksUpdated={handleUpdateSprints}
       />
+      {/* create sprint form */}
+      {project ? <SprintForm
+        project={project}
+        sprintDialogOpen={sprintDialogOpen}
+        handleCreateSprint={() => { }}
+        closeSprintDialog={() => setSprintDialogOpen(false)} /> : null}
     </Box>
   );
 }
