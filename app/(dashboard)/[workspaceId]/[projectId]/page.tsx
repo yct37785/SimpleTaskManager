@@ -83,6 +83,7 @@ export default function ProjectPage() {
     const start = todayDate.add({ days: 4 });
     const end = start.add({ days: 6 });
     createSprint(workspaceId, projectId, 'New Sprint', 'Auto-generated sprint', start, end);
+    setretriggerChart(prev => prev + 1);
   };
 
   /******************************************************************************************************************
