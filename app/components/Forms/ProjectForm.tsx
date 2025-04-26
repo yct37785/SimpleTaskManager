@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 // MUI
 import { Stack, TextField, Box } from '@mui/material';
 // date
@@ -35,6 +35,17 @@ export default function ProjectForm({ workspace, projectDialogOpen, handleCreate
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   /******************************************************************************************************************
+   * do reset when close
+   ******************************************************************************************************************/
+  useEffect(() => {
+    if (!projectDialogOpen) {
+      setTitle('');
+      setDescription('');
+      setDueDate(null);
+    }
+  }, [projectDialogOpen]);
+
+  /******************************************************************************************************************
    * submit
    ******************************************************************************************************************/
   const onDateSelected = (date: CalendarDate) => {
@@ -47,9 +58,6 @@ export default function ProjectForm({ workspace, projectDialogOpen, handleCreate
 
     const dueDateAsJSDate = new Date(dueDate.year, dueDate.month - 1, dueDate.day);
     handleCreateProject(title, description, dueDateAsJSDate);
-    setTitle('');
-    setDescription('');
-    setDueDate(null);
     closeProjectDialog();
   }
 
