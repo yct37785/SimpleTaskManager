@@ -1,13 +1,13 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 // react-aria
 import { useCalendar, useLocale } from 'react-aria';
 import { useCalendarState } from 'react-stately';
 // MUI
 import { Box } from '@mui/material';
 // date
-import { createCalendar, today, getLocalTimeZone } from '@internationalized/date';
+import { createCalendar, today, getLocalTimeZone, CalendarDate } from '@internationalized/date';
 // our components
 import CalendarHeader from './CalendarHeader';
 import CalendarGrid from './CalendarGrid';
@@ -21,6 +21,7 @@ type Props = {
   dayOfWeekFontSize?: string;
   fontSize?: string;
   highlightRanges?: HighlightRange[];
+  onSelect?: (date: CalendarDate) => void;
 };
 
 /********************************************************************************************************************
@@ -31,6 +32,7 @@ export default function CalendarPicker({
   dayOfWeekFontSize = '1.2rem',
   fontSize = '1rem',
   highlightRanges = [],
+  onSelect = () => {}
 }: Props) {
   let { locale } = useLocale();
 
@@ -48,6 +50,15 @@ export default function CalendarPicker({
     nextButtonProps,
     title
   } = useCalendar({ minValue: today(getLocalTimeZone()) }, state);
+
+  /******************************************************************************************************************
+   * listener
+   ******************************************************************************************************************/
+  useEffect(() => {
+    if (state.value) {
+      onSelect(state.value);
+    }
+  }, [state.value]);
 
   /******************************************************************************************************************
    * render

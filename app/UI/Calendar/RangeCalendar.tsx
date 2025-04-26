@@ -1,13 +1,13 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 // react-aria
 import { useRangeCalendar, useLocale } from 'react-aria';
 import { useRangeCalendarState } from 'react-stately';
 // MUI
 import { Box } from '@mui/material';
 // date
-import { createCalendar, today, getLocalTimeZone } from '@internationalized/date';
+import { createCalendar, today, getLocalTimeZone, CalendarDate, toCalendarDate } from '@internationalized/date';
 // our components
 import CalendarHeader from './CalendarHeader';
 import CalendarGrid from './CalendarGrid';
@@ -21,6 +21,7 @@ type Props = {
   dayOfWeekFontSize?: string;
   fontSize?: string;
   highlightRanges?: HighlightRange[];
+  onSelect?: (start: CalendarDate, end: CalendarDate) => void;
 };
 
 /********************************************************************************************************************
@@ -31,6 +32,7 @@ export default function RangeCalendar({
   dayOfWeekFontSize = '1.2rem',
   fontSize = '1rem',
   highlightRanges = [],
+  onSelect = () => {}
 }: Props) {
   let { locale } = useLocale();
   const ref = useRef(null);
@@ -50,6 +52,19 @@ export default function RangeCalendar({
     title
   } = useRangeCalendar({ minValue: today(getLocalTimeZone()) }, state, ref);
 
+  /******************************************************************************************************************
+   * listener
+   ******************************************************************************************************************/
+  useEffect(() => {
+    const range = state.value;
+    if (!range || !range.start || !range.end) return;
+  
+    onSelect(
+      toCalendarDate(range.start),
+      toCalendarDate(range.end)
+    );
+  }, [state.value?.start, state.value?.end]);
+  
   /******************************************************************************************************************
    * render
    ******************************************************************************************************************/
