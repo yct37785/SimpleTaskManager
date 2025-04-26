@@ -15,7 +15,7 @@ import GanttChart, { GanttTask } from '@UI/GanttChart/GanttChart';
 import { useWorkspacesManager } from '@globals/WorkspacesContext';
 import SprintForm from '@components/Forms/SprintForm';
 // schemas
-import { Project } from '@schemas';
+import { Project, Sprint } from '@schemas';
 // styles
 import { project_details_bar_height, appbar_height } from '@styles/dimens';
 import styles from './ProjectPage.module.css';
@@ -30,7 +30,7 @@ function formatSprintsToTasks(sprints: Project['sprints']): GanttTask[] {
     id: sprint.id,
     name: sprint.title,
     start: sprint.startDate.toString(),
-    end: sprint.endDate.toString(),
+    end: sprint.dueDate.toString(),
     progress: 70, // placeholder
     custom_class: 'gantt-task-bar',
   }));
@@ -66,13 +66,13 @@ export default function ProjectPage() {
    * update global project data
    ******************************************************************************************************************/
   const handleUpdateSprints = (latestTasks: GanttTask[]) => {
-    const updatedSprints = latestTasks.map((task) => {
+    const updatedSprints = latestTasks.map((task): Sprint => {
       const existing = project.sprints.find((s) => s.id === task.id);
       return {
         ...existing!,
         title: task.name,
         startDate: dateToCalendarDate(formatISOToDate(task.start)),
-        endDate: dateToCalendarDate(formatISOToDate(task.end)),
+        dueDate: dateToCalendarDate(formatISOToDate(task.end)),
       };
     });
     updateSprints(workspaceId, projectId, updatedSprints);
@@ -113,7 +113,7 @@ export default function ProjectPage() {
   );
 
   const projectDetailsBar = () => {
-    const dueDate: CalendarDate = project.endDate;
+    const dueDate: CalendarDate = project.dueDate;
     const now: CalendarDate = today(getLocalTimeZone());
 
     const formattedDue = `${dueDate.day}/${dueDate.month}/${dueDate.year}`;
@@ -159,7 +159,7 @@ export default function ProjectPage() {
         title='Sprints'
         tasks={formatSprintsToTasks(project.sprints)}
         retrigger={retriggerChart}
-        deadline={project.endDate}
+        deadline={project.dueDate}
         heightOffset={project_details_bar_height + appbar_height}
         onCreateClick={() => setSprintDialogOpen(true)}
         onTasksUpdated={handleUpdateSprints}

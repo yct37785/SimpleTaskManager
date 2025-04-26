@@ -27,8 +27,8 @@ export type Sprint = {
   id: string;
   title: string;
   desc: string;
-  startDate: CalendarDate;
-  endDate: CalendarDate;
+  startDate: CalendarDate;  // created day
+  dueDate: CalendarDate;    // target due date
   tasks: Task[];
 }
 
@@ -41,8 +41,8 @@ export type Project = {
   id: string;
   title: string;
   desc: string;
-  startDate: CalendarDate;
-  endDate: CalendarDate;
+  startDate: CalendarDate;  // created day
+  dueDate: CalendarDate;    // target due date
   sprints: Sprint[];
 }
 

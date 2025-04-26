@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 // date
 import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date';
 // schemas
-import { Workspace, Project, Sprint, Column, Task } from '@schemas';
+import { Workspace, Project, Sprint } from '@schemas';
 
 /********************************************************************************************************************
  * utils
@@ -13,49 +13,32 @@ function addDays(date: CalendarDate, days: number): CalendarDate {
 }
 
 /********************************************************************************************************************
- * generate column for sprint
- ********************************************************************************************************************/
-function genColumn(title: string, isTodo = false): Column {
-  return {
-    id: uuidv4(),
-    title,
-    isTodo,
-    tasks: [],
-  };
-}
-
-/********************************************************************************************************************
  * generate a sprint
  ********************************************************************************************************************/
-export function genSprint(title: string, startDate: CalendarDate, endDate: CalendarDate): Sprint {
+export function genSprint(title: string, startDate: CalendarDate, dueDate: CalendarDate): Sprint {
   return {
     id: uuidv4(),
     title,
     desc: `sprint ${title} description here`,
     startDate,
-    endDate,
-    columns: [
-      genColumn('TODO', true),
-      genColumn('IN PROGRESS'),
-      genColumn('DONE'),
-    ],
+    dueDate,
+    tasks: [],
   };
 }
 
 /********************************************************************************************************************
  * generate a project
  ********************************************************************************************************************/
-export function genProject(title: string, endDate: CalendarDate): Project {
-  const projectStart = today(getLocalTimeZone());
-  const projectEnd = endDate;
-  const projectDuration = projectEnd.compare(projectStart);
+export function genProject(title: string, dueDate: CalendarDate): Project {
+  const startDate = today(getLocalTimeZone());
+  const projectDuration = dueDate.compare(startDate);
 
   const sprintCount = Math.floor(Math.random() * 7) + 2; // 2 to 8 sprints
   const sprintMinDuration = 5;
   const sprintMaxDuration = 14;
 
   const sprints: Sprint[] = [];
-  let currentStart = projectStart;
+  let currentStart = startDate;
 
   for (let i = 0; i < sprintCount; i++) {
     const sprintLength = Math.floor(Math.random() * (sprintMaxDuration - sprintMinDuration + 1)) + sprintMinDuration;
@@ -63,13 +46,13 @@ export function genProject(title: string, endDate: CalendarDate): Project {
     const sprintEnd = addDays(currentStart, sprintLength);
 
     // clamp sprintEnd to project end
-    const clampedEnd = sprintEnd.compare(projectEnd) > 0 ? projectEnd : sprintEnd;
+    const clampedEnd = sprintEnd.compare(dueDate) > 0 ? dueDate : sprintEnd;
 
     sprints.push(genSprint(`Sprint ${i + 1}`, currentStart, clampedEnd));
 
     // move next start forward
     const nextStart = addDays(clampedEnd, -overlap);
-    if (nextStart.compare(projectEnd) >= 0) break;
+    if (nextStart.compare(dueDate) >= 0) break;
     currentStart = nextStart;
   }
 
@@ -77,8 +60,8 @@ export function genProject(title: string, endDate: CalendarDate): Project {
     id: uuidv4(),
     title,
     desc: `project ${title} description here`,
-    startDate: projectStart,
-    endDate: projectEnd,
+    startDate,
+    dueDate,
     sprints,
   };
 }

@@ -144,9 +144,9 @@ export default function Sidebar() {
     setActiveWorkspace(workspaceId);
   };
 
-  const handleCreateProject = (title: string, desc: string, endDate: CalendarDate) => {
+  const handleCreateProject = (title: string, desc: string, dueDate: CalendarDate) => {
     if (activeWorkspace && title) {
-      createProject(activeWorkspace, title, desc, dateToCalendarDate(new Date()), endDate);
+      createProject(activeWorkspace, title, desc, dateToCalendarDate(new Date()), dueDate);
     }
   };
 

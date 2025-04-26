@@ -18,7 +18,7 @@ type WorkspacesContextType = {
     title: string,
     desc: string,
     startDate: CalendarDate,
-    endDate: CalendarDate
+    dueDate: CalendarDate
   ) => void;
   createSprint: (
     workspaceId: string,
@@ -26,7 +26,7 @@ type WorkspacesContextType = {
     title: string,
     desc: string,
     startDate: CalendarDate,
-    endDate: CalendarDate
+    dueDate: CalendarDate
   ) => boolean;
   updateSprints: (workspaceId: string, projectId: string, sprints: Sprint[]) => void;
   addTask: (
@@ -77,7 +77,7 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
     title: string,
     desc: string,
     startDate: CalendarDate,
-    endDate: CalendarDate
+    dueDate: CalendarDate
   ) => {
     const projectId = uuidv4();
     const newProject: Project = {
@@ -85,7 +85,7 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
       title,
       desc,
       startDate,
-      endDate,
+      dueDate,
       sprints: [],
     };
 
@@ -111,23 +111,23 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
     title: string,
     desc: string,
     startDate: CalendarDate,
-    endDate: CalendarDate
+    dueDate: CalendarDate
   ): boolean => {
     const project = workspaces[workspaceId]?.projects[projectId];
     if (!project) return false;
     
     // validate sprint bounds
     // if (
-    //   startDate.compare(endDate) > 0 ||
+    //   startDate.compare(dueDate) > 0 ||
     //   project.startDate.compare(startDate) > 0 ||
-    //   endDate.compare(project.endDate) > 0
+    //   dueDate.compare(project.dueDate) > 0
     // ) {
     //   return false;
     // }
 
     // check for overlap
     // const overlaps = project.sprints.some((sprint) => {
-    //   const noOverlap = endDate.compare(sprint.startDate) < 0 || startDate.compare(sprint.endDate) > 0;
+    //   const noOverlap = dueDate.compare(sprint.startDate) < 0 || startDate.compare(sprint.dueDate) > 0;
     //   return !noOverlap;
     // });
     // if (overlaps) return false;
@@ -138,7 +138,7 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
       title,
       desc,
       startDate,
-      endDate,
+      dueDate,
       tasks: []
     };
 
