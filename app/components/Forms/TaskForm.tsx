@@ -6,6 +6,7 @@ import { Button, Dialog, DialogActions, DialogContent, Box, Stack, Typography } 
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 // our components
 import BaseDialog, { DialogTextInput } from '@UI/Dialog/Dialog';
+import CalendarPicker from '@UI/Calendar/CalendarPicker';
 import LabelSelector from './LabelSelector';
 // others
 import { v4 as uuidv4 } from 'uuid';
@@ -34,6 +35,7 @@ export default function TaskForm({ openColumn, setOpenColumn, addTask }: Props) 
   const [desc, setDesc] = useState('');
   const [dueDate, setDueDate] = useState<Dayjs | null>(dayjs());
   const [labels, setLabels] = useState<Label[]>([]);
+  const [openDatePicker, setOpenDatePicker] = useState(false);
 
   /******************************************************************************************************************
    * submit
@@ -62,34 +64,40 @@ export default function TaskForm({ openColumn, setOpenColumn, addTask }: Props) 
    * render
    ******************************************************************************************************************/
   return (
-    <BaseDialog
-      open={openColumn !== ''}
-      onClose={() => setOpenColumn('')}
-      onSubmit={handleSubmit}
-      title='New Task'
-      disabled={!title || !desc || !dueDate}
-    >
-      <DialogTextInput
-        label='Task title'
-        required
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-      <DialogTextInput
-        label='Task description'
-        rows={4}
-        required
-        value={desc}
-        onChange={(e) => setDesc(e.target.value)}
-      />
-      <DatePicker
-        label='Due Date'
-        disablePast
-        value={dueDate}
-        onChange={(date) => setDueDate(date)}
-        slotProps={{ textField: { fullWidth: true, required: true } }}
-      />
-      <LabelSelector labels={labels} setLabels={setLabels} />
-    </BaseDialog>
+    <>
+      <Dialog open={openDatePicker} onClose={() => setOpenDatePicker(false)} maxWidth='sm' fullWidth scroll='body'>
+        <CalendarPicker />
+      </Dialog>
+      <BaseDialog
+        open={openColumn !== ''}
+        onClose={() => setOpenColumn('')}
+        onSubmit={handleSubmit}
+        title='New Task'
+        disabled={!title || !desc || !dueDate}
+      >
+        <DialogTextInput
+          label='Task title'
+          required
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <DialogTextInput
+          label='Task description'
+          rows={4}
+          required
+          value={desc}
+          onChange={(e) => setDesc(e.target.value)}
+        />
+        {/* <DatePicker
+          label='Due Date'
+          disablePast
+          value={dueDate}
+          onChange={(date) => setDueDate(date)}
+          slotProps={{ textField: { fullWidth: true, required: true } }}
+        /> */}
+        <Button onClick={() => setOpenDatePicker(true)}>Select date</Button>
+        <LabelSelector labels={labels} setLabels={setLabels} />
+      </BaseDialog>
+    </>
   );
 };
