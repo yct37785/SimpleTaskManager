@@ -14,6 +14,8 @@ import {
   Add as AddIcon, Folder as FolderIcon, FolderOpen as FolderOpenIcon, InsertDriveFile as InsertDriveFileIcon, Send as SendIcon,
   CalendarMonth as CalendarIcon, Home as HomeIcon, PieChart as PieCharIcon, ExpandLess, ExpandMore
 } from '@mui/icons-material';
+// date
+import { CalendarDate } from '@internationalized/date';
 // our components
 import { useWorkspacesManager } from '@globals/WorkspacesContext';
 import ProjectForm from '@components/Forms/ProjectForm';
@@ -142,9 +144,9 @@ export default function Sidebar() {
     setActiveWorkspace(workspaceId);
   };
 
-  const handleCreateProject = (title: string, desc: string, endDate: Date) => {
+  const handleCreateProject = (title: string, desc: string, endDate: CalendarDate) => {
     if (activeWorkspace && title) {
-      createProject(activeWorkspace, title, desc, dateToCalendarDate(new Date()), dateToCalendarDate(endDate));
+      createProject(activeWorkspace, title, desc, dateToCalendarDate(new Date()), endDate);
     }
   };
 

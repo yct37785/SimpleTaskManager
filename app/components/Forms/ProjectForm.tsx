@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 // MUI
 import { Stack, TextField, Box } from '@mui/material';
 // date
-import dayjs, { Dayjs } from 'dayjs';
 import { CalendarDate } from '@internationalized/date';
 // our components
 import BaseDialog, { DialogTextInput } from '@UI/Dialog/Dialog';
@@ -21,7 +20,7 @@ import { calendar_picker_height } from '@styles/dimens';
 type Props = {
   workspace: Workspace;
   projectDialogOpen: boolean;
-  handleCreateProject: (title: string, desc: string, dueDate: Date) => void;
+  handleCreateProject: (title: string, desc: string, dueDate: CalendarDate) => void;
   closeProjectDialog: () => void;
 };
 
@@ -56,8 +55,7 @@ export default function ProjectForm({ workspace, projectDialogOpen, handleCreate
   const handleSubmit = () => {
     if (!title.trim() || !description.trim() || !dueDate) return;
 
-    const dueDateAsJSDate = new Date(dueDate.year, dueDate.month - 1, dueDate.day);
-    handleCreateProject(title, description, dueDateAsJSDate);
+    handleCreateProject(title, description, dueDate);
     closeProjectDialog();
   }
 
