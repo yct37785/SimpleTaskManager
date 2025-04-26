@@ -3,12 +3,13 @@
 import React, { useState } from 'react';
 // MUI
 import { Stack, TextField, Box } from '@mui/material';
+// date
+import dayjs, { Dayjs } from 'dayjs';
+import { CalendarDate } from '@internationalized/date';
 // our components
 import BaseDialog, { DialogTextInput } from '@UI/Dialog/Dialog';
 import Popover from '@UI/Dialog/Popover';
 import CalendarPicker from '@UI/Calendar/CalendarPicker';
-// date
-import dayjs, { Dayjs } from 'dayjs';
 // schemas
 import { Workspace } from '@schemas';
 // styles
@@ -30,26 +31,27 @@ type Props = {
 export default function ProjectForm({ workspace, projectDialogOpen, handleCreateProject, closeProjectDialog }: Props) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [dueDate, setDueDate] = useState<Dayjs | null>(dayjs());
+  const [dueDate, setDueDate] = useState<CalendarDate | null>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   /******************************************************************************************************************
    * submit
    ******************************************************************************************************************/
+  const onDateSelected = (date: CalendarDate) => {
+    setDueDate(date);
+    setAnchorEl(null);
+  }
+
   const handleSubmit = () => {
     if (!title.trim() || !description.trim() || !dueDate) return;
 
-    handleCreateProject(title, description, dueDate.toDate());
+    const dueDateAsJSDate = new Date(dueDate.year, dueDate.month - 1, dueDate.day);
+    handleCreateProject(title, description, dueDateAsJSDate);
     setTitle('');
     setDescription('');
-    setDueDate(dayjs());
+    setDueDate(null);
     closeProjectDialog();
-  };
-
-  const handleDateSelected = (date: Dayjs) => {
-    setDueDate(date);
-    setAnchorEl(null);
-  };
+  }
 
   /******************************************************************************************************************
    * render
@@ -62,7 +64,9 @@ export default function ProjectForm({ workspace, projectDialogOpen, handleCreate
         setAnchorEl={setAnchorEl}
       >
         <Box sx={{ height: calendar_picker_height }}>
-          <CalendarPicker />
+          <CalendarPicker
+            onSelect={onDateSelected}
+          />
         </Box>
       </Popover>
 
@@ -89,13 +93,15 @@ export default function ProjectForm({ workspace, projectDialogOpen, handleCreate
             onChange={(e) => setDescription(e.target.value)}
           />
           <TextField
-            label="Deadline"
+            label='Deadline'
             fullWidth
             required
-            value={dueDate ? dueDate.format('DD/MM/YYYY') : ''}
+            value={dueDate ? `${dueDate.day.toString().padStart(2, '0')}/${dueDate.month.toString().padStart(2, '0')}/${dueDate.year}` : '--/--/----'}
             onClick={(e) => setAnchorEl(e.currentTarget)}
-            InputProps={{
-              readOnly: true,
+            slotProps={{
+              input: {
+                readOnly: true,
+              },
             }}
             sx={{
               cursor: 'pointer',
