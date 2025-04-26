@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { Button, Dialog, DialogTitle, DialogActions, DialogContent, Box, Stack, Typography } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 // our components
-import BaseFormDialog, { TextInput } from './BaseFormDialog';
+import BaseDialog, { DialogTextInput } from '@UI/Dialog/Dialog';
 // date
 import dayjs, { Dayjs } from 'dayjs';
 // schemas
@@ -46,20 +46,20 @@ export default function ProjectForm({ workspace, projectDialogOpen, handleCreate
    * render
    ******************************************************************************************************************/
   return (
-    <BaseFormDialog
+    <BaseDialog
       open={projectDialogOpen}
       onClose={() => closeProjectDialog()}
       onSubmit={handleSubmit}
       title={`${workspace.title} - new project`}
       disabled={!title || !description || !dueDate}
     >
-      <TextInput
+      <DialogTextInput
         label='Project title'
         required
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
-      <TextInput
+      <DialogTextInput
         label='Project description'
         rows={4}
         required
@@ -73,6 +73,6 @@ export default function ProjectForm({ workspace, projectDialogOpen, handleCreate
         onChange={(date) => setDueDate(date)}
         slotProps={{ textField: { fullWidth: true, required: true } }}
       />
-    </BaseFormDialog>
+    </BaseDialog>
   );
 };

@@ -27,6 +27,7 @@
       "@styles/*": ["app/styles/*"],
       "@utils/*": ["app/utils/*"],
       "@hooks/*": ["app/hooks/*"],
+      "@UI/*": ["app/UI/*"],
       "@schemas": ["app/schemas.ts"]
     }
   },

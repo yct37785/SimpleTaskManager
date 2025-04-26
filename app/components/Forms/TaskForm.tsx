@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, Box, Stack, Typography } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 // our components
-import BaseFormDialog, { TextInput } from './BaseFormDialog';
+import BaseDialog, { DialogTextInput } from '@UI/Dialog/Dialog';
 import LabelSelector from './LabelSelector';
 // others
 import { v4 as uuidv4 } from 'uuid';
@@ -45,10 +45,9 @@ export default function TaskForm({ openColumn, setOpenColumn, addTask }: Props) 
       id: uuidv4(),
       title,
       desc,
-      addDate: today(getLocalTimeZone()),
-      dueDate: dateToCalendarDate(dueDate.toDate()),
+      points: 4,
       completedDate: undefined,
-      labels,
+      labels
     };
 
     addTask(newTask, openColumn);
@@ -63,20 +62,20 @@ export default function TaskForm({ openColumn, setOpenColumn, addTask }: Props) 
    * render
    ******************************************************************************************************************/
   return (
-    <BaseFormDialog
+    <BaseDialog
       open={openColumn !== ''}
       onClose={() => setOpenColumn('')}
       onSubmit={handleSubmit}
       title='New Task'
       disabled={!title || !desc || !dueDate}
     >
-      <TextInput
+      <DialogTextInput
         label='Task title'
         required
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
-      <TextInput
+      <DialogTextInput
         label='Task description'
         rows={4}
         required
@@ -91,6 +90,6 @@ export default function TaskForm({ openColumn, setOpenColumn, addTask }: Props) 
         slotProps={{ textField: { fullWidth: true, required: true } }}
       />
       <LabelSelector labels={labels} setLabels={setLabels} />
-    </BaseFormDialog>
+    </BaseDialog>
   );
 };

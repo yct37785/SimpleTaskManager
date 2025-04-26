@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { Button, Dialog, DialogTitle, DialogActions, DialogContent, Box, Stack, Typography } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 // our components
-import BaseFormDialog, { TextInput } from './BaseFormDialog';
+import BaseDialog, { DialogTextInput } from '@UI/Dialog/Dialog';
 // date
 import dayjs, { Dayjs } from 'dayjs';
 // schemas
@@ -46,20 +46,20 @@ export default function SprintForm({ project, sprintDialogOpen, handleCreateSpri
    * render
    ******************************************************************************************************************/
   return (
-    <BaseFormDialog
+    <BaseDialog
       open={sprintDialogOpen}
       onClose={() => closeSprintDialog()}
       onSubmit={handleSubmit}
       title={`${project.title} - new sprint`}
       disabled={!title || !description || !dueDate}
     >
-      <TextInput
+      <DialogTextInput
         label='Sprint title'
         required
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
-      <TextInput
+      <DialogTextInput
         label='Sprint description'
         rows={4}
         required
@@ -73,6 +73,6 @@ export default function SprintForm({ project, sprintDialogOpen, handleCreateSpri
         onChange={(date) => setDueDate(date)}
         slotProps={{ textField: { fullWidth: true, required: true } }}
       />
-    </BaseFormDialog>
+    </BaseDialog>
   );
 }

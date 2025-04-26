@@ -20,7 +20,7 @@ type Props = {
 /********************************************************************************************************************
  * UI components
  ********************************************************************************************************************/
-export function TextInput(props: TextFieldProps) {
+export function DialogTextInput(props: TextFieldProps) {
   return (
     <TextField fullWidth multiline variant='outlined'
       {...props}
@@ -31,7 +31,7 @@ export function TextInput(props: TextFieldProps) {
 /********************************************************************************************************************
  * form dialog base component
  ********************************************************************************************************************/
-export default function BaseFormDialog({
+export default function BaseDialog({
   open,
   onClose,
   onSubmit,
