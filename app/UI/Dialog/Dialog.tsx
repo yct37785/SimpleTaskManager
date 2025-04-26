@@ -41,7 +41,7 @@ export default function BaseDialog({
   children,
 }: Props) {
   return (
-    <Dialog open={open} onClose={onClose} maxWidth='sm' fullWidth scroll='body'>
+    <Dialog open={open} onClose={onClose} maxWidth='sm' fullWidth scroll='body' disableRestoreFocus>
       {title ? <DialogTitle>{title}</DialogTitle> : null}
       <DialogContent dividers>
         <Stack spacing={2}>{children}</Stack>
