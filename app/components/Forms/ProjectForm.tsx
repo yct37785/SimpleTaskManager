@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react';
 // MUI
-import { Popover, Stack, TextField } from '@mui/material';
+import { Stack, TextField } from '@mui/material';
 // our components
 import BaseDialog, { DialogTextInput } from '@UI/Dialog/Dialog';
+import Popover from '@UI/Dialog/Popover';
 import CalendarPicker from '@UI/Calendar/CalendarPicker';
 // date
 import dayjs, { Dayjs } from 'dayjs';
@@ -55,22 +56,8 @@ export default function ProjectForm({ workspace, projectDialogOpen, handleCreate
     <>
       {/* calendar popover */}
       <Popover
-        open={Boolean(anchorEl)}
         anchorEl={anchorEl}
-        onClose={() => setAnchorEl(null)}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
-        slotProps={{
-          paper: {
-            sx: { p: 2, mt: 1 },
-          },
-        }}
+        setAnchorEl={setAnchorEl}
       >
         <CalendarPicker />
       </Popover>
