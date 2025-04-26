@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 // MUI
-import { Stack, TextField } from '@mui/material';
+import { Stack, TextField, Box } from '@mui/material';
 // our components
 import BaseDialog, { DialogTextInput } from '@UI/Dialog/Dialog';
 import Popover from '@UI/Dialog/Popover';
@@ -11,6 +11,8 @@ import CalendarPicker from '@UI/Calendar/CalendarPicker';
 import dayjs, { Dayjs } from 'dayjs';
 // schemas
 import { Workspace } from '@schemas';
+// styles
+import { calendar_picker_height } from '@styles/dimens';
 
 /********************************************************************************************************************
  * types
@@ -59,7 +61,9 @@ export default function ProjectForm({ workspace, projectDialogOpen, handleCreate
         anchorEl={anchorEl}
         setAnchorEl={setAnchorEl}
       >
-        <CalendarPicker />
+        <Box sx={{ height: calendar_picker_height }}>
+          <CalendarPicker />
+        </Box>
       </Popover>
 
       {/* main form */}

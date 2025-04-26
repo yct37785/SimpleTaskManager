@@ -11,7 +11,6 @@ type Props = {
   anchorEl: HTMLElement | null;
   setAnchorEl: (el: HTMLElement | null) => void;
   children: ReactNode;
-  containerHeight?: number;
 } & Partial<PopoverProps>;
 
 /********************************************************************************************************************
