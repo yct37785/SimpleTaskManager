@@ -78,8 +78,8 @@ export default function ProjectPage() {
     updateSprints(workspaceId, projectId, updatedSprints);
   };
 
-  const handleCreateSprint = (title: string, desc: string, startDate: CalendarDate, dueDate: CalendarDate) => {
-    createSprint(workspaceId, projectId, title, desc, startDate, dueDate);
+  const handleCreateSprint = (title: string, desc: string) => {
+    createSprint(workspaceId, projectId, title, desc, new CalendarDate(2025, 4, 28), new CalendarDate(2025, 5, 10));
     setretriggerChart(prev => prev + 1);
   };
 
