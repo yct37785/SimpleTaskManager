@@ -139,13 +139,13 @@ export default function Sidebar() {
    ******************************************************************************************************************/
   const onClickCreateProject = (e: React.MouseEvent, workspaceId: string) => {
     e.stopPropagation();
-    setOpenWorkspaces((prev) => ({ ...prev, [workspaceId]: true }));
     setProjectDialogOpen(true);
     setActiveWorkspace(workspaceId);
   };
 
   const handleCreateProject = (title: string, desc: string, dueDate: CalendarDate) => {
     if (activeWorkspace && title) {
+      setOpenWorkspaces((prev) => ({ ...prev, [activeWorkspace]: true }));
       createProject(activeWorkspace, title, desc, dateToCalendarDate(new Date()), dueDate);
     }
   };
