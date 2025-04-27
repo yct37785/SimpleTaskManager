@@ -78,11 +78,8 @@ export default function ProjectPage() {
     updateSprints(workspaceId, projectId, updatedSprints);
   };
 
-  const handleCreateSprint = () => {
-    const todayDate = today(getLocalTimeZone());
-    const start = todayDate.add({ days: 4 });
-    const end = start.add({ days: 6 });
-    createSprint(workspaceId, projectId, 'New Sprint', 'Auto-generated sprint', start, end);
+  const handleCreateSprint = (title: string, desc: string, startDate: CalendarDate, dueDate: CalendarDate) => {
+    createSprint(workspaceId, projectId, title, desc, startDate, dueDate);
     setretriggerChart(prev => prev + 1);
   };
 
@@ -168,7 +165,7 @@ export default function ProjectPage() {
       {project ? <SprintForm
         project={project}
         sprintDialogOpen={sprintDialogOpen}
-        handleCreateSprint={() => { }}
+        handleCreateSprint={handleCreateSprint}
         closeSprintDialog={() => setSprintDialogOpen(false)} /> : null}
     </Box>
   );

@@ -86,13 +86,13 @@ export default function ProjectForm({ workspace, projectDialogOpen, handleCreate
       >
         <Stack spacing={2}>
           <DialogTextInput
-            label='Project title'
+            label='Project Title'
             required
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
           <DialogTextInput
-            label='Project description'
+            label='Project Description'
             rows={4}
             required
             value={description}
