@@ -117,7 +117,7 @@ export default function Sidebar() {
   const [workspaceInputVisible, setWorkspaceInputVisible] = useState(false);
   const [workspaceTitle, setWorkspaceTitle] = useState('');
   // create project
-  const [activeWorkspace, setActiveWorkspace] = useState<string | null>(null);
+  const [activeWorkspaceID, setActiveWorkspaceID] = useState<string | null>(null);
   const [projectDialogOpen, setProjectDialogOpen] = useState(false);
   // workspace open/close tracking
   const [openWorkspaces, setOpenWorkspaces] = useState<Record<string, boolean>>({});
@@ -140,13 +140,13 @@ export default function Sidebar() {
   const onClickCreateProject = (e: React.MouseEvent, workspaceId: string) => {
     e.stopPropagation();
     setProjectDialogOpen(true);
-    setActiveWorkspace(workspaceId);
+    setActiveWorkspaceID(workspaceId);
   };
 
   const handleCreateProject = (title: string, desc: string, dueDate: CalendarDate) => {
-    if (activeWorkspace && title) {
-      setOpenWorkspaces((prev) => ({ ...prev, [activeWorkspace]: true }));
-      createProject(activeWorkspace, title, desc, dateToCalendarDate(new Date()), dueDate);
+    if (activeWorkspaceID && title) {
+      setOpenWorkspaces((prev) => ({ ...prev, [activeWorkspaceID]: true }));
+      createProject(activeWorkspaceID, title, desc, dateToCalendarDate(new Date()), dueDate);
     }
   };
 
@@ -217,8 +217,8 @@ export default function Sidebar() {
       </List>
 
       {/* create project form */}
-      {activeWorkspace ? <ProjectForm
-        workspace={workspaces[activeWorkspace]}
+      {activeWorkspaceID ? <ProjectForm
+        workspace={workspaces[activeWorkspaceID]}
         projectDialogOpen={projectDialogOpen}
         handleCreateProject={handleCreateProject}
         closeProjectDialog={() => setProjectDialogOpen(false)} /> : null}
