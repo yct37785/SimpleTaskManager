@@ -39,7 +39,7 @@ export type GanttTask = {
 type Props = {
   title?: string;
   tasks: GanttTask[];
-  retrigger: number;  // retrigger GanttChart if tasks change
+  retrigger: number;            // retrigger GanttChart if tasks change
   deadline?: CalendarDate;
   heightOffset?: number;
   onCreateClick: () => void;
@@ -54,9 +54,8 @@ export default function GanttChart({ title, tasks, retrigger, deadline, heightOf
   const ganttInstance = useRef<any>(null);
 
   const [initialInit, setInitialInit] = useState(true);
-  const [tasksLength, setTasksLength] = useState(tasks.length);
   const [editMode, setEditMode] = useState(false);
-  const [updatedTasks, setUpdatedTasks] = useState<Map<string, GanttTask>>(new Map());
+  const [localTasks, setLocalTasks] = useState<GanttTask[]>(tasks);
 
   const windowHeight = useWindowHeight();
   const theme = useTheme();
@@ -94,7 +93,7 @@ export default function GanttChart({ title, tasks, retrigger, deadline, heightOf
       console.log('Gantt init');
 
       // create Gantt chart
-      ganttInstance.current = new Gantt(ganttRef.current, tasks, {
+      ganttInstance.current = new Gantt(ganttRef.current, localTasks, {
         readonly: !editMode,
         column_width,
         infinite_padding: true,
@@ -126,7 +125,7 @@ export default function GanttChart({ title, tasks, retrigger, deadline, heightOf
             scrollBehaviour = 'smooth';
           }
           // new task added/removed
-          else if (tasks && tasksLength != tasks.length) {
+          else if (localTasks.length > tasks.length) {
             const lastTask = tasks.at(-1);
             const scrollToDate = lastTask ? formatISOToDate(lastTask.start) : new Date();
             scrollToX = column_width * getDaysBetween(ganttInstance.current.dates[0], scrollToDate);
@@ -145,7 +144,6 @@ export default function GanttChart({ title, tasks, retrigger, deadline, heightOf
 
       // update states
       setInitialInit(false);
-      setTasksLength(tasks.length);
 
       // disable horizontal scroll wheel
       const cleanupWheel = disableHorizontalWheelScroll(container);
@@ -170,12 +168,10 @@ export default function GanttChart({ title, tasks, retrigger, deadline, heightOf
       end: formatDateToISO(addDays(end, 1)), // +1 day as end is exclusive
     };
 
-    // add to updatedTasks map
-    setUpdatedTasks(prev => {
-      const updated = new Map(prev);
-      updated.set(task.id, updatedTask);
-      return updated;
-    });
+    // add to tasks
+    setLocalTasks(prevTasks =>
+      prevTasks.map(t => t.id === task.id ? updatedTask : t)
+    );
   }
 
   function handleAddTask() {
@@ -194,26 +190,23 @@ export default function GanttChart({ title, tasks, retrigger, deadline, heightOf
 
   function handleConfirmEdits() {
     if (!ganttInstance.current) return;
-    console.log("Tasks updated: " + updatedTasks.size);
     // apply updates to the Gantt chart
-    updatedTasks.forEach((updatedTask) => {
+    localTasks.forEach((updatedTask) => {
       ganttInstance.current.update_task(updatedTask.id, updatedTask);
     });
   
     // call parent to persist updates
-    const latestTasks = tasks.map(task =>
-      updatedTasks.has(task.id) ? updatedTasks.get(task.id)! : task
-    );
-    onTasksUpdated(latestTasks);
-  
-    // reset
-    setUpdatedTasks(new Map());
+    // const latestTasks = tasks.map(task =>
+    //   updatedTasks.has(task.id) ? updatedTasks.get(task.id)! : task
+    // );
+    // onTasksUpdated(latestTasks);
+
     setEditMode(false);
   }
 
   function handleCancelEdits() {
-    // reset
-    setUpdatedTasks(new Map());
+    // reset back to prev state
+    setLocalTasks(tasks);
     setEditMode(false);
   }
 
