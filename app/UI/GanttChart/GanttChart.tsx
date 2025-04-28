@@ -87,7 +87,10 @@ export default function GanttChart({
    * - scroll to new task
    * - persist prevScrollX
    ******************************************************************************************************************/
-  function initGanttInstance() {
+  function initGanttInstance(
+    scrollTo: 'currDay' |  'lastScroll' | 'lastTask', 
+    enableEdit: boolean
+  ) {
     requestAnimationFrame(() => {
       if (!ganttRef.current) return;
       // prev scroll X
@@ -123,6 +126,11 @@ export default function GanttChart({
       // inject custom styles
       injectStyles();
 
+      // trigger edit mode?
+      if (editMode) {
+        toggleEditMode(true);
+      }
+
       // custom scroll behaviour
       container = ganttRef.current.querySelector('.gantt-container') as HTMLElement | null;
       if (container) {
@@ -132,9 +140,9 @@ export default function GanttChart({
             scrollToX = column_width * getDaysBetween(ganttInstance.current.dates[0], new Date());
             scrollBehaviour = 'smooth';
           }
-          // new task added/removed
-          else if (localTasks.length > tasks.length) {
-            const lastTask = tasks.at(-1);
+          // focus on the last task
+          else if (scrollTo == 'lastTask') {
+            const lastTask = localTasks.at(-1);
             const scrollToDate = lastTask ? formatISOToDate(lastTask.start) : new Date();
             scrollToX = column_width * getDaysBetween(ganttInstance.current.dates[0], scrollToDate);
             scrollToY = container.scrollHeight;
@@ -165,7 +173,7 @@ export default function GanttChart({
   // on window height change
   useEffect(() => {
     if (windowHeight != undefined) {
-      initGanttInstance();
+      initGanttInstance('lastScroll', false);
     }
   }, [windowHeight]);
 
@@ -174,7 +182,7 @@ export default function GanttChart({
     const prevLen = localTasksLenRef.current;
     const currLen = localTasks.length;
     if (prevLen !== currLen) {
-      initGanttInstance();
+      initGanttInstance('lastTask', true);
     }
     localTasksLenRef.current = currLen;
   }, [localTasks]);
