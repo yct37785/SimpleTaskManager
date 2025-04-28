@@ -40,6 +40,7 @@ type Props = {
   title?: string;
   tasks: GanttTask[];             // parent's tasks state
   newTaskTemp: GanttTask | null;  // temp task before confirmation
+  resetNewTaskTemp: () => void;   // clear temp task state on parent
   deadline?: CalendarDate;
   heightOffset?: number;
   onCreateClick: () => void;
@@ -52,6 +53,7 @@ export default function GanttChart({
   title,
   tasks,
   newTaskTemp,
+  resetNewTaskTemp,
   deadline,
   heightOffset = 0,
   onCreateClick}: Props) {
@@ -166,8 +168,9 @@ export default function GanttChart({
   }, [windowHeight]);
 
   useEffect(() => {
-    if (newTaskTemp) {
+    if (newTaskTemp && resetNewTaskTemp) {
       setLocalTasks(prev => [...prev, newTaskTemp]);
+      resetNewTaskTemp();
     }
   }, [newTaskTemp]);
 

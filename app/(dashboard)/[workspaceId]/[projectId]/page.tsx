@@ -167,6 +167,7 @@ export default function ProjectPage() {
         title='Sprints'
         tasks={formatSprintsToTasks(project.sprints)}
         newTaskTemp={newSprint ? formatSprintToTask(newSprint) : null}
+        resetNewTaskTemp={() => setNewSprint(null)}
         deadline={project.dueDate}
         heightOffset={project_details_bar_height + appbar_height}
         onCreateClick={() => setSprintDialogOpen(true)}
