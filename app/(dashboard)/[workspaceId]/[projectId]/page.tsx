@@ -25,15 +25,19 @@ const fallbackDesc = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, s
 /********************************************************************************************************************
  * format sprints into Frappe Gantt-compatible structure
  ********************************************************************************************************************/
-function formatSprintsToTasks(sprints: Project['sprints']): GanttTask[] {
-  return sprints.map((sprint) => ({
+function formatSprintToTask(sprint: Sprint): GanttTask {
+  return {
     id: sprint.id,
     name: sprint.title,
     start: sprint.startDate.toString(),
     end: sprint.dueDate.toString(),
     progress: 70, // placeholder
     custom_class: 'gantt-task-bar',
-  }));
+  }
+}
+
+function formatSprintsToTasks(sprints: Project['sprints']): GanttTask[] {
+  return sprints.map((sprint) => formatSprintToTask(sprint));
 }
 
 /********************************************************************************************************************
@@ -50,6 +54,7 @@ export default function ProjectPage() {
   const [showFullDesc, setShowFullDesc] = useState(false);
   const [sprintDialogOpen, setSprintDialogOpen] = useState(false);
   const [retriggerChart, setretriggerChart] = useState(0);
+  const [newSprint, setNewSprint] = useState<Sprint | null>(null);
 
   /******************************************************************************************************************
    * inject demo sprints into local state
@@ -79,7 +84,16 @@ export default function ProjectPage() {
   };
 
   const handleCreateSprint = (title: string, desc: string) => {
-    createSprint(workspaceId, projectId, title, desc, new CalendarDate(2025, 4, 28), new CalendarDate(2025, 5, 10));
+    const newSprint = {
+      id: 'temp',
+      title,
+      desc,
+      startDate: new CalendarDate(2025, 4, 28),
+      dueDate: new CalendarDate(2025, 5, 10),
+      tasks: []
+    };
+    setNewSprint(newSprint);
+    // createSprint(workspaceId, projectId, title, desc, new CalendarDate(2025, 4, 28), new CalendarDate(2025, 5, 10));
     setretriggerChart(prev => prev + 1);
   };
 
@@ -155,6 +169,7 @@ export default function ProjectPage() {
       <GanttChart
         title='Sprints'
         tasks={formatSprintsToTasks(project.sprints)}
+        newTask={newSprint ? formatSprintToTask(newSprint) : null}
         retrigger={retriggerChart}
         deadline={project.dueDate}
         heightOffset={project_details_bar_height + appbar_height}
