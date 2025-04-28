@@ -184,7 +184,7 @@ export default function GanttChart({
       initGanttInstance('newTaskAdded', true);
     }
     // task deleted, no need scroll
-    else {
+    else if (prevLen > currLen) {
       initGanttInstance('lastScroll', true);
     }
     localTasksLenRef.current = currLen;
