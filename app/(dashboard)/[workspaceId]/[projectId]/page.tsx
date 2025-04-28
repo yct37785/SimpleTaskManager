@@ -93,7 +93,6 @@ export default function ProjectPage() {
       tasks: []
     };
     setNewSprint(newSprint);
-    // createSprint(workspaceId, projectId, title, desc, new CalendarDate(2025, 4, 28), new CalendarDate(2025, 5, 10));
     setretriggerChart(prev => prev + 1);
   };
 
@@ -169,12 +168,11 @@ export default function ProjectPage() {
       <GanttChart
         title='Sprints'
         tasks={formatSprintsToTasks(project.sprints)}
-        newTask={newSprint ? formatSprintToTask(newSprint) : null}
+        newTaskTemp={newSprint ? formatSprintToTask(newSprint) : null}
         retrigger={retriggerChart}
         deadline={project.dueDate}
         heightOffset={project_details_bar_height + appbar_height}
         onCreateClick={() => setSprintDialogOpen(true)}
-        onTasksUpdated={handleUpdateSprints}
       />
       {/* create sprint form */}
       {project ? <SprintForm

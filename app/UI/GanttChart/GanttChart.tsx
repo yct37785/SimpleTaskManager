@@ -38,13 +38,12 @@ export type GanttTask = {
 
 type Props = {
   title?: string;
-  tasks: GanttTask[];
-  newTask: GanttTask | null;
-  retrigger: number;            // retrigger GanttChart if tasks change
+  tasks: GanttTask[];             // parent's tasks state
+  newTaskTemp: GanttTask | null;  // temp task before confirmation
+  retrigger: number;              // retrigger GanttChart if tasks change
   deadline?: CalendarDate;
   heightOffset?: number;
   onCreateClick: () => void;
-  onTasksUpdated: (latestTasks: GanttTask[]) => void;
 };
 
 /********************************************************************************************************************
@@ -53,12 +52,11 @@ type Props = {
 export default function GanttChart({
   title,
   tasks,
-  newTask,
+  newTaskTemp,
   retrigger,
   deadline,
   heightOffset = 0,
-  onCreateClick,
-  onTasksUpdated }: Props) {
+  onCreateClick}: Props) {
   const ganttRef = useRef<HTMLDivElement>(null);
   const ganttInstance = useRef<any>(null);
 
@@ -170,10 +168,10 @@ export default function GanttChart({
   }, [windowHeight, retrigger]);
 
   useEffect(() => {
-    if (newTask) {
+    if (newTaskTemp) {
       console.log("new task added");
     }
-  }, [newTask]);
+  }, [newTaskTemp]);
 
   /******************************************************************************************************************
    * handle task manipulations
@@ -212,12 +210,6 @@ export default function GanttChart({
     localTasks.forEach((updatedTask) => {
       ganttInstance.current.update_task(updatedTask.id, updatedTask);
     });
-  
-    // call parent to persist updates
-    // const latestTasks = tasks.map(task =>
-    //   updatedTasks.has(task.id) ? updatedTasks.get(task.id)! : task
-    // );
-    // onTasksUpdated(latestTasks);
 
     setEditMode(false);
   }
