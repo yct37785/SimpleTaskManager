@@ -40,7 +40,6 @@ type Props = {
   title?: string;
   tasks: GanttTask[];             // parent's tasks state
   newTaskTemp: GanttTask | null;  // temp task before confirmation
-  retrigger: number;              // retrigger GanttChart if tasks change
   deadline?: CalendarDate;
   heightOffset?: number;
   onCreateClick: () => void;
@@ -53,7 +52,6 @@ export default function GanttChart({
   title,
   tasks,
   newTaskTemp,
-  retrigger,
   deadline,
   heightOffset = 0,
   onCreateClick}: Props) {
@@ -162,14 +160,14 @@ export default function GanttChart({
    * refresh state
    ******************************************************************************************************************/
   useEffect(() => {
-    if (windowHeight && retrigger != undefined) {
+    if (windowHeight != undefined) {
       initGanttInstance();
     }
-  }, [windowHeight, retrigger]);
+  }, [windowHeight]);
 
   useEffect(() => {
     if (newTaskTemp) {
-      console.log("new task added");
+      setLocalTasks(prev => [...prev, newTaskTemp]);
     }
   }, [newTaskTemp]);
 

@@ -53,7 +53,6 @@ export default function ProjectPage() {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [showFullDesc, setShowFullDesc] = useState(false);
   const [sprintDialogOpen, setSprintDialogOpen] = useState(false);
-  const [retriggerChart, setretriggerChart] = useState(0);
   const [newSprint, setNewSprint] = useState<Sprint | null>(null);
 
   /******************************************************************************************************************
@@ -93,7 +92,6 @@ export default function ProjectPage() {
       tasks: []
     };
     setNewSprint(newSprint);
-    setretriggerChart(prev => prev + 1);
   };
 
   /******************************************************************************************************************
@@ -169,7 +167,6 @@ export default function ProjectPage() {
         title='Sprints'
         tasks={formatSprintsToTasks(project.sprints)}
         newTaskTemp={newSprint ? formatSprintToTask(newSprint) : null}
-        retrigger={retriggerChart}
         deadline={project.dueDate}
         heightOffset={project_details_bar_height + appbar_height}
         onCreateClick={() => setSprintDialogOpen(true)}
