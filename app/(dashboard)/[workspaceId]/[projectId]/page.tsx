@@ -10,6 +10,7 @@ import { Edit as EditIcon, CalendarMonth as CalendarMonthIcon } from '@mui/icons
 import { getLocalTimeZone, today, CalendarDate } from '@internationalized/date';
 // utils
 import { getRelativeTime, formatISOToDate, dateToCalendarDate } from '@utils/datetime';
+import { v4 as uuidv4 } from 'uuid';
 // our components
 import GanttChart, { GanttTask } from '@UI/GanttChart/GanttChart';
 import { useWorkspacesManager } from '@globals/WorkspacesContext';
@@ -53,7 +54,7 @@ export default function ProjectPage() {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [showFullDesc, setShowFullDesc] = useState(false);
   const [sprintDialogOpen, setSprintDialogOpen] = useState(false);
-  const [newSprint, setNewSprint] = useState<Sprint | null>(null);
+  const [newTempSprint, setNewTempSprint] = useState<Sprint | null>(null);
 
   /******************************************************************************************************************
    * inject demo sprints into local state
@@ -71,14 +72,14 @@ export default function ProjectPage() {
    ******************************************************************************************************************/
   const handleCreateSprint = (title: string, desc: string) => {
     const newSprint = {
-      id: 'temp',
+      id: `TEMP-${uuidv4()}`,
       title,
       desc,
       startDate: new CalendarDate(2025, 5, 10),
       dueDate: new CalendarDate(2025, 5, 19),
       tasks: []
     };
-    setNewSprint(newSprint);
+    setNewTempSprint(newSprint);
   };
 
   /******************************************************************************************************************
@@ -153,8 +154,8 @@ export default function ProjectPage() {
       <GanttChart
         title='Sprints'
         tasks={formatSprintsToTasks(project.sprints)}
-        newTaskTemp={newSprint ? formatSprintToTask(newSprint) : null}
-        resetNewTaskTemp={() => setNewSprint(null)}
+        newTaskTemp={newTempSprint ? formatSprintToTask(newTempSprint) : null}
+        resetNewTaskTemp={() => setNewTempSprint(null)}
         deadline={project.dueDate}
         heightOffset={project_details_bar_height + appbar_height}
         onCreateClick={() => handleCreateSprint('test', 'test')}
