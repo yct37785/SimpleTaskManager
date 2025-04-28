@@ -57,13 +57,13 @@ export default function GanttChart({
   deadline,
   heightOffset = 0,
   onCreateClick}: Props) {
-  const [initialInit, setInitialInit] = useState(true);
   const [editMode, setEditMode] = useState(false);
   const [localTasks, setLocalTasks] = useState<GanttTask[]>(tasks);
   
   const ganttRef = useRef<HTMLDivElement>(null);
   const ganttInstance = useRef<any>(null);
   const localTasksLenRef = useRef(localTasks.length);
+  const hasInit = useRef(false);
 
   const windowHeight = useWindowHeight();
   const theme = useTheme();
@@ -88,7 +88,7 @@ export default function GanttChart({
    * - persist prevScrollX
    ******************************************************************************************************************/
   function initGanttInstance(
-    scrollTo: 'currDay' |  'lastScroll' | 'lastTask', 
+    scrollTo: 'currDay' | 'lastScroll' | 'newTaskAdded', 
     enableEdit: boolean
   ) {
     requestAnimationFrame(() => {
@@ -97,7 +97,6 @@ export default function GanttChart({
       let container = ganttRef.current.querySelector('.gantt-container') as HTMLElement | null;
       let scrollToX = container?.scrollLeft ?? 0;
       let scrollToY = container?.scrollTop ?? 0;
-      let scrollBehaviour: 'instant' | 'smooth' = 'instant';
 
       // clear existing chart
       ganttRef.current.innerHTML = '';
@@ -127,7 +126,7 @@ export default function GanttChart({
       injectStyles();
 
       // trigger edit mode?
-      if (editMode) {
+      if (enableEdit) {
         toggleEditMode(true);
       }
 
@@ -135,31 +134,25 @@ export default function GanttChart({
       container = ganttRef.current.querySelector('.gantt-container') as HTMLElement | null;
       if (container) {
         if (ganttInstance.current.dates && ganttInstance.current.dates.length > 0) {
-          // if initial init, scroll to current day
-          if (initialInit) {
+          // scroll behaviour switch
+          if (scrollTo == 'currDay') {
             scrollToX = column_width * getDaysBetween(ganttInstance.current.dates[0], new Date());
-            scrollBehaviour = 'smooth';
           }
-          // focus on the last task
-          else if (scrollTo == 'lastTask') {
-            const lastTask = localTasks.at(-1);
-            const scrollToDate = lastTask ? formatISOToDate(lastTask.start) : new Date();
-            scrollToX = column_width * getDaysBetween(ganttInstance.current.dates[0], scrollToDate);
-            scrollToY = container.scrollHeight;
-            scrollBehaviour = 'smooth';
-            highlightLastTaskBar(container);
-          }
+          // if newTaskAdded, scroll to last and highlight
+        } else if (scrollTo == 'newTaskAdded') {
+          const lastTask = localTasks.at(-1);
+          const scrollToDate = lastTask ? formatISOToDate(lastTask.start) : new Date();
+          scrollToX = column_width * getDaysBetween(ganttInstance.current.dates[0], scrollToDate);
+          scrollToY = container.scrollHeight;
+          highlightLastTaskBar(container);
         }
 
         container.scrollTo({
           left: scrollToX,
           top: scrollToY,
-          behavior: scrollBehaviour,
+          behavior: 'smooth',
         });
       }
-
-      // update states
-      setInitialInit(false);
 
       // disable horizontal scroll wheel
       const cleanupWheel = disableHorizontalWheelScroll(container);
@@ -172,8 +165,13 @@ export default function GanttChart({
    ******************************************************************************************************************/
   // on window height change
   useEffect(() => {
-    if (windowHeight != undefined) {
-      initGanttInstance('lastScroll', false);
+    if (windowHeight !== 0) {
+      if (hasInit.current === false) {
+        initGanttInstance('currDay', false);
+        hasInit.current = true;
+      } else {
+        initGanttInstance('lastScroll', false);
+      }
     }
   }, [windowHeight]);
 
@@ -181,8 +179,13 @@ export default function GanttChart({
   useEffect(() => {
     const prevLen = localTasksLenRef.current;
     const currLen = localTasks.length;
-    if (prevLen !== currLen) {
-      initGanttInstance('lastTask', true);
+    // new task added
+    if (prevLen < currLen) {
+      initGanttInstance('newTaskAdded', true);
+    }
+    // task deleted, no need scroll
+    else {
+      initGanttInstance('lastScroll', true);
     }
     localTasksLenRef.current = currLen;
   }, [localTasks]);
