@@ -212,11 +212,12 @@ export default function GanttChart({
   /******************************************************************************************************************
    * UI
    ******************************************************************************************************************/
-  useEffect(() => {
+  function toggleEditMode(editMode: boolean) {
     if (ganttInstance.current) {
       ganttInstance.current.update_options({ readonly: !editMode });
+      setEditMode(editMode);
     }
-  }, [editMode]);
+  }
 
   function handleConfirmEdits() {
     if (!ganttInstance.current) return;
@@ -225,13 +226,13 @@ export default function GanttChart({
       ganttInstance.current.update_task(updatedTask.id, updatedTask);
     });
 
-    setEditMode(false);
+    toggleEditMode(false);
   }
 
   function handleCancelEdits() {
     // reset back to prev state
     setLocalTasks(tasks);
-    setEditMode(false);
+    toggleEditMode(false);
   }
 
   /******************************************************************************************************************
@@ -255,7 +256,7 @@ export default function GanttChart({
           </Stack>
           {!editMode ? (
             <Button
-              onClick={() => setEditMode(true)}
+              onClick={() => toggleEditMode(true)}
               variant='text'
               size='small'
               startIcon={<EditIcon />}
