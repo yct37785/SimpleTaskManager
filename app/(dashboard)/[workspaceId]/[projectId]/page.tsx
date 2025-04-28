@@ -69,26 +69,13 @@ export default function ProjectPage() {
   /******************************************************************************************************************
    * update global project data
    ******************************************************************************************************************/
-  const handleUpdateSprints = (latestTasks: GanttTask[]) => {
-    const updatedSprints = latestTasks.map((task): Sprint => {
-      const existing = project.sprints.find((s) => s.id === task.id);
-      return {
-        ...existing!,
-        title: task.name,
-        startDate: dateToCalendarDate(formatISOToDate(task.start)),
-        dueDate: dateToCalendarDate(formatISOToDate(task.end)),
-      };
-    });
-    updateSprints(workspaceId, projectId, updatedSprints);
-  };
-
   const handleCreateSprint = (title: string, desc: string) => {
     const newSprint = {
       id: 'temp',
       title,
       desc,
-      startDate: new CalendarDate(2025, 4, 28),
-      dueDate: new CalendarDate(2025, 5, 10),
+      startDate: new CalendarDate(2025, 5, 10),
+      dueDate: new CalendarDate(2025, 5, 19),
       tasks: []
     };
     setNewSprint(newSprint);
@@ -170,7 +157,7 @@ export default function ProjectPage() {
         resetNewTaskTemp={() => setNewSprint(null)}
         deadline={project.dueDate}
         heightOffset={project_details_bar_height + appbar_height}
-        onCreateClick={() => setSprintDialogOpen(true)}
+        onCreateClick={() => handleCreateSprint('test', 'test')}
       />
       {/* create sprint form */}
       {project ? <SprintForm

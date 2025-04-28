@@ -140,6 +140,8 @@ export default function GanttChart({
             scrollToX = column_width * getDaysBetween(ganttInstance.current.dates[0], scrollToDate);
             scrollToY = container.scrollHeight;
             highlightLastTaskBar(container);
+            // toggle edit mode
+            toggleEditMode(true);
           }
 
           container.scrollTo({
