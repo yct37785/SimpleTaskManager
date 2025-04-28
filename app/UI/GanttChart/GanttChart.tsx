@@ -163,12 +163,14 @@ export default function GanttChart({ title, tasks, retrigger, deadline, heightOf
    * handle task manipulations
    ******************************************************************************************************************/
   function handleDateChange(task: GanttTask, start: Date, end: Date) {
+    // build new updated task
     const updatedTask: GanttTask = {
       ...task,
       start: formatDateToISO(start),
       end: formatDateToISO(addDays(end, 1)), // +1 day as end is exclusive
     };
 
+    // add to updatedTasks map
     setUpdatedTasks(prev => {
       const updated = new Map(prev);
       updated.set(task.id, updatedTask);
@@ -192,7 +194,8 @@ export default function GanttChart({ title, tasks, retrigger, deadline, heightOf
 
   function handleConfirmEdits() {
     if (!ganttInstance.current) return;
-  
+    console.log("Tasks updated: " + updatedTasks.size);
+    // apply updates to the Gantt chart
     updatedTasks.forEach((updatedTask) => {
       ganttInstance.current.update_task(updatedTask.id, updatedTask);
     });
@@ -203,11 +206,13 @@ export default function GanttChart({ title, tasks, retrigger, deadline, heightOf
     );
     onTasksUpdated(latestTasks);
   
+    // reset
     setUpdatedTasks(new Map());
     setEditMode(false);
   }
 
   function handleCancelEdits() {
+    // reset
     setUpdatedTasks(new Map());
     setEditMode(false);
   }
