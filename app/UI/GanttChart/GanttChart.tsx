@@ -57,12 +57,13 @@ export default function GanttChart({
   deadline,
   heightOffset = 0,
   onCreateClick}: Props) {
-  const ganttRef = useRef<HTMLDivElement>(null);
-  const ganttInstance = useRef<any>(null);
-
   const [initialInit, setInitialInit] = useState(true);
   const [editMode, setEditMode] = useState(false);
   const [localTasks, setLocalTasks] = useState<GanttTask[]>(tasks);
+  
+  const ganttRef = useRef<HTMLDivElement>(null);
+  const ganttInstance = useRef<any>(null);
+  const localTasksLenRef = useRef(localTasks.length);
 
   const windowHeight = useWindowHeight();
   const theme = useTheme();
@@ -161,12 +162,24 @@ export default function GanttChart({
   /******************************************************************************************************************
    * refresh state
    ******************************************************************************************************************/
+  // on window height change
   useEffect(() => {
     if (windowHeight != undefined) {
       initGanttInstance();
     }
   }, [windowHeight]);
 
+  // on new tasks added/deleted
+  useEffect(() => {
+    const prevLen = localTasksLenRef.current;
+    const currLen = localTasks.length;
+    if (prevLen !== currLen) {
+      initGanttInstance();
+    }
+    localTasksLenRef.current = currLen;
+  }, [localTasks]);
+
+  // new task added
   useEffect(() => {
     if (newTaskTemp && resetNewTaskTemp) {
       setLocalTasks(prev => [...prev, newTaskTemp]);
