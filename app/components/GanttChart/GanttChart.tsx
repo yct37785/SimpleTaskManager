@@ -48,14 +48,16 @@ export default function GanttChart({
   workspaceId,
   project,
   heightOffset = 0}: Props) {
-  const { updateSprint } = useWorkspacesManager();
+  const { updateSprint, createSprint } = useWorkspacesManager();
 
   const [editMode, setEditMode] = useState(false);
   const [sprintDialogOpen, setSprintDialogOpen] = useState(false);
   const [ganttTasks, setGanttTasks] = useState<GanttTask[]>(formatSprintsToGanttTasks(project.sprints));
+  const [newSprints, setNewSprints] = useState<Sprint[]>([]);
   
   const ganttRef = useRef<HTMLDivElement>(null);
   const ganttInstance = useRef<any>(null);
+  const ganttTaskLen = useRef<number>(project.sprints.length);
 
   const windowHeight = useWindowHeight();
   const theme = useTheme();
@@ -106,6 +108,14 @@ export default function GanttChart({
     }
   }, [windowHeight]);
 
+  // if got changes in GanttTasks
+  useEffect(() => {
+    if (ganttTaskLen.current != ganttTasks.length) {
+      initGanttInstance();
+      ganttTaskLen.current = ganttTasks.length;
+    }
+  }, [ganttTasks]);
+
   /******************************************************************************************************************
    * handle task manipulations
    ******************************************************************************************************************/
@@ -123,26 +133,66 @@ export default function GanttChart({
     );
   }
 
+  function addNewSprint(title: string, desc: string) {
+    // Sprint
+    const newSprint: Sprint = {
+      id: `TEMP-${uuidv4()}`,
+      title,
+      desc,
+      startDate: today(getLocalTimeZone()),
+      dueDate: today(getLocalTimeZone()).add({ days: 7 }),
+      tasks: []
+    };
+    setNewSprints(prev => [...prev, newSprint]);
+  
+    // GanttTask
+    const newTask: GanttTask = {
+      id: newSprint.id,
+      name: newSprint.title,
+      start: newSprint.startDate.toString(),
+      end: newSprint.dueDate.toString(),
+      progress: 0,
+      custom_class: 'gantt-task-bar'
+    };
+    setGanttTasks(prev => [...prev, newTask]);
+
+    // toggle edit mode immediately when new sprint added
+    toggleEditMode(true);
+  }
+
   /******************************************************************************************************************
    * handle state manipulations
    ******************************************************************************************************************/
   function handleConfirmEdits() {
     if (!ganttInstance.current) return;
-
-    // apply updates to the Gantt chart
-    ganttTasks.forEach((ganttTask) => {
-      ganttInstance.current.update_task(ganttTask.id, ganttTask);
+  
+    // update chart visuals
+    ganttTasks.forEach(task => {
+      ganttInstance.current.update_task(task.id, task);
     });
-
-    // apply updates to the global state
-    ganttTasks.forEach((ganttTask) => {
-      const originalSprint = project.sprints.find(s => s.id === ganttTask.id);
-      if (originalSprint) {
-        const updatedSprint = formatGanttTaskToSprint(ganttTask, originalSprint);
-        updateSprint(workspaceId, project.id, updatedSprint);
+  
+    // update existing sprints
+    ganttTasks.forEach(ganttTask => {
+      if (!ganttTask.id.startsWith('TEMP')) {
+        const originalSprint = project.sprints.find(s => s.id === ganttTask.id);
+        if (originalSprint) {
+          const updatedSprint = formatGanttTaskToSprint(ganttTask, originalSprint);
+          updateSprint(workspaceId, project.id, updatedSprint);
+        }
       }
     });
-
+  
+    // apply new sprints
+    newSprints.forEach(tempSprint => {
+      const matchingTask = ganttTasks.find(t => t.id === tempSprint.id);
+      if (matchingTask) {
+        const newConfirmedSprint = formatGanttTaskToSprint(matchingTask, tempSprint);
+        createSprint(workspaceId, project.id, newConfirmedSprint.title, newConfirmedSprint.desc, newConfirmedSprint.startDate, newConfirmedSprint.dueDate);
+      }
+    });
+  
+    // cleanup
+    setNewSprints([]);
     toggleEditMode(false);
   }
 
@@ -171,7 +221,7 @@ export default function GanttChart({
     {project ? <SprintForm
         project={project}
         sprintDialogOpen={sprintDialogOpen}
-        handleCreateSprint={() => {}}
+        handleCreateSprint={addNewSprint}
         closeSprintDialog={() => setSprintDialogOpen(false)} /> : null}
     <Box sx={{ px: 2, pb: 2 }}>
       <Box sx={{ border: `1px solid ${theme.palette.divider}`, borderRadius: 2 }}>
