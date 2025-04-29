@@ -29,12 +29,7 @@ type WorkspacesContextType = {
     dueDate: CalendarDate
   ) => boolean;
   updateSprint: (workspaceId: string, projectId: string, updatedSprint: Sprint) => void;
-  addTask: (
-    workspaceId: string,
-    projectId: string,
-    sprintId: string,
-    task: Task
-  ) => void;
+  addTask: (workspaceId: string, projectId: string, sprintId: string, task: Task) => void;
 };
 
 const WorkspacesContext = createContext<WorkspacesContextType | undefined>(undefined);
@@ -56,16 +51,39 @@ export const useWorkspacesManager = () => {
 export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
   const [workspaces, setWorkspaces] = useState<Record<string, Workspace>>(sampleWorkspaces);
 
+  const updateProject = (
+    workspaceId: string,
+    projectId: string,
+    updater: (project: Project) => Project
+  ) => {
+    setWorkspaces(prev => {
+      const workspace = prev[workspaceId];
+      if (!workspace) return prev;
+
+      const project = workspace.projects[projectId];
+      if (!project) return prev;
+
+      const updatedProject = updater(project);
+
+      return {
+        ...prev,
+        [workspaceId]: {
+          ...workspace,
+          projects: {
+            ...workspace.projects,
+            [projectId]: updatedProject,
+          },
+        },
+      };
+    });
+  };
+
   /******************************************************************************************************************
    * create a new workspace
    ******************************************************************************************************************/
   const createWorkspace = (title: string) => {
     const id = uuidv4();
-    const newWorkspace: Workspace = {
-      id,
-      title,
-      projects: {},
-    };
+    const newWorkspace: Workspace = { id, title, projects: {} };
     setWorkspaces(prev => ({ ...prev, [id]: newWorkspace }));
   };
 
@@ -88,17 +106,7 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
       dueDate,
       sprints: [],
     };
-
-    setWorkspaces(prev => ({
-      ...prev,
-      [workspaceId]: {
-        ...prev[workspaceId],
-        projects: {
-          ...prev[workspaceId].projects,
-          [projectId]: newProject,
-        },
-      },
-    }));
+    updateProject(workspaceId, projectId, () => newProject);
   };
 
   /******************************************************************************************************************
@@ -116,73 +124,37 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
     const project = workspaces[workspaceId]?.projects[projectId];
     if (!project) return false;
 
-    // add sprint
     const newSprint: Sprint = {
       id: uuidv4(),
       title,
       desc,
       startDate,
       dueDate,
-      tasks: []
+      tasks: [],
     };
 
-    setWorkspaces(prev => {
-      const workspace = prev[workspaceId];
-      const updatedProject: Project = {
-        ...workspace.projects[projectId],
-        sprints: [...workspace.projects[projectId].sprints, newSprint],
-      };
+    updateProject(workspaceId, projectId, (project) => ({
+      ...project,
+      sprints: [...project.sprints, newSprint],
+    }));
 
-      return {
-        ...prev,
-        [workspaceId]: {
-          ...workspace,
-          projects: {
-            ...workspace.projects,
-            [projectId]: updatedProject,
-          },
-        },
-      };
-    });
-  
     return true;
   };
 
   /******************************************************************************************************************
-   * replace project sprints list with a new list
+   * update a single sprint in a project by ID
    ******************************************************************************************************************/
   const updateSprint = (
     workspaceId: string,
     projectId: string,
     updatedSprint: Sprint
   ) => {
-    setWorkspaces(prev => {
-      const workspace = prev[workspaceId];
-      if (!workspace) return prev;
-  
-      const project = workspace.projects[projectId];
-      if (!project) return prev;
-  
-      const updatedSprints = project.sprints.map(sprint =>
+    updateProject(workspaceId, projectId, (project) => ({
+      ...project,
+      sprints: project.sprints.map(sprint =>
         sprint.id === updatedSprint.id ? updatedSprint : sprint
-      );
-  
-      const updatedProject: Project = {
-        ...project,
-        sprints: updatedSprints,
-      };
-  
-      return {
-        ...prev,
-        [workspaceId]: {
-          ...workspace,
-          projects: {
-            ...workspace.projects,
-            [projectId]: updatedProject,
-          },
-        },
-      };
-    });
+      ),
+    }));
   };
 
   /******************************************************************************************************************
@@ -194,32 +166,14 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
     sprintId: string,
     task: Task
   ) => {
-    setWorkspaces(prev => {
-      const workspace = prev[workspaceId];
-      const project = workspace.projects[projectId];
-
-      const updatedSprints = project.sprints.map((sprint) =>
+    updateProject(workspaceId, projectId, (project) => ({
+      ...project,
+      sprints: project.sprints.map(sprint =>
         sprint.id === sprintId
           ? { ...sprint, tasks: [...sprint.tasks, task] }
           : sprint
-      );
-
-      const updatedProject: Project = {
-        ...project,
-        sprints: updatedSprints,
-      };
-
-      return {
-        ...prev,
-        [workspaceId]: {
-          ...workspace,
-          projects: {
-            ...workspace.projects,
-            [projectId]: updatedProject,
-          },
-        },
-      };
-    });
+      ),
+    }));
   };
 
   /******************************************************************************************************************
