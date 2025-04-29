@@ -21,7 +21,7 @@ import { formatDateToISO, addDays, getDaysBetween, formatISOToDate } from '@util
 import { disableHorizontalWheelScroll } from '@utils/UI';
 import { GanttTask, formatSprintsToGanttTasks, formatGanttTaskToSprint } from './GanttChartUtils';
 // schemas
-import { Workspace, Project, Sprint } from '@schemas';
+import { Project, Sprint } from '@schemas';
 // styles
 import './frappe-gantt.css';
 import './frappe-gantt-custom.css';
@@ -97,7 +97,7 @@ export default function GanttChart({
   }
 
   /******************************************************************************************************************
-   * refresh state
+   * hooks
    ******************************************************************************************************************/
   // on window height change
   useEffect(() => {
@@ -124,15 +124,8 @@ export default function GanttChart({
   }
 
   /******************************************************************************************************************
-   * UI
+   * handle state manipulations
    ******************************************************************************************************************/
-  function toggleEditMode(editMode: boolean) {
-    if (ganttInstance.current) {
-      ganttInstance.current.update_options({ readonly: !editMode });
-      setEditMode(editMode);
-    }
-  }
-
   function handleConfirmEdits() {
     if (!ganttInstance.current) return;
 
@@ -160,6 +153,16 @@ export default function GanttChart({
   }
 
   /******************************************************************************************************************
+   * UI
+   ******************************************************************************************************************/
+  function toggleEditMode(editMode: boolean) {
+    if (ganttInstance.current) {
+      ganttInstance.current.update_options({ readonly: !editMode });
+      setEditMode(editMode);
+    }
+  }
+
+  /******************************************************************************************************************
    * render
    ******************************************************************************************************************/
   return (
@@ -180,7 +183,7 @@ export default function GanttChart({
               {title}
             </Typography>
             <Tooltip title='Create'>
-              <IconButton size='small' color='primary' sx={{ ml: 1 }} onClick={() => {}}>
+              <IconButton size='small' color='primary' sx={{ ml: 1 }} onClick={() => setSprintDialogOpen(true)}>
                 <AddIcon />
               </IconButton>
             </Tooltip>
