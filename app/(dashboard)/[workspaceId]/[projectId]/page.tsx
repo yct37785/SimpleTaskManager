@@ -26,10 +26,10 @@ const fallbackDesc = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, s
  ********************************************************************************************************************/
 export default function ProjectPage() {
   const { workspaceId, projectId } = useParams() as { workspaceId: string; projectId: string };
-  const { workspaces } = useWorkspacesManager();
+  const { workspaces, getProject } = useWorkspacesManager();
 
   const workspace = workspaces[workspaceId];
-  const project = workspace?.projects[projectId];
+  const project = getProject(workspaceId, projectId);
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [showFullDesc, setShowFullDesc] = useState(false);
@@ -116,6 +116,7 @@ export default function ProjectPage() {
       {projectDetailsBar()}
       <GanttChart
         title='Sprints'
+        workspaceId={workspaceId}
         project={project}
         heightOffset={project_details_bar_height + appbar_height}
       />

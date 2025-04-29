@@ -13,23 +13,10 @@ type WorkspacesContextType = {
   workspaces: Record<string, Workspace>;
   setWorkspaces: React.Dispatch<React.SetStateAction<Record<string, Workspace>>>;
   createWorkspace: (title: string) => void;
-  createProject: (
-    workspaceId: string,
-    title: string,
-    desc: string,
-    startDate: CalendarDate,
-    dueDate: CalendarDate
-  ) => void;
-  createSprint: (
-    workspaceId: string,
-    projectId: string,
-    title: string,
-    desc: string,
-    startDate: CalendarDate,
-    dueDate: CalendarDate
-  ) => boolean;
+  createProject: (workspaceId: string, title: string, desc: string, startDate: CalendarDate, dueDate: CalendarDate) => void;
+  getProject: (workspaceId: string, projectId: string) => Project | null;
+  createSprint: (workspaceId: string, projectId: string, title: string, desc: string, startDate: CalendarDate, dueDate: CalendarDate) => boolean;
   updateSprint: (workspaceId: string, projectId: string, updatedSprint: Sprint) => void;
-  addTask: (workspaceId: string, projectId: string, sprintId: string, task: Task) => void;
 };
 
 const WorkspacesContext = createContext<WorkspacesContextType | undefined>(undefined);
@@ -110,6 +97,19 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
   };
 
   /******************************************************************************************************************
+   * retrieve a project by workspaceId and projectId
+   ******************************************************************************************************************/
+  const getProject = (workspaceId: string, projectId: string): Project | null => {
+    const workspace = workspaces[workspaceId];
+    if (!workspace) return null;
+
+    const project = workspace.projects[projectId];
+    if (!project) return null;
+
+    return project;
+  };
+
+  /******************************************************************************************************************
    * create a sprint under a project with default columns
    * - returns false if invalid date range or overlapping
    ******************************************************************************************************************/
@@ -158,25 +158,6 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
   };
 
   /******************************************************************************************************************
-   * add a task to a sprint
-   ******************************************************************************************************************/
-  const addTask = (
-    workspaceId: string,
-    projectId: string,
-    sprintId: string,
-    task: Task
-  ) => {
-    updateProject(workspaceId, projectId, (project) => ({
-      ...project,
-      sprints: project.sprints.map(sprint =>
-        sprint.id === sprintId
-          ? { ...sprint, tasks: [...sprint.tasks, task] }
-          : sprint
-      ),
-    }));
-  };
-
-  /******************************************************************************************************************
    * render
    ******************************************************************************************************************/
   return (
@@ -186,9 +167,9 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
         setWorkspaces,
         createWorkspace,
         createProject,
+        getProject,
         createSprint,
-        updateSprint,
-        addTask,
+        updateSprint
       }}
     >
       {children}

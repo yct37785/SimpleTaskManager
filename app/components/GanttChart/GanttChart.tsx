@@ -12,14 +12,16 @@ import { Add as AddIcon, Edit as EditIcon, Check as CheckIcon, Close as CloseIco
 import { useWindowHeight } from '@hooks/useWindowHeight';
 // pages
 import SprintForm from '@components/Forms/SprintForm';
+// our components
+import { useWorkspacesManager } from '@globals/WorkspacesContext';
 // utils
 import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date';
 import { v4 as uuidv4 } from 'uuid';
 import { formatDateToISO, addDays, getDaysBetween, formatISOToDate } from '@utils/datetime';
 import { disableHorizontalWheelScroll } from '@utils/UI';
-import { GanttTask, formatSprintToTask, formatSprintsToTasks, markDeadline, highlightLastTaskBar } from './GanttChartUtils';
+import { GanttTask, formatSprintsToGanttTasks, formatGanttTaskToSprint } from './GanttChartUtils';
 // schemas
-import { Project, Sprint } from '@schemas';
+import { Workspace, Project, Sprint } from '@schemas';
 // styles
 import './frappe-gantt.css';
 import './frappe-gantt-custom.css';
@@ -33,6 +35,7 @@ const column_width = 45;
  ********************************************************************************************************************/
 type Props = {
   title?: string;
+  workspaceId: string;
   project: Project;
   heightOffset?: number;
 };
@@ -42,12 +45,14 @@ type Props = {
  ********************************************************************************************************************/
 export default function GanttChart({
   title,
+  workspaceId,
   project,
   heightOffset = 0}: Props) {
+  const { updateSprint } = useWorkspacesManager();
 
   const [editMode, setEditMode] = useState(false);
   const [sprintDialogOpen, setSprintDialogOpen] = useState(false);
-  const [ganttTasks, setGanttTasks] = useState<GanttTask[]>(formatSprintsToTasks(project.sprints));
+  const [ganttTasks, setGanttTasks] = useState<GanttTask[]>(formatSprintsToGanttTasks(project.sprints));
   
   const ganttRef = useRef<HTMLDivElement>(null);
   const ganttInstance = useRef<any>(null);
@@ -130,18 +135,27 @@ export default function GanttChart({
 
   function handleConfirmEdits() {
     if (!ganttInstance.current) return;
+
     // apply updates to the Gantt chart
     ganttTasks.forEach((ganttTask) => {
       ganttInstance.current.update_task(ganttTask.id, ganttTask);
     });
-    // apply to global
+
+    // apply updates to the global state
+    ganttTasks.forEach((ganttTask) => {
+      const originalSprint = project.sprints.find(s => s.id === ganttTask.id);
+      if (originalSprint) {
+        const updatedSprint = formatGanttTaskToSprint(ganttTask, originalSprint);
+        updateSprint(workspaceId, project.id, updatedSprint);
+      }
+    });
 
     toggleEditMode(false);
   }
 
   function handleCancelEdits() {
     // reset back to prev state
-    setGanttTasks(formatSprintsToTasks(project.sprints));
+    setGanttTasks(formatSprintsToGanttTasks(project.sprints));
     toggleEditMode(false);
   }
 

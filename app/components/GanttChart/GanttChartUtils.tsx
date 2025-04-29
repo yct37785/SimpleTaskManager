@@ -23,7 +23,7 @@ export type GanttTask = {
 /********************************************************************************************************************
  * format sprints into Frappe Gantt-compatible structure
  ********************************************************************************************************************/
-export function formatSprintToTask(sprint: Sprint): GanttTask {
+export function formatSprintToGanttTask(sprint: Sprint): GanttTask {
   return {
     id: sprint.id,
     name: sprint.title,
@@ -34,8 +34,23 @@ export function formatSprintToTask(sprint: Sprint): GanttTask {
   }
 }
 
-export function formatSprintsToTasks(sprints: Project['sprints']): GanttTask[] {
-  return sprints.map((sprint) => formatSprintToTask(sprint));
+export function formatSprintsToGanttTasks(sprints: Project['sprints']): GanttTask[] {
+  return sprints.map((sprint) => formatSprintToGanttTask(sprint));
+}
+
+/********************************************************************************************************************
+ * format a GanttTask back into Sprint
+ ********************************************************************************************************************/
+export function formatGanttTaskToSprint(task: GanttTask, originalSprint: Sprint): Sprint {
+  const startParts = task.start.split('-').map(Number);
+  const endParts = task.end.split('-').map(Number);
+
+  return {
+    ...originalSprint,
+    title: task.name,
+    startDate: new CalendarDate(startParts[0], startParts[1], startParts[2]),
+    dueDate: new CalendarDate(endParts[0], endParts[1], endParts[2]),
+  };
 }
 
 /********************************************************************************************************************
