@@ -12,7 +12,7 @@ import { getLocalTimeZone, today, CalendarDate } from '@internationalized/date';
 import { getRelativeTime, formatISOToDate, dateToCalendarDate } from '@utils/datetime';
 import { v4 as uuidv4 } from 'uuid';
 // our components
-import GanttChart, { GanttTask } from '@UI/GanttChart/GanttChart';
+import GanttChart, { GanttTask } from '@components/GanttChart/GanttChart';
 import { useWorkspacesManager } from '@globals/WorkspacesContext';
 import SprintForm from '@components/Forms/SprintForm';
 // schemas
