@@ -26,7 +26,7 @@ const fallbackDesc = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, s
  ********************************************************************************************************************/
 export default function ProjectPage() {
   const { workspaceId, projectId } = useParams() as { workspaceId: string; projectId: string };
-  const { workspaces, createSprint, updateSprints } = useWorkspacesManager();
+  const { workspaces } = useWorkspacesManager();
 
   const workspace = workspaces[workspaceId];
   const project = workspace?.projects[projectId];
