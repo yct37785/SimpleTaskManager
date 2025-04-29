@@ -77,10 +77,17 @@ export function addDays(date: Date, days: number): Date {
  * returns the number of days between two dates
  * e.g. (May 2 - May 4) returns 2
  ********************************************************************************************************************/
-export function getDaysBetween(start: Date, end: Date): number {
-  const startTime = start.setHours(0, 0, 0, 0);
-  const endTime = end.setHours(0, 0, 0, 0);
-  const diffInMs = Math.abs(endTime - startTime);
+export function getDaysBetween(start: CalendarDate | Date, end: CalendarDate | Date): number {
+  const toDate = (input: CalendarDate | Date): Date => {
+    if (input instanceof Date) return new Date(input.getFullYear(), input.getMonth(), input.getDate());
+    return new Date(input.year, input.month - 1, input.day);
+  };
+
+  const startDate = toDate(start);
+  const endDate = toDate(end);
+
+  const diffInMs = endDate.getTime() - startDate.getTime();
   const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
   return diffInDays;
 }

@@ -6,15 +6,13 @@ import { useParams } from 'next/navigation';
 // MUI
 import { Box, Typography, Tooltip, IconButton, Stack } from '@mui/material';
 import { Edit as EditIcon, CalendarMonth as CalendarMonthIcon } from '@mui/icons-material';
-// date
-import { getLocalTimeZone, today, CalendarDate } from '@internationalized/date';
 // utils
+import { getLocalTimeZone, today, CalendarDate } from '@internationalized/date';
 import { getRelativeTime, formatISOToDate, dateToCalendarDate } from '@utils/datetime';
 import { v4 as uuidv4 } from 'uuid';
 // our components
-import GanttChart, { GanttTask } from '@components/GanttChart/GanttChart';
+import GanttChart from '@components/GanttChart/GanttChart';
 import { useWorkspacesManager } from '@globals/WorkspacesContext';
-import SprintForm from '@components/Forms/SprintForm';
 // schemas
 import { Project, Sprint } from '@schemas';
 // styles
@@ -22,24 +20,6 @@ import { project_details_bar_height, appbar_height } from '@styles/dimens';
 import styles from './ProjectPage.module.css';
 
 const fallbackDesc = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
-
-/********************************************************************************************************************
- * format sprints into Frappe Gantt-compatible structure
- ********************************************************************************************************************/
-function formatSprintToTask(sprint: Sprint): GanttTask {
-  return {
-    id: sprint.id,
-    name: sprint.title,
-    start: sprint.startDate.toString(),
-    end: sprint.dueDate.toString(),
-    progress: 70, // placeholder
-    custom_class: 'gantt-task-bar',
-  }
-}
-
-function formatSprintsToTasks(sprints: Project['sprints']): GanttTask[] {
-  return sprints.map((sprint) => formatSprintToTask(sprint));
-}
 
 /********************************************************************************************************************
  * project dashboard
@@ -53,8 +33,6 @@ export default function ProjectPage() {
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [showFullDesc, setShowFullDesc] = useState(false);
-  const [sprintDialogOpen, setSprintDialogOpen] = useState(false);
-  const [newTempSprint, setNewTempSprint] = useState<Sprint | null>(null);
 
   /******************************************************************************************************************
    * inject demo sprints into local state
@@ -66,21 +44,6 @@ export default function ProjectPage() {
   if (!workspace || !project) {
     return <div>Invalid workspace or project</div>;
   }
-
-  /******************************************************************************************************************
-   * update global project data
-   ******************************************************************************************************************/
-  const handleCreateSprint = (title: string, desc: string) => {
-    const newSprint = {
-      id: `TEMP-${uuidv4()}`,
-      title,
-      desc,
-      startDate: new CalendarDate(2025, 5, 10),
-      dueDate: new CalendarDate(2025, 5, 19),
-      tasks: []
-    };
-    setNewTempSprint(newSprint);
-  };
 
   /******************************************************************************************************************
    * project details
@@ -153,19 +116,9 @@ export default function ProjectPage() {
       {projectDetailsBar()}
       <GanttChart
         title='Sprints'
-        tasks={formatSprintsToTasks(project.sprints)}
-        newTaskTemp={newTempSprint ? formatSprintToTask(newTempSprint) : null}
-        resetNewTaskTemp={() => setNewTempSprint(null)}
-        deadline={project.dueDate}
-        heightOffset={project_details_bar_height + appbar_height}
-        onCreateClick={() => handleCreateSprint('test', 'test')}
-      />
-      {/* create sprint form */}
-      {project ? <SprintForm
         project={project}
-        sprintDialogOpen={sprintDialogOpen}
-        handleCreateSprint={handleCreateSprint}
-        closeSprintDialog={() => setSprintDialogOpen(false)} /> : null}
+        heightOffset={project_details_bar_height + appbar_height}
+      />
     </Box>
   );
 }

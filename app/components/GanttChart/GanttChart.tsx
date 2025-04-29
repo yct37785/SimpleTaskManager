@@ -8,14 +8,18 @@ import {
   Box, Typography, IconButton, Stack, Divider, Tooltip, useTheme, Button
 } from '@mui/material';
 import { Add as AddIcon, Edit as EditIcon, Check as CheckIcon, Close as CloseIcon } from '@mui/icons-material';
-// date
-import { CalendarDate } from '@internationalized/date';
 // hooks
 import { useWindowHeight } from '@hooks/useWindowHeight';
+// pages
+import SprintForm from '@components/Forms/SprintForm';
 // utils
+import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date';
+import { v4 as uuidv4 } from 'uuid';
 import { formatDateToISO, addDays, getDaysBetween, formatISOToDate } from '@utils/datetime';
 import { disableHorizontalWheelScroll } from '@utils/UI';
-import { markDeadline, highlightLastTaskBar } from './GanttChartUtils';
+import { GanttTask, formatSprintToTask, formatSprintsToTasks, markDeadline, highlightLastTaskBar } from './GanttChartUtils';
+// schemas
+import { Project, Sprint } from '@schemas';
 // styles
 import './frappe-gantt.css';
 import './frappe-gantt-custom.css';
@@ -27,23 +31,10 @@ const column_width = 45;
 /********************************************************************************************************************
  * types
  ********************************************************************************************************************/
-export type GanttTask = {
-  id: string;
-  name: string;
-  start: string;  // yyy-mm-dd
-  end: string;    // yyy-mm-dd
-  progress: number;
-  custom_class?: string;
-};
-
 type Props = {
   title?: string;
-  tasks: GanttTask[];             // parent's tasks state
-  newTaskTemp: GanttTask | null;  // temp task before confirmation
-  resetNewTaskTemp: () => void;   // clear temp task state on parent
-  deadline?: CalendarDate;
+  project: Project;
   heightOffset?: number;
-  onCreateClick: () => void;
 };
 
 /********************************************************************************************************************
@@ -51,35 +42,18 @@ type Props = {
  ********************************************************************************************************************/
 export default function GanttChart({
   title,
-  tasks,
-  newTaskTemp,
-  resetNewTaskTemp,
-  deadline,
-  heightOffset = 0,
-  onCreateClick}: Props) {
-  const [initialInit, setInitialInit] = useState(true);
+  project,
+  heightOffset = 0}: Props) {
+
   const [editMode, setEditMode] = useState(false);
-  const [localTasks, setLocalTasks] = useState<GanttTask[]>(tasks);
+  const [sprintDialogOpen, setSprintDialogOpen] = useState(false);
+  const [ganttTasks, setGanttTasks] = useState<GanttTask[]>(formatSprintsToTasks(project.sprints));
   
   const ganttRef = useRef<HTMLDivElement>(null);
   const ganttInstance = useRef<any>(null);
-  const localTasksLenRef = useRef(localTasks.length);
 
   const windowHeight = useWindowHeight();
   const theme = useTheme();
-
-  /******************************************************************************************************************
-   * inject styles
-   ******************************************************************************************************************/
-  function injectStyles() {
-    if (deadline) {
-      markDeadline(ganttInstance.current, ganttRef.current, deadline, column_width);
-    }
-  }
-
-  useEffect(() => {
-    injectStyles();
-  }, [editMode, deadline]);
 
   /******************************************************************************************************************
    * Gantt instance
@@ -87,20 +61,16 @@ export default function GanttChart({
    * - scroll to new task
    * - persist prevScrollX
    ******************************************************************************************************************/
-  function initGanttInstance(newTaskAdded: boolean) {
+  function initGanttInstance() {
     requestAnimationFrame(() => {
       if (!ganttRef.current) return;
-      // prev scroll X
-      let container = ganttRef.current.querySelector('.gantt-container') as HTMLElement | null;
-      let scrollToX = container?.scrollLeft ?? 0;
-      let scrollToY = container?.scrollTop ?? 0;
 
       // clear existing chart
       ganttRef.current.innerHTML = '';
       console.log('Gantt init');
 
       // create Gantt chart
-      ganttInstance.current = new Gantt(ganttRef.current, localTasks, {
+      ganttInstance.current = new Gantt(ganttRef.current, ganttTasks, {
         readonly: !editMode,
         column_width,
         infinite_padding: true,
@@ -118,43 +88,6 @@ export default function GanttChart({
         snap_at: '1d',
         on_date_change: (task: GanttTask, start: Date, end: Date) => handleDateChange(task, start, end),
       });
-
-      // inject custom styles
-      injectStyles();
-
-      // custom scroll behaviour
-      container = ganttRef.current.querySelector('.gantt-container') as HTMLElement | null;
-      if (container) {
-        let behavior: ScrollBehavior = 'instant';
-        if (ganttInstance.current.dates && ganttInstance.current.dates.length > 0) {
-          // on first initialize
-          if (initialInit) {
-            scrollToX = column_width * getDaysBetween(ganttInstance.current.dates[0], new Date());
-            behavior = 'smooth';
-            setInitialInit(false);
-          // on new task added
-          } else if (newTaskAdded) {
-            behavior = 'smooth';
-            const lastTask = localTasks.at(-1);
-            const scrollToDate = lastTask ? formatISOToDate(lastTask.start) : new Date();
-            scrollToX = column_width * getDaysBetween(ganttInstance.current.dates[0], scrollToDate);
-            scrollToY = container.scrollHeight;
-            highlightLastTaskBar(container);
-            // toggle edit mode
-            toggleEditMode(true);
-          }
-
-          container.scrollTo({
-            left: scrollToX,
-            top: scrollToY,
-            behavior: behavior,
-          });
-        }
-      }
-
-      // disable horizontal scroll wheel
-      const cleanupWheel = disableHorizontalWheelScroll(container);
-      return () => cleanupWheel();
     });
   }
 
@@ -164,49 +97,25 @@ export default function GanttChart({
   // on window height change
   useEffect(() => {
     if (windowHeight !== 0) {
-      initGanttInstance(false);
+      initGanttInstance();
     }
   }, [windowHeight]);
-
-  // on new tasks added/deleted
-  useEffect(() => {
-    const prevLen = localTasksLenRef.current;
-    const currLen = localTasks.length;
-    // new task added/deleted
-    if (prevLen != currLen) {
-      initGanttInstance(prevLen < currLen);
-    }
-    localTasksLenRef.current = currLen;
-  }, [localTasks]);
-
-  // new task added
-  useEffect(() => {
-    if (newTaskTemp && resetNewTaskTemp) {
-      setLocalTasks(prev => [...prev, newTaskTemp]);
-      resetNewTaskTemp();
-    }
-  }, [newTaskTemp]);
 
   /******************************************************************************************************************
    * handle task manipulations
    ******************************************************************************************************************/
-  function handleDateChange(task: GanttTask, start: Date, end: Date) {
+  function handleDateChange(ganttTask: GanttTask, start: Date, end: Date) {
     // build new updated task
     const updatedTask: GanttTask = {
-      ...task,
+      ...ganttTask,
       start: formatDateToISO(start),
       end: formatDateToISO(addDays(end, 1)), // +1 day as end is exclusive
     };
 
     // add to tasks
-    setLocalTasks(prevTasks =>
-      prevTasks.map(t => t.id === task.id ? updatedTask : t)
+    setGanttTasks(prevTasks =>
+      prevTasks.map(t => t.id === ganttTask.id ? updatedTask : t)
     );
-  }
-
-  function handleAddTask() {
-    // delegate to parent to add task/sprint
-    onCreateClick();
   }
 
   /******************************************************************************************************************
@@ -222,16 +131,17 @@ export default function GanttChart({
   function handleConfirmEdits() {
     if (!ganttInstance.current) return;
     // apply updates to the Gantt chart
-    localTasks.forEach((updatedTask) => {
-      ganttInstance.current.update_task(updatedTask.id, updatedTask);
+    ganttTasks.forEach((ganttTask) => {
+      ganttInstance.current.update_task(ganttTask.id, ganttTask);
     });
+    // apply to global
 
     toggleEditMode(false);
   }
 
   function handleCancelEdits() {
     // reset back to prev state
-    setLocalTasks(tasks);
+    setGanttTasks(formatSprintsToTasks(project.sprints));
     toggleEditMode(false);
   }
 
@@ -239,6 +149,13 @@ export default function GanttChart({
    * render
    ******************************************************************************************************************/
   return (
+    <>
+    {/* create sprint form */}
+    {project ? <SprintForm
+        project={project}
+        sprintDialogOpen={sprintDialogOpen}
+        handleCreateSprint={() => {}}
+        closeSprintDialog={() => setSprintDialogOpen(false)} /> : null}
     <Box sx={{ px: 2, pb: 2 }}>
       <Box sx={{ border: `1px solid ${theme.palette.divider}`, borderRadius: 2 }}>
 
@@ -249,7 +166,7 @@ export default function GanttChart({
               {title}
             </Typography>
             <Tooltip title='Create'>
-              <IconButton size='small' color='primary' sx={{ ml: 1 }} onClick={handleAddTask}>
+              <IconButton size='small' color='primary' sx={{ ml: 1 }} onClick={() => {}}>
                 <AddIcon />
               </IconButton>
             </Tooltip>
@@ -283,5 +200,6 @@ export default function GanttChart({
         </Box>
       </Box>
     </Box>
+    </>
   );
 }

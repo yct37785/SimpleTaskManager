@@ -2,9 +2,41 @@
 
 // date
 import { CalendarDate } from '@internationalized/date';
+// schemas
+import { Project, Sprint } from '@schemas';
 // styles
 import './frappe-gantt.css';
 import './frappe-gantt-custom.css';
+
+/********************************************************************************************************************
+ * types
+ ********************************************************************************************************************/
+export type GanttTask = {
+  id: string;
+  name: string;
+  start: string;  // yyy-mm-dd
+  end: string;    // yyy-mm-dd
+  progress: number;
+  custom_class?: string;
+};
+
+/********************************************************************************************************************
+ * format sprints into Frappe Gantt-compatible structure
+ ********************************************************************************************************************/
+export function formatSprintToTask(sprint: Sprint): GanttTask {
+  return {
+    id: sprint.id,
+    name: sprint.title,
+    start: sprint.startDate.toString(),
+    end: sprint.dueDate.toString(),
+    progress: 70, // placeholder
+    custom_class: 'gantt-task-bar',
+  }
+}
+
+export function formatSprintsToTasks(sprints: Project['sprints']): GanttTask[] {
+  return sprints.map((sprint) => formatSprintToTask(sprint));
+}
 
 /********************************************************************************************************************
  * injects a vertical deadline marker to Gantt chart
