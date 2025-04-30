@@ -19,7 +19,7 @@ import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date';
 import { v4 as uuidv4 } from 'uuid';
 import { formatDateToISO, addDays, getDaysBetween, formatISOToDate } from '@utils/datetime';
 import { disableHorizontalWheelScroll } from '@utils/UI';
-import { GanttTask, formatSprintsToGanttTasks, formatGanttTaskToSprint } from './GanttChartUtils';
+import { GanttTask, formatSprintsToGanttTasks, formatGanttTaskToSprint, chartDomManipulation } from './GanttChartUtils';
 // schemas
 import { Project, Sprint } from '@schemas';
 // styles
@@ -50,6 +50,7 @@ export default function GanttChart({
   heightOffset = 0}: Props) {
   const { updateSprint, createSprint } = useWorkspacesManager();
 
+  const [initialInit, setInitialInit] = useState(true);
   const [editMode, setEditMode] = useState(false);
   const [sprintDialogOpen, setSprintDialogOpen] = useState(false);
   const [ganttTasks, setGanttTasks] = useState<GanttTask[]>(formatSprintsToGanttTasks(project.sprints));
@@ -71,6 +72,11 @@ export default function GanttChart({
   function initGanttInstance() {
     requestAnimationFrame(() => {
       if (!ganttRef.current) return;
+
+      // prev scroll
+      let container = ganttRef.current.querySelector('.gantt-container') as HTMLElement | null;
+      let scrollToX = container?.scrollLeft ?? 0;
+      let scrollToY = container?.scrollTop ?? 0;
 
       // clear existing chart
       ganttRef.current.innerHTML = '';
@@ -95,6 +101,12 @@ export default function GanttChart({
         snap_at: '1d',
         on_date_change: (task: GanttTask, start: Date, end: Date) => handleDateChange(task, start, end),
       });
+
+      chartDomManipulation(initialInit, ganttRef, scrollToX, scrollToY);
+
+      if (initialInit) {
+        setInitialInit(false);
+      }
     });
   }
 

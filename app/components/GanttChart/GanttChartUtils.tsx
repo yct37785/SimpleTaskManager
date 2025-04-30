@@ -1,5 +1,6 @@
 'use client';
 
+import { RefObject } from 'react';
 // date
 import { CalendarDate } from '@internationalized/date';
 // schemas
@@ -103,4 +104,29 @@ export function highlightLastTaskBar(containerEl: HTMLElement | null) {
       { once: true }
     );
   });
+}
+
+/********************************************************************************************************************
+ * do scroll
+ ********************************************************************************************************************/
+export function chartDomManipulation(
+  initialInit: boolean, 
+  ganttRef: RefObject<HTMLDivElement | null>,
+  prevScrollX: number,
+  prevScrollY: number
+) {
+  if (!ganttRef.current) return;
+
+  const container = ganttRef.current.querySelector('.gantt-container') as HTMLElement | null;
+  
+  // custom scroll behaviour
+  if (!initialInit) {
+    if (container) {
+      container.scrollTo({
+        left: prevScrollX,
+        top: prevScrollY,
+        behavior: 'instant',
+      });
+    }
+  }
 }
