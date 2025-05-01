@@ -1,8 +1,6 @@
 'use client';
 
 import { RefObject, SetStateAction } from 'react';
-// hooks
-import { useWorkspacesManager } from '@globals/WorkspacesContext';
 // utils
 import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date';
 import { v4 as uuidv4 } from 'uuid';
@@ -114,10 +112,11 @@ export function applyUpdatedSprints(
   workspaceId: string,
   project: Project,
   ganttTasks: GanttTask[],
-  newSprints: Sprint[]
+  newSprints: Sprint[],
+  createSprint: (workspaceId: string, projectId: string, title: string, desc: string, startDate: CalendarDate, dueDate: CalendarDate) => boolean,
+  updateSprint: (workspaceId: string, projectId: string, updatedSprint: Sprint) => void
 ) {
   if (!ganttInstance.current) return;
-  const { updateSprint, createSprint } = useWorkspacesManager();
 
   // update chart visuals
   ganttTasks.forEach(task => {

@@ -10,6 +10,7 @@ import {
 import { Add as AddIcon, Edit as EditIcon, Check as CheckIcon, Close as CloseIcon } from '@mui/icons-material';
 // hooks
 import { useWindowHeight } from '@hooks/useWindowHeight';
+import { useWorkspacesManager } from '@globals/WorkspacesContext';
 // pages
 import SprintForm from '@components/Forms/SprintForm';
 // Gantt chart utils
@@ -54,6 +55,7 @@ export default function GanttChart({
   const ganttInstance = useRef<any>(null);
   const ganttTaskLen = useRef<number>(project.sprints.length);
 
+  const { createSprint, updateSprint } = useWorkspacesManager();
   const windowHeight = useWindowHeight();
   const theme = useTheme();
 
@@ -150,7 +152,7 @@ export default function GanttChart({
    * handle state manipulations
    ******************************************************************************************************************/
   function handleConfirmEdits() {
-    applyUpdatedSprints(ganttInstance, workspaceId, project, ganttTasks, newSprints);
+    applyUpdatedSprints(ganttInstance, workspaceId, project, ganttTasks, newSprints, createSprint, updateSprint);
     // cleanup
     setNewSprints([]);
     toggleEditMode(false);
