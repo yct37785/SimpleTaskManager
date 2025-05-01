@@ -19,7 +19,7 @@ import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date';
 import { v4 as uuidv4 } from 'uuid';
 import { formatDateToISO, addDays, getDaysBetween, formatISOToDate } from '@utils/datetime';
 import { disableHorizontalWheelScroll } from '@utils/UI';
-import { GanttTask, formatSprintsToGanttTasks, formatGanttTaskToSprint, chartDomManipulation } from './GanttChartUtils';
+import { GanttTask, formatSprintsToGanttTasks, markDeadline, formatGanttTaskToSprint, doCustomScroll } from './GanttChartUtils';
 // schemas
 import { Project, Sprint } from '@schemas';
 // styles
@@ -102,12 +102,26 @@ export default function GanttChart({
         on_date_change: (task: GanttTask, start: Date, end: Date) => handleDateChange(task, start, end),
       });
 
-      chartDomManipulation(initialInit, ganttRef, scrollToX, scrollToY);
-
       if (initialInit) {
         setInitialInit(false);
       }
+
+      // DOM manipulation
+      doCustomScroll(initialInit, ganttRef, scrollToX, scrollToY);
+      injectStyles();
+
+      // disable horizontal scroll wheel
+      container = ganttRef.current.querySelector('.gantt-container') as HTMLElement | null;
+      const cleanupWheel = disableHorizontalWheelScroll(container);
+      return () => cleanupWheel();
     });
+  }
+
+  /******************************************************************************************************************
+   * DOM manipulation
+   ******************************************************************************************************************/
+  function injectStyles() {
+    markDeadline(ganttInstance.current, ganttRef.current, project.dueDate, column_width);
   }
 
   /******************************************************************************************************************
@@ -221,6 +235,7 @@ export default function GanttChart({
     if (ganttInstance.current) {
       ganttInstance.current.update_options({ readonly: !editMode });
       setEditMode(editMode);
+      injectStyles();
     }
   }
 

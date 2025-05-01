@@ -109,7 +109,7 @@ export function highlightLastTaskBar(containerEl: HTMLElement | null) {
 /********************************************************************************************************************
  * do scroll
  ********************************************************************************************************************/
-export function chartDomManipulation(
+export function doCustomScroll(
   initialInit: boolean, 
   ganttRef: RefObject<HTMLDivElement | null>,
   prevScrollX: number,
