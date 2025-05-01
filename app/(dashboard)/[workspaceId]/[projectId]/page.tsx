@@ -6,14 +6,13 @@ import { useParams } from 'next/navigation';
 // MUI
 import { Box, Typography, Tooltip, IconButton, Stack } from '@mui/material';
 import { Edit as EditIcon, CalendarMonth as CalendarMonthIcon } from '@mui/icons-material';
-// date
-import { getLocalTimeZone, today, CalendarDate } from '@internationalized/date';
 // utils
+import { getLocalTimeZone, today, CalendarDate } from '@internationalized/date';
 import { getRelativeTime, formatISOToDate, dateToCalendarDate } from '@utils/datetime';
+import { v4 as uuidv4 } from 'uuid';
 // our components
-import GanttChart, { GanttTask } from '@UI/GanttChart/GanttChart';
+import GanttChart from '@components/GanttChart/GanttChart';
 import { useWorkspacesManager } from '@globals/WorkspacesContext';
-import SprintForm from '@components/Forms/SprintForm';
 // schemas
 import { Project, Sprint } from '@schemas';
 // styles
@@ -23,33 +22,17 @@ import styles from './ProjectPage.module.css';
 const fallbackDesc = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
 
 /********************************************************************************************************************
- * format sprints into Frappe Gantt-compatible structure
- ********************************************************************************************************************/
-function formatSprintsToTasks(sprints: Project['sprints']): GanttTask[] {
-  return sprints.map((sprint) => ({
-    id: sprint.id,
-    name: sprint.title,
-    start: sprint.startDate.toString(),
-    end: sprint.dueDate.toString(),
-    progress: 70, // placeholder
-    custom_class: 'gantt-task-bar',
-  }));
-}
-
-/********************************************************************************************************************
  * project dashboard
  ********************************************************************************************************************/
 export default function ProjectPage() {
   const { workspaceId, projectId } = useParams() as { workspaceId: string; projectId: string };
-  const { workspaces, createSprint, updateSprints } = useWorkspacesManager();
+  const { workspaces, getProject } = useWorkspacesManager();
 
   const workspace = workspaces[workspaceId];
-  const project = workspace?.projects[projectId];
+  const project = getProject(workspaceId, projectId);
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [showFullDesc, setShowFullDesc] = useState(false);
-  const [sprintDialogOpen, setSprintDialogOpen] = useState(false);
-  const [retriggerChart, setretriggerChart] = useState(0);
 
   /******************************************************************************************************************
    * inject demo sprints into local state
@@ -61,27 +44,6 @@ export default function ProjectPage() {
   if (!workspace || !project) {
     return <div>Invalid workspace or project</div>;
   }
-
-  /******************************************************************************************************************
-   * update global project data
-   ******************************************************************************************************************/
-  const handleUpdateSprints = (latestTasks: GanttTask[]) => {
-    const updatedSprints = latestTasks.map((task): Sprint => {
-      const existing = project.sprints.find((s) => s.id === task.id);
-      return {
-        ...existing!,
-        title: task.name,
-        startDate: dateToCalendarDate(formatISOToDate(task.start)),
-        dueDate: dateToCalendarDate(formatISOToDate(task.end)),
-      };
-    });
-    updateSprints(workspaceId, projectId, updatedSprints);
-  };
-
-  const handleCreateSprint = (title: string, desc: string) => {
-    createSprint(workspaceId, projectId, title, desc, new CalendarDate(2025, 4, 28), new CalendarDate(2025, 5, 10));
-    setretriggerChart(prev => prev + 1);
-  };
 
   /******************************************************************************************************************
    * project details
@@ -154,19 +116,10 @@ export default function ProjectPage() {
       {projectDetailsBar()}
       <GanttChart
         title='Sprints'
-        tasks={formatSprintsToTasks(project.sprints)}
-        retrigger={retriggerChart}
-        deadline={project.dueDate}
-        heightOffset={project_details_bar_height + appbar_height}
-        onCreateClick={() => setSprintDialogOpen(true)}
-        onTasksUpdated={handleUpdateSprints}
-      />
-      {/* create sprint form */}
-      {project ? <SprintForm
+        workspaceId={workspaceId}
         project={project}
-        sprintDialogOpen={sprintDialogOpen}
-        handleCreateSprint={handleCreateSprint}
-        closeSprintDialog={() => setSprintDialogOpen(false)} /> : null}
+        heightOffset={project_details_bar_height + appbar_height}
+      />
     </Box>
   );
 }

@@ -8,14 +8,15 @@ import {
   Box, Typography, IconButton, Stack, Divider, Tooltip, useTheme, Button
 } from '@mui/material';
 import { Add as AddIcon, Edit as EditIcon, Check as CheckIcon, Close as CloseIcon } from '@mui/icons-material';
-// date
-import { CalendarDate } from '@internationalized/date';
 // hooks
 import { useWindowHeight } from '@hooks/useWindowHeight';
-// utils
-import { formatDateToISO, addDays, getDaysBetween, formatISOToDate } from '@utils/datetime';
-import { disableHorizontalWheelScroll } from '@utils/UI';
-import { markDeadline, highlightLastTaskBar } from './GanttChartUtils';
+// pages
+import SprintForm from '@components/Forms/SprintForm';
+// Gantt chart utils
+import { getGanttContainerEL, markDeadline, doCustomScroll, disableHorizontalWheelScroll } from './GanttChartBehavior';
+import { GanttTask, formatSprintsToGanttTasks, formatGanttTaskToSprint, handleDateChange, addNewSprint, applyUpdatedSprints } from './GanttChartLogic';
+// schemas
+import { Project, Sprint } from '@schemas';
 // styles
 import './frappe-gantt.css';
 import './frappe-gantt-custom.css';
@@ -27,52 +28,34 @@ const column_width = 45;
 /********************************************************************************************************************
  * types
  ********************************************************************************************************************/
-export type GanttTask = {
-  id: string;
-  name: string;
-  start: string;  // yyy-mm-dd
-  end: string;    // yyy-mm-dd
-  progress: number;
-  custom_class?: string;
-};
-
 type Props = {
   title?: string;
-  tasks: GanttTask[];
-  retrigger: number;  // retrigger GanttChart if tasks change
-  deadline?: CalendarDate;
+  workspaceId: string;
+  project: Project;
   heightOffset?: number;
-  onCreateClick: () => void;
-  onTasksUpdated: (latestTasks: GanttTask[]) => void;
 };
 
 /********************************************************************************************************************
  * reusable Frappe Gantt chart component
  ********************************************************************************************************************/
-export default function GanttChart({ title, tasks, retrigger, deadline, heightOffset = 0, onCreateClick, onTasksUpdated }: Props) {
-  const ganttRef = useRef<HTMLDivElement>(null);
-  const ganttInstance = useRef<any>(null);
+export default function GanttChart({
+  title,
+  workspaceId,
+  project,
+  heightOffset = 0}: Props) {
 
   const [initialInit, setInitialInit] = useState(true);
-  const [tasksLength, setTasksLength] = useState(tasks.length);
   const [editMode, setEditMode] = useState(false);
-  const [updatedTasks, setUpdatedTasks] = useState<Map<string, GanttTask>>(new Map());
+  const [sprintDialogOpen, setSprintDialogOpen] = useState(false);
+  const [ganttTasks, setGanttTasks] = useState<GanttTask[]>(formatSprintsToGanttTasks(project.sprints));
+  const [newSprints, setNewSprints] = useState<Sprint[]>([]);
+  
+  const ganttRef = useRef<HTMLDivElement>(null);
+  const ganttInstance = useRef<any>(null);
+  const ganttTaskLen = useRef<number>(project.sprints.length);
 
   const windowHeight = useWindowHeight();
   const theme = useTheme();
-
-  /******************************************************************************************************************
-   * inject styles
-   ******************************************************************************************************************/
-  function injectStyles() {
-    if (deadline) {
-      markDeadline(ganttInstance.current, ganttRef.current, deadline, column_width);
-    }
-  }
-
-  useEffect(() => {
-    injectStyles();
-  }, [editMode, deadline]);
 
   /******************************************************************************************************************
    * Gantt instance
@@ -80,21 +63,21 @@ export default function GanttChart({ title, tasks, retrigger, deadline, heightOf
    * - scroll to new task
    * - persist prevScrollX
    ******************************************************************************************************************/
-  function initGanttInstance() {
+  function initGanttInstance(highlightLastTask: boolean) {
     requestAnimationFrame(() => {
       if (!ganttRef.current) return;
-      // prev scroll X
-      let container = ganttRef.current.querySelector('.gantt-container') as HTMLElement | null;
+
+      // prev scroll
+      const container = getGanttContainerEL(ganttRef);
       let scrollToX = container?.scrollLeft ?? 0;
       let scrollToY = container?.scrollTop ?? 0;
-      let scrollBehaviour: 'instant' | 'smooth' = 'instant';
 
       // clear existing chart
       ganttRef.current.innerHTML = '';
       console.log('Gantt init');
 
       // create Gantt chart
-      ganttInstance.current = new Gantt(ganttRef.current, tasks, {
+      ganttInstance.current = new Gantt(ganttRef.current, ganttTasks, {
         readonly: !editMode,
         column_width,
         infinite_padding: true,
@@ -110,117 +93,97 @@ export default function GanttChart({ title, tasks, retrigger, deadline, heightOf
         view_mode: 'Day',
         date_format: 'DD-MM-YYYY',
         snap_at: '1d',
-        on_date_change: (task: GanttTask, start: Date, end: Date) => handleDateChange(task, start, end),
+        on_date_change: (task: GanttTask, start: Date, end: Date) => handleDateChange(task, start, end, setGanttTasks),
       });
 
-      // inject custom styles
-      injectStyles();
-
-      // custom scroll behaviour
-      container = ganttRef.current.querySelector('.gantt-container') as HTMLElement | null;
-      if (container) {
-        if (ganttInstance.current.dates && ganttInstance.current.dates.length > 0) {
-          // if initial init, scroll to current day
-          if (initialInit) {
-            scrollToX = column_width * getDaysBetween(ganttInstance.current.dates[0], new Date());
-            scrollBehaviour = 'smooth';
-          }
-          // new task added/removed
-          else if (tasks && tasksLength != tasks.length) {
-            const lastTask = tasks.at(-1);
-            const scrollToDate = lastTask ? formatISOToDate(lastTask.start) : new Date();
-            scrollToX = column_width * getDaysBetween(ganttInstance.current.dates[0], scrollToDate);
-            scrollToY = container.scrollHeight;
-            scrollBehaviour = 'smooth';
-            highlightLastTaskBar(container);
-          }
-        }
-
-        container.scrollTo({
-          left: scrollToX,
-          top: scrollToY,
-          behavior: scrollBehaviour,
-        });
+      if (initialInit) {
+        setInitialInit(false);
       }
 
-      // update states
-      setInitialInit(false);
-      setTasksLength(tasks.length);
+      // DOM manipulation
+      if (!initialInit) {
+        doCustomScroll(ganttInstance, ganttRef, scrollToX, scrollToY, highlightLastTask, ganttTasks, column_width);
+      }
+      injectStyles();
 
       // disable horizontal scroll wheel
-      const cleanupWheel = disableHorizontalWheelScroll(container);
+      const cleanupWheel = disableHorizontalWheelScroll(getGanttContainerEL(ganttRef));
       return () => cleanupWheel();
     });
   }
 
+  /******************************************************************************************************************
+   * DOM manipulation
+   ******************************************************************************************************************/
+  function injectStyles() {
+    markDeadline(ganttInstance, ganttRef, project.dueDate, column_width);
+  }
+
+  /******************************************************************************************************************
+   * hooks
+   ******************************************************************************************************************/
+  // on window height change
   useEffect(() => {
-    if (windowHeight && retrigger != undefined) {
-      initGanttInstance();
+    if (windowHeight !== 0) {
+      initGanttInstance(false);
     }
-  }, [windowHeight, retrigger]);
+  }, [windowHeight]);
+
+  // if got changes in GanttTasks
+  useEffect(() => {
+    if (ganttTaskLen.current != ganttTasks.length) {
+      initGanttInstance(true);
+      ganttTaskLen.current = ganttTasks.length;
+    }
+  }, [ganttTasks]);
 
   /******************************************************************************************************************
    * handle task manipulations
    ******************************************************************************************************************/
-  function handleDateChange(task: GanttTask, start: Date, end: Date) {
-    // build new updated task
-    const updatedTask: GanttTask = {
-      ...task,
-      start: formatDateToISO(start),
-      end: formatDateToISO(addDays(end, 1)), // +1 day as end is exclusive
-    };
-
-    // add to updatedTasks map
-    setUpdatedTasks(prev => {
-      const updated = new Map(prev);
-      updated.set(task.id, updatedTask);
-      return updated;
-    });
+  function handleCreateSprint(title: string, desc: string) {
+    addNewSprint(title, desc, setNewSprints, setGanttTasks);
+    // toggle edit mode immediately when new sprint added
+    toggleEditMode(true);
   }
 
-  function handleAddTask() {
-    // delegate to parent to add task/sprint
-    onCreateClick();
+  /******************************************************************************************************************
+   * handle state manipulations
+   ******************************************************************************************************************/
+  function handleConfirmEdits() {
+    applyUpdatedSprints(ganttInstance, workspaceId, project, ganttTasks, newSprints);
+    // cleanup
+    setNewSprints([]);
+    toggleEditMode(false);
+  }
+
+  function handleCancelEdits() {
+    // reset back to prev state
+    setGanttTasks(formatSprintsToGanttTasks(project.sprints));
+    toggleEditMode(false);
   }
 
   /******************************************************************************************************************
    * UI
    ******************************************************************************************************************/
-  useEffect(() => {
+  function toggleEditMode(editMode: boolean) {
     if (ganttInstance.current) {
       ganttInstance.current.update_options({ readonly: !editMode });
+      setEditMode(editMode);
+      injectStyles();
     }
-  }, [editMode]);
-
-  function handleConfirmEdits() {
-    if (!ganttInstance.current) return;
-    console.log("Tasks updated: " + updatedTasks.size);
-    // apply updates to the Gantt chart
-    updatedTasks.forEach((updatedTask) => {
-      ganttInstance.current.update_task(updatedTask.id, updatedTask);
-    });
-  
-    // call parent to persist updates
-    const latestTasks = tasks.map(task =>
-      updatedTasks.has(task.id) ? updatedTasks.get(task.id)! : task
-    );
-    onTasksUpdated(latestTasks);
-  
-    // reset
-    setUpdatedTasks(new Map());
-    setEditMode(false);
-  }
-
-  function handleCancelEdits() {
-    // reset
-    setUpdatedTasks(new Map());
-    setEditMode(false);
   }
 
   /******************************************************************************************************************
    * render
    ******************************************************************************************************************/
   return (
+    <>
+    {/* create sprint form */}
+    {project ? <SprintForm
+        project={project}
+        sprintDialogOpen={sprintDialogOpen}
+        handleCreateSprint={handleCreateSprint}
+        closeSprintDialog={() => setSprintDialogOpen(false)} /> : null}
     <Box sx={{ px: 2, pb: 2 }}>
       <Box sx={{ border: `1px solid ${theme.palette.divider}`, borderRadius: 2 }}>
 
@@ -231,14 +194,14 @@ export default function GanttChart({ title, tasks, retrigger, deadline, heightOf
               {title}
             </Typography>
             <Tooltip title='Create'>
-              <IconButton size='small' color='primary' sx={{ ml: 1 }} onClick={handleAddTask}>
+              <IconButton size='small' color='primary' sx={{ ml: 1 }} onClick={() => setSprintDialogOpen(true)}>
                 <AddIcon />
               </IconButton>
             </Tooltip>
           </Stack>
           {!editMode ? (
             <Button
-              onClick={() => setEditMode(true)}
+              onClick={() => toggleEditMode(true)}
               variant='text'
               size='small'
               startIcon={<EditIcon />}
@@ -265,5 +228,6 @@ export default function GanttChart({ title, tasks, retrigger, deadline, heightOf
         </Box>
       </Box>
     </Box>
+    </>
   );
 }
