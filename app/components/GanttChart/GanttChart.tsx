@@ -12,15 +12,11 @@ import { Add as AddIcon, Edit as EditIcon, Check as CheckIcon, Close as CloseIco
 import { useWindowHeight } from '@hooks/useWindowHeight';
 // pages
 import SprintForm from '@components/Forms/SprintForm';
-// our components
-import { useWorkspacesManager } from '@globals/WorkspacesContext';
 // utils
 import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date';
-import { v4 as uuidv4 } from 'uuid';
-import { formatDateToISO, addDays, getDaysBetween, formatISOToDate } from '@utils/datetime';
 // Gantt chart utils
-import { markDeadline, doCustomScroll, disableHorizontalWheelScroll } from './GanttChartBehavior';
-import { GanttTask, formatSprintsToGanttTasks, formatGanttTaskToSprint } from './GanttChartLogic';
+import { getGanttContainerEL, markDeadline, doCustomScroll, disableHorizontalWheelScroll } from './GanttChartBehavior';
+import { GanttTask, formatSprintsToGanttTasks, formatGanttTaskToSprint, handleDateChange, addNewSprint, applyUpdatedSprints } from './GanttChartLogic';
 // schemas
 import { Project, Sprint } from '@schemas';
 // styles
@@ -49,7 +45,6 @@ export default function GanttChart({
   workspaceId,
   project,
   heightOffset = 0}: Props) {
-  const { updateSprint, createSprint } = useWorkspacesManager();
 
   const [initialInit, setInitialInit] = useState(true);
   const [editMode, setEditMode] = useState(false);
@@ -75,7 +70,7 @@ export default function GanttChart({
       if (!ganttRef.current) return;
 
       // prev scroll
-      let container = ganttRef.current.querySelector('.gantt-container') as HTMLElement | null;
+      const container = getGanttContainerEL(ganttRef);
       let scrollToX = container?.scrollLeft ?? 0;
       let scrollToY = container?.scrollTop ?? 0;
 
@@ -100,7 +95,7 @@ export default function GanttChart({
         view_mode: 'Day',
         date_format: 'DD-MM-YYYY',
         snap_at: '1d',
-        on_date_change: (task: GanttTask, start: Date, end: Date) => handleDateChange(task, start, end),
+        on_date_change: (task: GanttTask, start: Date, end: Date) => handleDateChange(task, start, end, setGanttTasks),
       });
 
       if (initialInit) {
@@ -112,8 +107,7 @@ export default function GanttChart({
       injectStyles();
 
       // disable horizontal scroll wheel
-      container = ganttRef.current.querySelector('.gantt-container') as HTMLElement | null;
-      const cleanupWheel = disableHorizontalWheelScroll(container);
+      const cleanupWheel = disableHorizontalWheelScroll(getGanttContainerEL(ganttRef));
       return () => cleanupWheel();
     });
   }
@@ -122,7 +116,7 @@ export default function GanttChart({
    * DOM manipulation
    ******************************************************************************************************************/
   function injectStyles() {
-    markDeadline(ganttInstance.current, ganttRef.current, project.dueDate, column_width);
+    markDeadline(ganttInstance, ganttRef, project.dueDate, column_width);
   }
 
   /******************************************************************************************************************
@@ -146,43 +140,8 @@ export default function GanttChart({
   /******************************************************************************************************************
    * handle task manipulations
    ******************************************************************************************************************/
-  function handleDateChange(ganttTask: GanttTask, start: Date, end: Date) {
-    // build new updated task
-    const updatedTask: GanttTask = {
-      ...ganttTask,
-      start: formatDateToISO(start),
-      end: formatDateToISO(addDays(end, 1)), // +1 day as end is exclusive
-    };
-
-    // add to tasks
-    setGanttTasks(prevTasks =>
-      prevTasks.map(t => t.id === ganttTask.id ? updatedTask : t)
-    );
-  }
-
-  function addNewSprint(title: string, desc: string) {
-    // Sprint
-    const newSprint: Sprint = {
-      id: `TEMP-${uuidv4()}`,
-      title,
-      desc,
-      startDate: today(getLocalTimeZone()),
-      dueDate: today(getLocalTimeZone()).add({ days: 7 }),
-      tasks: []
-    };
-    setNewSprints(prev => [...prev, newSprint]);
-  
-    // GanttTask
-    const newTask: GanttTask = {
-      id: newSprint.id,
-      name: newSprint.title,
-      start: newSprint.startDate.toString(),
-      end: newSprint.dueDate.toString(),
-      progress: 0,
-      custom_class: 'gantt-task-bar'
-    };
-    setGanttTasks(prev => [...prev, newTask]);
-
+  function handleCreateSprint(title: string, desc: string) {
+    addNewSprint(title, desc, setNewSprints, setGanttTasks);
     // toggle edit mode immediately when new sprint added
     toggleEditMode(true);
   }
@@ -191,33 +150,7 @@ export default function GanttChart({
    * handle state manipulations
    ******************************************************************************************************************/
   function handleConfirmEdits() {
-    if (!ganttInstance.current) return;
-  
-    // update chart visuals
-    ganttTasks.forEach(task => {
-      ganttInstance.current.update_task(task.id, task);
-    });
-  
-    // update existing sprints
-    ganttTasks.forEach(ganttTask => {
-      if (!ganttTask.id.startsWith('TEMP')) {
-        const originalSprint = project.sprints.find(s => s.id === ganttTask.id);
-        if (originalSprint) {
-          const updatedSprint = formatGanttTaskToSprint(ganttTask, originalSprint);
-          updateSprint(workspaceId, project.id, updatedSprint);
-        }
-      }
-    });
-  
-    // apply new sprints
-    newSprints.forEach(tempSprint => {
-      const matchingTask = ganttTasks.find(t => t.id === tempSprint.id);
-      if (matchingTask) {
-        const newConfirmedSprint = formatGanttTaskToSprint(matchingTask, tempSprint);
-        createSprint(workspaceId, project.id, newConfirmedSprint.title, newConfirmedSprint.desc, newConfirmedSprint.startDate, newConfirmedSprint.dueDate);
-      }
-    });
-  
+    applyUpdatedSprints(ganttInstance, workspaceId, project, ganttTasks, newSprints);
     // cleanup
     setNewSprints([]);
     toggleEditMode(false);
@@ -249,7 +182,7 @@ export default function GanttChart({
     {project ? <SprintForm
         project={project}
         sprintDialogOpen={sprintDialogOpen}
-        handleCreateSprint={addNewSprint}
+        handleCreateSprint={handleCreateSprint}
         closeSprintDialog={() => setSprintDialogOpen(false)} /> : null}
     <Box sx={{ px: 2, pb: 2 }}>
       <Box sx={{ border: `1px solid ${theme.palette.divider}`, borderRadius: 2 }}>

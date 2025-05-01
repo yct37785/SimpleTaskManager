@@ -8,19 +8,26 @@ import './frappe-gantt.css';
 import './frappe-gantt-custom.css';
 
 /********************************************************************************************************************
+ * get Gantt chart container element
+ ********************************************************************************************************************/
+export function getGanttContainerEL(ganttRef: RefObject<HTMLDivElement | null>) {
+  return ganttRef.current?.querySelector('.gantt-container') as HTMLElement | null;
+}
+
+/********************************************************************************************************************
  * injects a vertical deadline marker to Gantt chart
  ********************************************************************************************************************/
-export function markDeadline(gantt: any, containerEl: HTMLElement | null, deadline: CalendarDate, column_width: number) {
+export function markDeadline(ganttInstance: RefObject<any>, ganttRef: RefObject<HTMLDivElement | null>, deadline: CalendarDate, column_width: number) {
   requestAnimationFrame(() => {
-    if (!gantt || !gantt.dates || !containerEl || !deadline) return;
+    if (!ganttInstance.current || !ganttInstance.current.dates || !ganttRef.current) return;
 
     // find idx offset of the date to add line to
-    const index = gantt.dates.findIndex((d: Date) =>
+    const index = ganttInstance.current.dates.findIndex((d: Date) =>
       d.toISOString().split('T')[0] === deadline.toString()
     );
     if (index === -1) return;
 
-    const svgEl = containerEl.querySelector('svg.gantt') as SVGSVGElement | null;
+    const svgEl = ganttRef.current.querySelector('svg.gantt') as SVGSVGElement | null;
     const svgHeight = svgEl?.getAttribute('height') ?? '372';
 
     const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
@@ -30,7 +37,7 @@ export function markDeadline(gantt: any, containerEl: HTMLElement | null, deadli
     line.setAttribute('y2', svgHeight);
     line.setAttribute('class', 'gantt-deadline-line');
 
-    gantt.layers.grid.appendChild(line);
+    ganttInstance.current.layers.grid.appendChild(line);
   });
 }
 
@@ -70,7 +77,7 @@ export function doCustomScroll(
 ) {
   if (!ganttRef.current) return;
 
-  const container = ganttRef.current.querySelector('.gantt-container') as HTMLElement | null;
+  const container = getGanttContainerEL(ganttRef);
   
   // custom scroll behaviour
   if (!initialInit) {

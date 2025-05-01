@@ -1,7 +1,12 @@
 'use client';
 
-// date
-import { CalendarDate } from '@internationalized/date';
+import { RefObject, SetStateAction } from 'react';
+// hooks
+import { useWorkspacesManager } from '@globals/WorkspacesContext';
+// utils
+import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date';
+import { v4 as uuidv4 } from 'uuid';
+import { formatDateToISO, addDays, getDaysBetween, formatISOToDate } from '@utils/datetime';
 // schemas
 import { Project, Sprint } from '@schemas';
 
@@ -48,4 +53,94 @@ export function formatGanttTaskToSprint(task: GanttTask, originalSprint: Sprint)
     startDate: new CalendarDate(startParts[0], startParts[1], startParts[2]),
     dueDate: new CalendarDate(endParts[0], endParts[1], endParts[2]),
   };
+}
+
+/******************************************************************************************************************
+ * handle task manipulations
+ ******************************************************************************************************************/
+export function handleDateChange(
+  ganttTask: GanttTask,
+  start: Date,
+  end: Date,
+  setGanttTasks: (value: SetStateAction<GanttTask[]>) => void
+) {
+  // build new updated task
+  const updatedTask: GanttTask = {
+    ...ganttTask,
+    start: formatDateToISO(start),
+    end: formatDateToISO(addDays(end, 1)), // +1 day as end is exclusive
+  };
+
+  // add to tasks
+  setGanttTasks(prevTasks =>
+    prevTasks.map(t => t.id === ganttTask.id ? updatedTask : t)
+  );
+}
+
+export function addNewSprint(
+  title: string,
+  desc: string,
+  setNewSprints: (value: SetStateAction<Sprint[]>) => void,
+  setGanttTasks: (value: SetStateAction<GanttTask[]>) => void
+) {
+  // Sprint
+  const newSprint: Sprint = {
+    id: `TEMP-${uuidv4()}`,
+    title,
+    desc,
+    startDate: today(getLocalTimeZone()),
+    dueDate: today(getLocalTimeZone()).add({ days: 7 }),
+    tasks: []
+  };
+  setNewSprints(prev => [...prev, newSprint]);
+
+  // GanttTask
+  const newTask: GanttTask = {
+    id: newSprint.id,
+    name: newSprint.title,
+    start: newSprint.startDate.toString(),
+    end: newSprint.dueDate.toString(),
+    progress: 0,
+    custom_class: 'gantt-task-bar'
+  };
+  setGanttTasks(prev => [...prev, newTask]);
+}
+
+/******************************************************************************************************************
+ * handle state manipulations
+ ******************************************************************************************************************/
+export function applyUpdatedSprints(
+  ganttInstance: RefObject<any>,
+  workspaceId: string,
+  project: Project,
+  ganttTasks: GanttTask[],
+  newSprints: Sprint[]
+) {
+  if (!ganttInstance.current) return;
+  const { updateSprint, createSprint } = useWorkspacesManager();
+
+  // update chart visuals
+  ganttTasks.forEach(task => {
+    ganttInstance.current.update_task(task.id, task);
+  });
+
+  // update existing sprints
+  ganttTasks.forEach(ganttTask => {
+    if (!ganttTask.id.startsWith('TEMP')) {
+      const originalSprint = project.sprints.find(s => s.id === ganttTask.id);
+      if (originalSprint) {
+        const updatedSprint = formatGanttTaskToSprint(ganttTask, originalSprint);
+        updateSprint(workspaceId, project.id, updatedSprint);
+      }
+    }
+  });
+
+  // apply new sprints
+  newSprints.forEach(tempSprint => {
+    const matchingTask = ganttTasks.find(t => t.id === tempSprint.id);
+    if (matchingTask) {
+      const newConfirmedSprint = formatGanttTaskToSprint(matchingTask, tempSprint);
+      createSprint(workspaceId, project.id, newConfirmedSprint.title, newConfirmedSprint.desc, newConfirmedSprint.startDate, newConfirmedSprint.dueDate);
+    }
+  });
 }
