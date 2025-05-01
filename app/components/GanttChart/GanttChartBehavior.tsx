@@ -70,7 +70,6 @@ export function highlightLastTaskBar(containerEl: HTMLElement | null) {
  * do scroll
  ********************************************************************************************************************/
 export function doCustomScroll(
-  initialInit: boolean, 
   ganttRef: RefObject<HTMLDivElement | null>,
   prevScrollX: number,
   prevScrollY: number
@@ -80,14 +79,12 @@ export function doCustomScroll(
   const container = getGanttContainerEL(ganttRef);
   
   // custom scroll behaviour
-  if (!initialInit) {
-    if (container) {
-      container.scrollTo({
-        left: prevScrollX,
-        top: prevScrollY,
-        behavior: 'instant',
-      });
-    }
+  if (container) {
+    container.scrollTo({
+      left: prevScrollX,
+      top: prevScrollY,
+      behavior: 'instant',
+    });
   }
 }
 

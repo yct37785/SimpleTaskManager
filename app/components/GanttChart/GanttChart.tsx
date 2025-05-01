@@ -103,7 +103,9 @@ export default function GanttChart({
       }
 
       // DOM manipulation
-      doCustomScroll(initialInit, ganttRef, scrollToX, scrollToY);
+      if (!initialInit) {
+        doCustomScroll(ganttRef, scrollToX, scrollToY);
+      }
       injectStyles();
 
       // disable horizontal scroll wheel
