@@ -12,8 +12,6 @@ import { Add as AddIcon, Edit as EditIcon, Check as CheckIcon, Close as CloseIco
 import { useWindowHeight } from '@hooks/useWindowHeight';
 // pages
 import SprintForm from '@components/Forms/SprintForm';
-// utils
-import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date';
 // Gantt chart utils
 import { getGanttContainerEL, markDeadline, doCustomScroll, disableHorizontalWheelScroll } from './GanttChartBehavior';
 import { GanttTask, formatSprintsToGanttTasks, formatGanttTaskToSprint, handleDateChange, addNewSprint, applyUpdatedSprints } from './GanttChartLogic';
@@ -65,7 +63,7 @@ export default function GanttChart({
    * - scroll to new task
    * - persist prevScrollX
    ******************************************************************************************************************/
-  function initGanttInstance() {
+  function initGanttInstance(highlightLastTask: boolean) {
     requestAnimationFrame(() => {
       if (!ganttRef.current) return;
 
@@ -104,7 +102,7 @@ export default function GanttChart({
 
       // DOM manipulation
       if (!initialInit) {
-        doCustomScroll(ganttRef, scrollToX, scrollToY);
+        doCustomScroll(ganttInstance, ganttRef, scrollToX, scrollToY, highlightLastTask, ganttTasks, column_width);
       }
       injectStyles();
 
@@ -127,14 +125,14 @@ export default function GanttChart({
   // on window height change
   useEffect(() => {
     if (windowHeight !== 0) {
-      initGanttInstance();
+      initGanttInstance(false);
     }
   }, [windowHeight]);
 
   // if got changes in GanttTasks
   useEffect(() => {
     if (ganttTaskLen.current != ganttTasks.length) {
-      initGanttInstance();
+      initGanttInstance(true);
       ganttTaskLen.current = ganttTasks.length;
     }
   }, [ganttTasks]);

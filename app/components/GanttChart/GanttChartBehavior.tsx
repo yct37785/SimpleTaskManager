@@ -1,11 +1,11 @@
 'use client';
 
 import { RefObject } from 'react';
-// date
+// utils
 import { CalendarDate } from '@internationalized/date';
-// styles
-import './frappe-gantt.css';
-import './frappe-gantt-custom.css';
+import { formatDateToISO, addDays, getDaysBetween, formatISOToDate } from '@utils/datetime';
+// Gantt chart utils
+import { GanttTask } from './GanttChartLogic';
 
 /********************************************************************************************************************
  * get Gantt chart container element
@@ -70,22 +70,38 @@ export function highlightLastTaskBar(containerEl: HTMLElement | null) {
  * do scroll
  ********************************************************************************************************************/
 export function doCustomScroll(
+  ganttInstance: RefObject<any>,
   ganttRef: RefObject<HTMLDivElement | null>,
   prevScrollX: number,
-  prevScrollY: number
+  prevScrollY: number,
+  highlightLastTask: boolean,
+  ganttTasks: GanttTask[],
+  column_width: number
 ) {
   if (!ganttRef.current) return;
 
   const container = getGanttContainerEL(ganttRef);
-  
-  // custom scroll behaviour
-  if (container) {
-    container.scrollTo({
-      left: prevScrollX,
-      top: prevScrollY,
-      behavior: 'instant',
-    });
+  if (!container) return;
+
+  // determine scroll behaviour
+  let scrollToX = prevScrollX;
+  let scrollToY = prevScrollY;
+  let behaviour: ScrollBehavior = 'instant';
+  if (highlightLastTask) {
+    if (ganttInstance.current.dates && ganttInstance.current.dates.length > 0 && ganttTasks.length > 0) {
+      const daysBtw = getDaysBetween(ganttInstance.current.dates[0], formatISOToDate(ganttTasks[ganttTasks.length - 1].start));
+      scrollToX = daysBtw * column_width;
+      scrollToY = container.scrollHeight;
+      behaviour = 'smooth';
+    }
   }
+  
+  // apply scroll
+  container.scrollTo({
+    left: scrollToX,
+    top: scrollToY,
+    behavior: behaviour,
+  });
 }
 
 /********************************************************************************************************************
