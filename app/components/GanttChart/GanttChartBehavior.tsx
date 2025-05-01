@@ -3,7 +3,7 @@
 import { RefObject } from 'react';
 // utils
 import { CalendarDate } from '@internationalized/date';
-import { formatDateToISO, addDays, getDaysBetween, formatISOToDate } from '@utils/datetime';
+import { getDaysBetween, formatISOToDate } from '@utils/datetime';
 // Gantt chart utils
 import { GanttTask } from './GanttChartLogic';
 
@@ -78,28 +78,32 @@ export function doCustomScroll(
   ganttTasks: GanttTask[],
   column_width: number
 ) {
-  if (!ganttRef.current) return;
+  requestAnimationFrame(() => {
+    if (!ganttRef.current) return;
 
-  const container = getGanttContainerEL(ganttRef);
-  if (!container) return;
+    const container = getGanttContainerEL(ganttRef);
+    if (!container) return;
 
-  // scroll to curr
-  container.scrollLeft = prevScrollX;
-  container.scrollTop = prevScrollY;
+    // scroll to curr
+    container.scrollLeft = prevScrollX;
+    container.scrollTop = prevScrollY;
 
-  // scroll to target
-  if (highlightLastTask) {
-    if (ganttInstance.current.dates && ganttInstance.current.dates.length > 0 && ganttTasks.length > 0) {
-      const daysBtw = getDaysBetween(ganttInstance.current.dates[0], formatISOToDate(ganttTasks[ganttTasks.length - 1].start));
-      requestAnimationFrame(() => {
-        container.scrollTo({
-          left: daysBtw * column_width,
-          top: container.scrollHeight,
-          behavior: 'smooth',
+    // scroll to target
+    if (highlightLastTask) {
+      if (ganttInstance.current.dates && ganttInstance.current.dates.length > 0 && ganttTasks.length > 0) {
+        const daysBtw = getDaysBetween(ganttInstance.current.dates[0], formatISOToDate(ganttTasks[ganttTasks.length - 1].start));
+        requestAnimationFrame(() => {
+          container.scrollTo({
+            left: daysBtw * column_width,
+            top: container.scrollHeight,
+            behavior: 'smooth',
+          });
         });
-      });
+        // do highlight on last task
+        highlightLastTaskBar(container);
+      }
     }
-  }
+  });
 }
 
 /********************************************************************************************************************
