@@ -18,8 +18,9 @@ import { useWorkspacesManager } from '@globals/WorkspacesContext';
 import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date';
 import { v4 as uuidv4 } from 'uuid';
 import { formatDateToISO, addDays, getDaysBetween, formatISOToDate } from '@utils/datetime';
-import { disableHorizontalWheelScroll } from '@utils/UI';
-import { GanttTask, formatSprintsToGanttTasks, markDeadline, formatGanttTaskToSprint, doCustomScroll } from './GanttChartUtils';
+// Gantt chart utils
+import { markDeadline, doCustomScroll, disableHorizontalWheelScroll } from './GanttChartBehavior';
+import { GanttTask, formatSprintsToGanttTasks, formatGanttTaskToSprint } from './GanttChartLogic';
 // schemas
 import { Project, Sprint } from '@schemas';
 // styles
