@@ -50,10 +50,11 @@ export default function GanttChart({
   const [sprintDialogOpen, setSprintDialogOpen] = useState(false);
   const [ganttTasks, setGanttTasks] = useState<GanttTask[]>(formatSprintsToGanttTasks(project.sprints));
   const [newSprints, setNewSprints] = useState<Sprint[]>([]);
+  const [sprintAdded, setSprintAdded] = useState(false);
+  const [changesCancelled, setChangesCancelled] = useState(false);
   
   const ganttRef = useRef<HTMLDivElement>(null);
   const ganttInstance = useRef<any>(null);
-  const ganttTaskLen = useRef<number>(project.sprints.length);
 
   const { createSprint, updateSprint } = useWorkspacesManager();
   const windowHeight = useWindowHeight();
@@ -131,13 +132,21 @@ export default function GanttChart({
     }
   }, [windowHeight]);
 
-  // if got changes in GanttTasks
+  // trigger for new sprint added
   useEffect(() => {
-    if (ganttTaskLen.current != ganttTasks.length) {
+    if (sprintAdded) {
       initGanttInstance(true);
-      ganttTaskLen.current = ganttTasks.length;
+      setSprintAdded(false);
     }
-  }, [ganttTasks]);
+  }, [sprintAdded]);
+
+  // if changes cancelled
+  useEffect(() => {
+    if (changesCancelled) {
+      initGanttInstance(false);
+      setChangesCancelled(false);
+    }
+  }, [changesCancelled]);
 
   /******************************************************************************************************************
    * handle task manipulations
@@ -146,12 +155,14 @@ export default function GanttChart({
     addNewSprint(title, desc, setNewSprints, setGanttTasks);
     // toggle edit mode immediately when new sprint added
     toggleEditMode(true);
+    setSprintAdded(true);
   }
 
   /******************************************************************************************************************
    * handle state manipulations
    ******************************************************************************************************************/
   function handleConfirmEdits() {
+    // apply changes to global state as well as Gantt chart programatically
     applyUpdatedSprints(ganttInstance, workspaceId, project, ganttTasks, newSprints, createSprint, updateSprint);
     // cleanup
     setNewSprints([]);
@@ -161,6 +172,8 @@ export default function GanttChart({
   function handleCancelEdits() {
     // reset back to prev state
     setGanttTasks(formatSprintsToGanttTasks(project.sprints));
+    // refresh Gantt chart
+    setChangesCancelled(true);
     toggleEditMode(false);
   }
 
