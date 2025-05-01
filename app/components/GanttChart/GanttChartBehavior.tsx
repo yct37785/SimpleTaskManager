@@ -83,25 +83,23 @@ export function doCustomScroll(
   const container = getGanttContainerEL(ganttRef);
   if (!container) return;
 
-  // determine scroll behaviour
-  let scrollToX = prevScrollX;
-  let scrollToY = prevScrollY;
-  let behaviour: ScrollBehavior = 'instant';
+  // scroll to curr
+  container.scrollLeft = prevScrollX;
+  container.scrollTop = prevScrollY;
+
+  // scroll to target
   if (highlightLastTask) {
     if (ganttInstance.current.dates && ganttInstance.current.dates.length > 0 && ganttTasks.length > 0) {
       const daysBtw = getDaysBetween(ganttInstance.current.dates[0], formatISOToDate(ganttTasks[ganttTasks.length - 1].start));
-      scrollToX = daysBtw * column_width;
-      scrollToY = container.scrollHeight;
-      behaviour = 'smooth';
+      requestAnimationFrame(() => {
+        container.scrollTo({
+          left: daysBtw * column_width,
+          top: container.scrollHeight,
+          behavior: 'smooth',
+        });
+      });
     }
   }
-  
-  // apply scroll
-  container.scrollTo({
-    left: scrollToX,
-    top: scrollToY,
-    behavior: behaviour,
-  });
 }
 
 /********************************************************************************************************************
