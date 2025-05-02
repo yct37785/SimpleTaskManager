@@ -14,7 +14,7 @@ import { useWorkspacesManager } from '@globals/WorkspacesContext';
 // pages
 import SprintForm from '@components/Forms/SprintForm';
 // Gantt chart utils
-import { getGanttContainerEL, markDeadline, doCustomScroll, disableHorizontalWheelScroll, highlightLastTaskBar } from './GanttChartBehavior';
+import { getGanttContainerEL, markDeadline, doCustomScroll, disableHorizontalWheelScroll } from './GanttChartBehavior';
 import { GanttTask, formatSprintsToGanttTasks, handleDateChange, addNewSprint, applyUpdatedSprints } from './GanttChartLogic';
 // schemas
 import { Project, Sprint } from '@schemas';
@@ -122,11 +122,6 @@ export default function GanttChart({
     markDeadline(ganttInstance, ganttRef, project.dueDate, column_width);
   }
 
-  function testHighlight() {
-    const container = getGanttContainerEL(ganttRef);
-    highlightLastTaskBar(container);
-  }
-
   /******************************************************************************************************************
    * hooks
    ******************************************************************************************************************/
@@ -214,7 +209,7 @@ export default function GanttChart({
               {title}
             </Typography>
             <Tooltip title='Create'>
-              <IconButton size='small' color='primary' sx={{ ml: 1 }} onClick={() => testHighlight()}>
+              <IconButton size='small' color='primary' sx={{ ml: 1 }} onClick={() => setSprintDialogOpen(true)}>
                 <AddIcon />
               </IconButton>
             </Tooltip>

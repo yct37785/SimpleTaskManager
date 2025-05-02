@@ -93,15 +93,7 @@ export function addNewSprint(
   setNewSprints(prev => [...prev, newSprint]);
 
   // GanttTask
-  const newTask: GanttTask = {
-    id: newSprint.id,
-    name: newSprint.title,
-    start: newSprint.startDate.toString(),
-    end: newSprint.dueDate.toString(),
-    progress: 0,
-    custom_class: 'gantt-task-bar'
-  };
-  setGanttTasks(prev => [...prev, newTask]);
+  setGanttTasks(prev => [...prev, formatSprintToGanttTask(newSprint)]);
 }
 
 /******************************************************************************************************************

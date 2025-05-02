@@ -22,12 +22,13 @@
 /**
  * animation highlight for newly added task
  */
- .gantt-task-bar.gantt-task-bar-new .bar {
-  animation: fadeInOutIn 1.5s ease-in-out 0s 1;
+ .gantt-task-bar.gantt-task-bar-new .bar-group {
+  animation: fadeInOutIn 3s ease-in-out 0s 1;
 }
 
 @keyframes fadeInOutIn {
-  0%   { opacity: 0.2; }
+  0%   { opacity: 1; }
+  25%   { opacity: 0.2; }
   50%  { opacity: 1; }
   75%  { opacity: 0.2; }
   100% { opacity: 1; }
