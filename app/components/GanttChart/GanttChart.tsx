@@ -152,7 +152,7 @@ export default function GanttChart({
    * handle task manipulations
    ******************************************************************************************************************/
   function handleCreateSprint(title: string, desc: string) {
-    addNewSprint(title, desc, setNewSprints, setGanttTasks);
+    addNewSprint(title, desc, project.sprints, setNewSprints, setGanttTasks);
     // toggle edit mode immediately when new sprint added
     toggleEditMode(true);
     setSprintAdded(true);

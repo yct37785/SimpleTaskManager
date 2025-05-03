@@ -78,16 +78,22 @@ export function handleDateChange(
 export function addNewSprint(
   title: string,
   desc: string,
+  sprints: Sprint[],
   setNewSprints: (value: SetStateAction<Sprint[]>) => void,
   setGanttTasks: (value: SetStateAction<GanttTask[]>) => void
 ) {
+  let startDate = today(getLocalTimeZone());
+  // retrieve last date
+  if (sprints && sprints.length > 0) {
+    startDate = sprints[sprints.length - 1].dueDate.copy()
+  }
   // Sprint
   const newSprint: Sprint = {
     id: `TEMP-${uuidv4()}`,
     title,
     desc,
-    startDate: today(getLocalTimeZone()),
-    dueDate: today(getLocalTimeZone()).add({ days: 7 }),
+    startDate: startDate,
+    dueDate: startDate.add({ days: 7 }),
     tasks: []
   };
   setNewSprints(prev => [...prev, newSprint]);
