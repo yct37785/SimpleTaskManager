@@ -107,19 +107,46 @@ export function doCustomScroll(
 }
 
 /********************************************************************************************************************
- * disables horizontal scrolling via mouse wheel on a given element
- * - still allows scrollbar dragging and vertical scroll
+ * custom drag to scroll behaviour
+ * - drag and scroll horizontally
+ * - disables horizontal scrolling via mouse wheel on a given element
  ********************************************************************************************************************/
-export function disableHorizontalWheelScroll(container: HTMLElement | null) {
-  const onWheel = (event: WheelEvent) => {
-    if (event.deltaX !== 0) {
-      event.preventDefault();
-    }
+export function enableGanttDragScroll(container: HTMLElement | null): () => void {
+  if (!container) return () => {};
+
+  let isDragging = false;
+  let startX = 0;
+  let scrollLeft = 0;
+
+  const onMouseDown = (e: MouseEvent) => {
+    if ((e.target as HTMLElement).closest('.bar-group')) return; // let Frappe handle bar dragging
+
+    isDragging = true;
+    startX = e.pageX;
+    scrollLeft = container.scrollLeft;
+    container.classList.add('dragging');
   };
 
-  container?.addEventListener('wheel', onWheel, { passive: false });
+  const onMouseMove = (e: MouseEvent) => {
+    if (!isDragging) return;
+    const walk = e.pageX - startX;
+    container.scrollLeft = scrollLeft - walk;
+  };
+
+  const onMouseUp = () => {
+    isDragging = false;
+    container.classList.remove('dragging');
+  };
+
+  container.addEventListener('mousedown', onMouseDown);
+  container.addEventListener('mousemove', onMouseMove);
+  container.addEventListener('mouseup', onMouseUp);
+  container.addEventListener('mouseleave', onMouseUp);
 
   return () => {
-    container?.removeEventListener('wheel', onWheel);
+    container.removeEventListener('mousedown', onMouseDown);
+    container.removeEventListener('mousemove', onMouseMove);
+    container.removeEventListener('mouseup', onMouseUp);
+    container.removeEventListener('mouseleave', onMouseUp);
   };
 }

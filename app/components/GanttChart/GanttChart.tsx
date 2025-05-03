@@ -14,7 +14,7 @@ import { useWorkspacesManager } from '@globals/WorkspacesContext';
 // pages
 import SprintForm from '@components/Forms/SprintForm';
 // Gantt chart utils
-import { getGanttContainerEL, markDeadline, doCustomScroll, disableHorizontalWheelScroll } from './GanttChartBehavior';
+import { getGanttContainerEL, markDeadline, doCustomScroll, enableGanttDragScroll } from './GanttChartBehavior';
 import { GanttTask, formatSprintsToGanttTasks, handleDateChange, addNewSprint, applyUpdatedSprints } from './GanttChartLogic';
 // schemas
 import { Project, Sprint } from '@schemas';
@@ -110,8 +110,8 @@ export default function GanttChart({
       injectStyles();
 
       // disable horizontal scroll wheel
-      const cleanupWheel = disableHorizontalWheelScroll(getGanttContainerEL(ganttRef));
-      return () => cleanupWheel();
+      const cleanupScroll = enableGanttDragScroll(getGanttContainerEL(ganttRef));
+      return () => cleanupScroll();
     });
   }
 
