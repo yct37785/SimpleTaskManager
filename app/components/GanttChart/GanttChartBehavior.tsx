@@ -119,34 +119,40 @@ export function enableGanttDragScroll(container: HTMLElement | null): () => void
   let scrollLeft = 0;
 
   const onMouseDown = (e: MouseEvent) => {
-    if ((e.target as HTMLElement).closest('.bar-group')) return; // let Frappe handle bar dragging
+    // only allow drag scroll on background (not bars or handles)
+    const target = e.target as HTMLElement;
+    if (target.closest('.bar-group') || target.closest('.handle') || target.closest('.bar-progress')) return;
 
     isDragging = true;
-    startX = e.pageX;
+    startX = e.clientX;
     scrollLeft = container.scrollLeft;
     container.classList.add('dragging');
+
+    // prevent text selection while dragging
+    document.body.style.userSelect = 'none';
   };
 
   const onMouseMove = (e: MouseEvent) => {
     if (!isDragging) return;
-    const walk = e.pageX - startX;
+    const walk = e.clientX - startX;
     container.scrollLeft = scrollLeft - walk;
   };
 
   const onMouseUp = () => {
+    if (!isDragging) return;
     isDragging = false;
     container.classList.remove('dragging');
+    document.body.style.userSelect = ''; // restore text selection
   };
 
+  // attach drag tracking globally
   container.addEventListener('mousedown', onMouseDown);
-  container.addEventListener('mousemove', onMouseMove);
-  container.addEventListener('mouseup', onMouseUp);
-  container.addEventListener('mouseleave', onMouseUp);
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
 
   return () => {
     container.removeEventListener('mousedown', onMouseDown);
-    container.removeEventListener('mousemove', onMouseMove);
-    container.removeEventListener('mouseup', onMouseUp);
-    container.removeEventListener('mouseleave', onMouseUp);
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
   };
 }
