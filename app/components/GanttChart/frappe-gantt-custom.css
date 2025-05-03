@@ -1,7 +1,52 @@
-/**
+/********************************************************************************************************************
+ * chart
+ ********************************************************************************************************************/
+ .gantt {
+  user-select: none;
+  scrollbar-width: thin;
+}
+
+/********************************************************************************************************************
+ * chart container
+ ********************************************************************************************************************/
+ .gantt-container {
+  /* overflow-y: hidden; */
+  max-height: 100%;
+  cursor: grab;
+  cursor: -webkit-grab;
+}
+
+.gantt-container.dragging {
+  cursor: grabbing;
+  cursor: -webkit-grabbing;
+}
+
+/********************************************************************************************************************
+ * grid lines and bg
+ ********************************************************************************************************************/
+ .gantt .grid .row .tick {
+  stroke: #ccc;
+}
+
+.gantt .grid .row:nth-child(even) {
+  fill: rgba(0, 0, 0, 0.025);
+}
+
+/********************************************************************************************************************
+ * vertical deadline line
+ ********************************************************************************************************************/
+.gantt-deadline-line {
+  stroke: red;
+  stroke-width: 2.5;
+  stroke-dasharray: 4;
+  shape-rendering: crispEdges; /* improves pixel alignment */
+  pointer-events: none;
+}
+
+/********************************************************************************************************************
  * task bar
- * !important overrides inline styles from Frappe Gantt
- */
+ * - !important overrides inline styles from Frappe Gantt
+ ********************************************************************************************************************/
 .gantt-task-bar .bar {
   fill: #f7e6ff !important;
   rx: 6;
@@ -19,9 +64,9 @@
   cursor: pointer;
 }
 
-/**
- * animation highlight for newly added task
- */
+/********************************************************************************************************************
+ * animation highlight for newly added task bar
+ ********************************************************************************************************************/
  .gantt-task-bar.gantt-task-bar-new .bar-group {
   animation: fadeInOutIn 3s ease-in-out 0s 1;
 }
@@ -40,9 +85,9 @@
   user-select: none;
 }
 
-/**
+/********************************************************************************************************************
  * bar text
- */
+ ********************************************************************************************************************/
 .gantt .bar-text {
   fill: #ffffff;
   font-weight: 500;
@@ -50,9 +95,9 @@
   pointer-events: none;
 }
 
-/**
+/********************************************************************************************************************
  * tooltip
- */
+ ********************************************************************************************************************/
 .gantt-tooltip {
   padding: 4px;
   max-width: 280px;
@@ -79,49 +124,4 @@
   font-size: 0.8rem;
   color: #666;
   white-space: normal;
-}
-
-/**
- * chart container
- */
-.gantt-container {
-  /* overflow-y: hidden; */
-  max-height: 100%;
-  cursor: grab;
-  cursor: -webkit-grab;
-}
-
-.gantt-container.dragging {
-  cursor: grabbing;
-  cursor: -webkit-grabbing;
-}
-
-/**
- * chart
- */
-.gantt {
-  user-select: none;
-  scrollbar-width: thin;
-}
-
-/**
- * grid lines and bg
- */
-.gantt .grid .row .tick {
-  stroke: #ccc;
-}
-
-.gantt .grid .row:nth-child(even) {
-  fill: rgba(0, 0, 0, 0.025);
-}
-
-/**
- * vertical deadline line
- */
-.gantt-deadline-line {
-  stroke: red;
-  stroke-width: 2.5;
-  stroke-dasharray: 4;
-  shape-rendering: crispEdges; /* improves pixel alignment */
-  pointer-events: none;
 }
