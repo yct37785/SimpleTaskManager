@@ -145,14 +145,20 @@ export function enableGanttDragScroll(container: HTMLElement | null): () => void
     document.body.style.userSelect = ''; // restore text selection
   };
 
+  const onWheel = (event: WheelEvent) => {
+    if (event.deltaX !== 0) event.preventDefault();
+  };
+
   // attach drag tracking globally
   container.addEventListener('mousedown', onMouseDown);
   document.addEventListener('mousemove', onMouseMove);
   document.addEventListener('mouseup', onMouseUp);
+  container.addEventListener('wheel', onWheel, { passive: false });
 
   return () => {
     container.removeEventListener('mousedown', onMouseDown);
     document.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('mouseup', onMouseUp);
+    container.removeEventListener('wheel', onWheel);
   };
 }
