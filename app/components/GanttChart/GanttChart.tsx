@@ -17,7 +17,7 @@ import SprintForm from '@components/Forms/SprintForm';
 import { getGanttContainerEL, markDeadline, doCustomScroll, enableGanttDragScroll } from './GanttChartBehavior';
 import { GanttTask, formatSprintsToGanttTasks, handleDateChange, addNewSprint, applyUpdatedSprints } from './GanttChartLogic';
 // schemas
-import { Project, Sprint } from '@schemas';
+import { Project } from '@schemas';
 // styles
 import './frappe-gantt.css';
 import './frappe-gantt-custom.css';
@@ -49,7 +49,6 @@ export default function GanttChart({
   const [editMode, setEditMode] = useState(false);
   const [sprintDialogOpen, setSprintDialogOpen] = useState(false);
   const [ganttTasks, setGanttTasks] = useState<GanttTask[]>(formatSprintsToGanttTasks(project.sprints));
-  const [newSprints, setNewSprints] = useState<Sprint[]>([]);
   const [sprintAdded, setSprintAdded] = useState(false);
   const [changesCancelled, setChangesCancelled] = useState(false);
   
@@ -152,7 +151,7 @@ export default function GanttChart({
    * handle task manipulations
    ******************************************************************************************************************/
   function handleCreateSprint(title: string, desc: string) {
-    addNewSprint(title, desc, project.sprints, setNewSprints, setGanttTasks);
+    addNewSprint(title, desc, project.sprints, setGanttTasks);
     // toggle edit mode immediately when new sprint added
     toggleEditMode(true);
     setSprintAdded(true);
@@ -163,9 +162,7 @@ export default function GanttChart({
    ******************************************************************************************************************/
   function handleConfirmEdits() {
     // apply changes to global state as well as Gantt chart programatically
-    applyUpdatedSprints(ganttInstance, workspaceId, project, ganttTasks, newSprints, createSprint, updateSprint);
-    // cleanup
-    setNewSprints([]);
+    applyUpdatedSprints(ganttInstance, workspaceId, project, ganttTasks, createSprint, updateSprint);
     toggleEditMode(false);
   }
 

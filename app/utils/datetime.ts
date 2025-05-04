@@ -65,6 +65,13 @@ export function formatISOToDate(isoString: string): Date {
 }
 
 /********************************************************************************************************************
+ * convert ISO date string (YYYY-MM-DD) to CalendarDate object
+ ********************************************************************************************************************/
+export function formatISOToCalendarDate(isoString: string): CalendarDate {
+  return dateToCalendarDate(formatISOToDate(isoString));
+}
+
+/********************************************************************************************************************
  * add given number of days to a given Date
  ********************************************************************************************************************/
 export function addDays(date: Date, days: number): Date {
