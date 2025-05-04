@@ -49,10 +49,6 @@ export default function ProjectForm({
       setTitle(project?.title || '');
       setDescription(project?.desc || '');
       setDueDate(project?.dueDate || null);
-    } else {
-      setTitle('');
-      setDescription('');
-      setDueDate(null);
     }
   }, [projectDialogOpen, project]);
 
@@ -98,6 +94,7 @@ export default function ProjectForm({
         onClose={closeProjectDialog}
         onSubmit={handleSubmit}
         title={`${workspace.title} - ${project ? 'Edit Project' : 'New Project'}`}
+        submitLabel={project ? 'Confirm' : 'Create'}
         disabled={!title || !description || !dueDate || !hasChanges}
       >
         <Stack spacing={2}>

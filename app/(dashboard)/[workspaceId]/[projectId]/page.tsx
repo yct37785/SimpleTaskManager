@@ -13,8 +13,9 @@ import { v4 as uuidv4 } from 'uuid';
 // our components
 import GanttChart from '@components/GanttChart/GanttChart';
 import { useWorkspacesManager } from '@globals/WorkspacesContext';
+import ProjectForm from '@components/Forms/ProjectForm';
 // schemas
-import { Project, Sprint } from '@schemas';
+import { Project } from '@schemas';
 // styles
 import { project_details_bar_height, appbar_height } from '@styles/dimens';
 import styles from './ProjectPage.module.css';
@@ -26,13 +27,15 @@ const fallbackDesc = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, s
  ********************************************************************************************************************/
 export default function ProjectPage() {
   const { workspaceId, projectId } = useParams() as { workspaceId: string; projectId: string };
-  const { workspaces, getProject } = useWorkspacesManager();
+  const { workspaces, getProject, updateProjectFields } = useWorkspacesManager();
 
   const workspace = workspaces[workspaceId];
   const project = getProject(workspaceId, projectId);
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [showFullDesc, setShowFullDesc] = useState(false);
+
+  if (!project) return;
 
   /******************************************************************************************************************
    * inject demo sprints into local state
@@ -44,6 +47,15 @@ export default function ProjectPage() {
   if (!workspace || !project) {
     return <div>Invalid workspace or project</div>;
   }
+
+  /******************************************************************************************************************
+   * edit project
+   ******************************************************************************************************************/
+  const handleEditProject = (title: string, desc: string, dueDate: CalendarDate) => {
+    if (workspaceId && projectId) {
+      updateProjectFields(workspaceId, projectId, { title, desc, dueDate } );
+    }
+  };
 
   /******************************************************************************************************************
    * project details
@@ -113,6 +125,14 @@ export default function ProjectPage() {
    ******************************************************************************************************************/
   return (
     <Box>
+      {/* edit project form */}
+      {project ? <ProjectForm
+        workspace={workspaces[workspaceId]}
+        project={project}
+        projectDialogOpen={editDialogOpen}
+        onSubmitProject={handleEditProject}
+        closeProjectDialog={() => setEditDialogOpen(false)} /> : null}
+
       {projectDetailsBar()}
       <GanttChart
         title='Sprints'
