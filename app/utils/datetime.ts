@@ -98,3 +98,9 @@ export function getDaysBetween(start: CalendarDate | Date, end: CalendarDate | D
 
   return diffInDays;
 }
+
+/********************************************************************************************************************
+ * formatting
+ ********************************************************************************************************************/
+export const formatDate = (date: CalendarDate) =>
+  `${date.day.toString().padStart(2, '0')}/${date.month.toString().padStart(2, '0')}/${date.year}`;

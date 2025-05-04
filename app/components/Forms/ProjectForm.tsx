@@ -5,12 +5,13 @@ import React, { useEffect, useState } from 'react';
 import { Stack, TextField, Box } from '@mui/material';
 // utils
 import { CalendarDate } from '@internationalized/date';
+import { formatDate } from '@utils/datetime';
 // our components
 import BaseDialog, { DialogTextInput } from '@UI/Dialog/Dialog';
 import Popover from '@UI/Dialog/Popover';
 import CalendarPicker from '@UI/Calendar/CalendarPicker';
 // schemas
-import { Workspace } from '@schemas';
+import { Project, Workspace } from '@schemas';
 // styles
 import { calendar_picker_height } from '@styles/dimens';
 
@@ -19,30 +20,41 @@ import { calendar_picker_height } from '@styles/dimens';
  ********************************************************************************************************************/
 type Props = {
   workspace: Workspace;
+  project?: Project;  // optional: passed when editing
   projectDialogOpen: boolean;
-  handleCreateProject: (title: string, desc: string, dueDate: CalendarDate) => void;
+  onSubmitProject: (title: string, desc: string, dueDate: CalendarDate) => void;
   closeProjectDialog: () => void;
 };
 
 /********************************************************************************************************************
  * project creation form
  ********************************************************************************************************************/
-export default function ProjectForm({ workspace, projectDialogOpen, handleCreateProject, closeProjectDialog }: Props) {
+export default function ProjectForm({
+  workspace,
+  project,
+  projectDialogOpen,
+  onSubmitProject,
+  closeProjectDialog,
+}: Props) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState<CalendarDate | null>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   /******************************************************************************************************************
-   * do reset when close
+   * prefill/reset
    ******************************************************************************************************************/
   useEffect(() => {
-    if (!projectDialogOpen) {
+    if (projectDialogOpen) {
+      setTitle(project?.title || '');
+      setDescription(project?.desc || '');
+      setDueDate(project?.dueDate || null);
+    } else {
       setTitle('');
       setDescription('');
       setDueDate(null);
     }
-  }, [projectDialogOpen]);
+  }, [projectDialogOpen, project]);
 
   /******************************************************************************************************************
    * submit
@@ -55,9 +67,18 @@ export default function ProjectForm({ workspace, projectDialogOpen, handleCreate
   const handleSubmit = () => {
     if (!title.trim() || !description.trim() || !dueDate) return;
 
-    handleCreateProject(title, description, dueDate);
+    onSubmitProject(title.trim(), description.trim(), dueDate);
     closeProjectDialog();
   }
+
+  /******************************************************************************************************************
+   * utils
+   ******************************************************************************************************************/
+  const hasChanges =
+    !project ||
+    title.trim() !== project.title ||
+    description.trim() !== project.desc ||
+    (dueDate && project.dueDate.compare(dueDate) !== 0);
 
   /******************************************************************************************************************
    * render
@@ -65,14 +86,9 @@ export default function ProjectForm({ workspace, projectDialogOpen, handleCreate
   return (
     <>
       {/* calendar popover */}
-      <Popover
-        anchorEl={anchorEl}
-        setAnchorEl={setAnchorEl}
-      >
+      <Popover anchorEl={anchorEl} setAnchorEl={setAnchorEl}>
         <Box sx={{ height: calendar_picker_height }}>
-          <CalendarPicker
-            onSelect={onDateSelected}
-          />
+          <CalendarPicker onSelect={onDateSelected} />
         </Box>
       </Popover>
 
@@ -81,8 +97,8 @@ export default function ProjectForm({ workspace, projectDialogOpen, handleCreate
         open={projectDialogOpen}
         onClose={closeProjectDialog}
         onSubmit={handleSubmit}
-        title={`${workspace.title} - New Project`}
-        disabled={!title || !description || !dueDate}
+        title={`${workspace.title} - ${project ? 'Edit Project' : 'New Project'}`}
+        disabled={!title || !description || !dueDate || !hasChanges}
       >
         <Stack spacing={2}>
           <DialogTextInput
@@ -102,18 +118,14 @@ export default function ProjectForm({ workspace, projectDialogOpen, handleCreate
             label='Deadline'
             fullWidth
             required
-            value={dueDate ? `${dueDate.day.toString().padStart(2, '0')}/${dueDate.month.toString().padStart(2, '0')}/${dueDate.year}` : '--/--/----'}
+            value={dueDate ? formatDate(dueDate) : '--/--/----'}
             onClick={(e) => setAnchorEl(e.currentTarget)}
             slotProps={{
-              input: {
-                readOnly: true,
-              },
+              input: { readOnly: true },
             }}
             sx={{
               cursor: 'pointer',
-              input: {
-                cursor: 'pointer',
-              },
+              input: { cursor: 'pointer' },
             }}
           />
         </Stack>

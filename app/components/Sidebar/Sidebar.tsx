@@ -219,7 +219,7 @@ export default function Sidebar() {
       {activeWorkspaceID ? <ProjectForm
         workspace={workspaces[activeWorkspaceID]}
         projectDialogOpen={projectDialogOpen}
-        handleCreateProject={handleCreateProject}
+        onSubmitProject={handleCreateProject}
         closeProjectDialog={() => setProjectDialogOpen(false)} /> : null}
       
     </Box>
