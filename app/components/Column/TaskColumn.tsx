@@ -10,16 +10,19 @@ import TaskCard from '@components/Cards/TaskCard';
 // schemas
 import { Column } from '@schemas';
 // styles
-import { task_column_width } from '@/app/defines/dimens';
+import { task_column_width } from '@/app/styles/dimens';
 
+/********************************************************************************************************************
+ * types
+ ********************************************************************************************************************/
 type Props = {
   column: Column;
   setOpenColumn: (id: string) => void;
 };
 
-/**
+/********************************************************************************************************************
  * task column component
- */
+ ********************************************************************************************************************/
 export default function TaskColumn({ column, setOpenColumn }: Props) {
   return (
     <Box>

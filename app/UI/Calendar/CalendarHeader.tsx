@@ -8,16 +8,17 @@ import { IconButton, IconButtonProps, Box, Typography } from '@mui/material';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 // others
 import { PressEvent } from '@react-types/shared';
-// styles
-import styles from './calendar.module.css';
 
+/********************************************************************************************************************
+ * types
+ ********************************************************************************************************************/
 type NavButtonProps = AriaButtonProps & {
   children: ReactNode;
 } & Omit<IconButtonProps, 'onClick' | 'disabled'>;
 
-/**
+/********************************************************************************************************************
  * wraps a MUI IconButton for use with React Aria's onPress and isDisabled props
- */
+ ********************************************************************************************************************/
 function CalendarNavButton({ onPress, isDisabled, children }: NavButtonProps) {
   const handleClick = () => {
     if (onPress) onPress({} as PressEvent);
@@ -36,9 +37,9 @@ type Props = {
   title: string;
 };
 
-/**
+/********************************************************************************************************************
  * range calendar header component
- */
+ ********************************************************************************************************************/
 export default function CalendarHeader({ prevButtonProps, nextButtonProps, title }: Props) {
   return (
     <Box sx={{ display: 'flex' }}>

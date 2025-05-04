@@ -20,14 +20,15 @@ import ProjectForm from '@components/Forms/ProjectForm';
 // schemas
 import { Workspace, Project } from '@schemas';
 // utils
+import { CalendarDate } from '@internationalized/date';
 import { dateToCalendarDate } from '@utils/datetime';
 // styles
-import { sidebar_width, appbar_height, scrollbar_allowance } from '@/app/defines/dimens';
+import { sidebar_width, appbar_height, scrollbar_allowance } from '@/app/styles/dimens';
 import styles from './sidebar.module.css';
 
-/**
+/********************************************************************************************************************
  * text input reusable component
- */
+ ********************************************************************************************************************/
 function InlineTextInput({ placeholder, value, setValue, onSubmit }: {
   placeholder: string;
   value: string;
@@ -49,9 +50,9 @@ function InlineTextInput({ placeholder, value, setValue, onSubmit }: {
   );
 };
 
-/**
+/********************************************************************************************************************
  * render a single workspace row
- */
+ ********************************************************************************************************************/
 function WorkspaceListItem({ workspace, isOpen, onClickCreateProject, toggleOpen }: {
   workspace: Workspace;
   isOpen: boolean;
@@ -72,9 +73,9 @@ function WorkspaceListItem({ workspace, isOpen, onClickCreateProject, toggleOpen
   );
 };
 
-/**
+/********************************************************************************************************************
  * render all projects inside a workspace
- */
+ ********************************************************************************************************************/
 function ProjectsList({ workspace, isOpen }: {
   workspace: Workspace;
   isOpen: boolean;
@@ -104,9 +105,9 @@ function ProjectsList({ workspace, isOpen }: {
   );
 }
 
-/**
+/********************************************************************************************************************
  * sidebar component
- */
+ ********************************************************************************************************************/
 export default function Sidebar() {
   // context
   const { workspaces, createWorkspace, createProject } = useWorkspacesManager();
@@ -115,14 +116,14 @@ export default function Sidebar() {
   const [workspaceInputVisible, setWorkspaceInputVisible] = useState(false);
   const [workspaceTitle, setWorkspaceTitle] = useState('');
   // create project
-  const [activeWorkspace, setActiveWorkspace] = useState<string | null>(null);
+  const [activeWorkspaceID, setActiveWorkspaceID] = useState<string | null>(null);
   const [projectDialogOpen, setProjectDialogOpen] = useState(false);
   // workspace open/close tracking
   const [openWorkspaces, setOpenWorkspaces] = useState<Record<string, boolean>>({});
 
-  /**
-   * create a workspace from name input
-   */
+  /******************************************************************************************************************
+   * handle workspaces
+   ******************************************************************************************************************/
   const handleCreateWorkspace = () => {
     const title = workspaceTitle.trim();
     if (title) {
@@ -132,53 +133,39 @@ export default function Sidebar() {
     setWorkspaceInputVisible(false);
   };
   
-  /**
-   * launch project creation dialog
-   */
+  /******************************************************************************************************************
+   * handle projects
+   ******************************************************************************************************************/
   const onClickCreateProject = (e: React.MouseEvent, workspaceId: string) => {
     e.stopPropagation();
-    setOpenWorkspaces((prev) => ({ ...prev, [workspaceId]: true }));
     setProjectDialogOpen(true);
-    setActiveWorkspace(workspaceId);
+    setActiveWorkspaceID(workspaceId);
   };
 
-  /**
-   * create project
-   */
-  const handleCreateProject = (title: string, desc: string, endDate: Date) => {
-    if (activeWorkspace && title) {
-      createProject(activeWorkspace, title, desc, dateToCalendarDate(new Date()), dateToCalendarDate(endDate));
+  const handleCreateProject = (title: string, desc: string, dueDate: CalendarDate) => {
+    if (activeWorkspaceID && title) {
+      setOpenWorkspaces((prev) => ({ ...prev, [activeWorkspaceID]: true }));
+      createProject(activeWorkspaceID, title, desc, dateToCalendarDate(new Date()), dueDate);
     }
   };
 
-  /**
-   * expand workspace
-   */
+  /******************************************************************************************************************
+   * UI
+   ******************************************************************************************************************/
   const toggleOpen = (id: string) => {
     setOpenWorkspaces((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
+  /******************************************************************************************************************
+   * render
+   ******************************************************************************************************************/
   return (
-    <Box sx={{ width: sidebar_width }} className={styles.sidebar}>
+    <Box sx={{ width: sidebar_width, height: '100%' }} className={styles.sidebar}>
       {/* header */}
       <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
-        <Box sx={{ height: appbar_height }}>
-          <Link href='/' style={{ textDecoration: 'none' }}>
-            <Typography variant='h6' color='primary' gutterBottom
-              sx={{ fontWeight: 600, textAlign: 'left', mt: 1, ml: 2, cursor: 'pointer' }}>
-              TASK MANAGER
-            </Typography>
-          </Link>
-        </Box>
-
-        <Divider />
 
         {/* projects management */}
         <List>
-          <ListItemButton>
-            <ListItemIcon><CalendarIcon /></ListItemIcon>
-            <ListItemText primary='Timeline' />
-          </ListItemButton>
           <ListItemButton>
             <ListItemIcon><PieCharIcon /></ListItemIcon>
             <ListItemText primary='Metrics' />
@@ -229,8 +216,8 @@ export default function Sidebar() {
       </List>
 
       {/* create project form */}
-      {activeWorkspace ? <ProjectForm
-        workspace={workspaces[activeWorkspace]}
+      {activeWorkspaceID ? <ProjectForm
+        workspace={workspaces[activeWorkspaceID]}
         projectDialogOpen={projectDialogOpen}
         handleCreateProject={handleCreateProject}
         closeProjectDialog={() => setProjectDialogOpen(false)} /> : null}

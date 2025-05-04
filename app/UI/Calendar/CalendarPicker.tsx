@@ -1,33 +1,38 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 // react-aria
 import { useCalendar, useLocale } from 'react-aria';
 import { useCalendarState } from 'react-stately';
 // MUI
 import { Box } from '@mui/material';
-// date
-import { createCalendar, today, getLocalTimeZone } from '@internationalized/date';
+// utils
+import { createCalendar, today, getLocalTimeZone, CalendarDate } from '@internationalized/date';
 // our components
 import CalendarHeader from './CalendarHeader';
 import CalendarGrid from './CalendarGrid';
 import { HighlightRange } from './CalendarCell';
 
+/********************************************************************************************************************
+ * types
+ ********************************************************************************************************************/
 type Props = {
   cellSize?: number;
   dayOfWeekFontSize?: string;
   fontSize?: string;
   highlightRanges?: HighlightRange[];
+  onSelect?: (date: CalendarDate) => void;
 };
 
-/**
+/********************************************************************************************************************
  * calendar date picker component
- */
+ ********************************************************************************************************************/
 export default function CalendarPicker({
   cellSize = 40,
   dayOfWeekFontSize = '1.2rem',
   fontSize = '1rem',
   highlightRanges = [],
+  onSelect = () => {}
 }: Props) {
   let { locale } = useLocale();
 
@@ -46,6 +51,18 @@ export default function CalendarPicker({
     title
   } = useCalendar({ minValue: today(getLocalTimeZone()) }, state);
 
+  /******************************************************************************************************************
+   * listener
+   ******************************************************************************************************************/
+  useEffect(() => {
+    if (state.value) {
+      onSelect(state.value);
+    }
+  }, [state.value]);
+
+  /******************************************************************************************************************
+   * render
+   ******************************************************************************************************************/
   return (
     <Box {...calendarProps} sx={{ width: 'fit-content', maxWidth: '100%' }}>
       {/* header */}

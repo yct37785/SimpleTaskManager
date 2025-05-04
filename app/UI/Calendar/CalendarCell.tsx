@@ -4,17 +4,17 @@ import { useRef } from 'react';
 // react-aria
 import { useCalendarCell, useFocusRing, useLocale, mergeProps } from 'react-aria';
 import { CalendarState, RangeCalendarState } from 'react-stately';
-// date
+// utils
 import { CalendarDate, isSameDay, isSameMonth, getDayOfWeek, getLocalTimeZone } from '@internationalized/date';
 // styles
 import styles from './calendar.module.css';
 
-/**
- * define a range to highlight
- */
+/********************************************************************************************************************
+ * types
+ ********************************************************************************************************************/
 export type HighlightRange = {
-  start: Date;
-  end: Date;
+  start: CalendarDate;
+  end: CalendarDate;
   color: string;
 };
 
@@ -27,9 +27,9 @@ type Props<T extends CalendarState | RangeCalendarState> = {
   highlightRanges?: HighlightRange[];
 };
 
-/**
+/********************************************************************************************************************
  * calendar cell component of a single day
- */
+ ********************************************************************************************************************/
 export default function CalendarCell<T extends CalendarState | RangeCalendarState>({
   state,
   date,
@@ -40,7 +40,6 @@ export default function CalendarCell<T extends CalendarState | RangeCalendarStat
 }: Props<T>) {
   const ref = useRef(null);
   const { locale } = useLocale();
-  const jsDate = date.toDate(getLocalTimeZone());
   const dayOfWeek = getDayOfWeek(date, locale);
 
   const { cellProps, buttonProps, isSelected, isDisabled, formattedDate } = useCalendarCell({ date }, state, ref);
@@ -49,7 +48,7 @@ export default function CalendarCell<T extends CalendarState | RangeCalendarStat
 
   // custom ranges
   const matchedHighlight = highlightRanges.find(
-    range => jsDate >= range.start && jsDate <= range.end
+    range => date.compare(range.start) >= 0 && date.compare(range.end) <= 0
   );
 
   /**
@@ -61,8 +60,17 @@ export default function CalendarCell<T extends CalendarState | RangeCalendarStat
 
   // render cell
   const renderCell = (cellClassNames: string, innerClassNames: string) => {
+    const highlightColor = matchedHighlight ? matchedHighlight.color : undefined;
+
     return <td {...cellProps} className={styles.cellTd}>
-      <div {...mergeProps(buttonProps, focusProps)} ref={ref} className={cellClassNames}>
+      <div
+        {...mergeProps(buttonProps, focusProps)}
+        ref={ref}
+        className={cellClassNames}
+        style={{
+          backgroundColor: highlightColor
+        }}
+      >
         <div className={innerClassNames}
           style={{
             width: cellSize,

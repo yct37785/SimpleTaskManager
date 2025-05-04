@@ -3,13 +3,16 @@
 // react-aria
 import { useCalendarGrid, useLocale } from 'react-aria';
 import { CalendarState, RangeCalendarState } from 'react-stately';
-// date
+// utils
 import { getWeeksInMonth, CalendarDate, endOfMonth, isSameMonth } from '@internationalized/date';
 // our components
 import CalendarCell, { HighlightRange } from './CalendarCell';
 // styles
 import styles from './calendar.module.css';
 
+/********************************************************************************************************************
+ * types
+ ********************************************************************************************************************/
 type Props<T extends CalendarState | RangeCalendarState> = {
   state: T;
   offset: number;
@@ -19,9 +22,9 @@ type Props<T extends CalendarState | RangeCalendarState> = {
   fontSize: string;
 };
 
-/**
+/********************************************************************************************************************
  * calendar grid component with one month of days
- */
+ ********************************************************************************************************************/
 export default function CalendarGrid<T extends CalendarState | RangeCalendarState>({
   state,
   offset,
@@ -39,6 +42,9 @@ export default function CalendarGrid<T extends CalendarState | RangeCalendarStat
 
   const { gridProps, headerProps, weekDays } = useCalendarGrid({ startDate, endDate }, state);
 
+  /******************************************************************************************************************
+   * render
+   ******************************************************************************************************************/
   return (
     <table {...gridProps} style={{ borderCollapse: 'collapse' }}>
       <thead {...headerProps} className={styles.dayOfWeek} style={{ fontSize: dayOfWeekFontSize }}>
