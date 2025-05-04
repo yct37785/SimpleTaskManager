@@ -11,8 +11,9 @@ import { Add as AddIcon, Edit as EditIcon, Check as CheckIcon, Close as CloseIco
 // hooks
 import { useWindowHeight } from '@hooks/useWindowHeight';
 import { useWorkspacesManager } from '@globals/WorkspacesContext';
-// pages
+// our components
 import SprintForm from '@components/Forms/SprintForm';
+import GanttChartConfirmDialog from './GanttChartConfirmDialog';
 // Gantt chart utils
 import { getGanttContainerEL, markDeadline, doCustomScroll, enableGanttDragScroll } from './GanttChartBehavior';
 import { GanttTask, formatSprintsToGanttTasks, handleDateChange, addNewSprint, applyUpdatedSprints } from './GanttChartLogic';
@@ -48,6 +49,7 @@ export default function GanttChart({
   const [initialInit, setInitialInit] = useState(true);
   const [editMode, setEditMode] = useState(false);
   const [sprintDialogOpen, setSprintDialogOpen] = useState(false);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [ganttTasks, setGanttTasks] = useState<GanttTask[]>(formatSprintsToGanttTasks(project.sprints));
   const [sprintAdded, setSprintAdded] = useState(false);
   const [changesCancelled, setChangesCancelled] = useState(false);
@@ -164,6 +166,7 @@ export default function GanttChart({
     // apply changes to global state as well as Gantt chart programatically
     applyUpdatedSprints(ganttInstance, workspaceId, project, ganttTasks, createSprint, updateSprint);
     toggleEditMode(false);
+    setConfirmDialogOpen(false);
   }
 
   function handleCancelEdits() {
@@ -190,56 +193,67 @@ export default function GanttChart({
    ******************************************************************************************************************/
   return (
     <>
-    {/* create sprint form */}
-    {project ? <SprintForm
+      {/* create sprint form */}
+      {project ? <SprintForm
         project={project}
         sprintDialogOpen={sprintDialogOpen}
         handleCreateSprint={handleCreateSprint}
         closeSprintDialog={() => setSprintDialogOpen(false)} /> : null}
-    <Box sx={{ px: 2, pb: 2 }}>
-      <Box sx={{ border: `1px solid ${theme.palette.divider}`, borderRadius: 2 }}>
 
-        {/* top bar */}
-        <Stack direction='row' justifyContent='space-between' alignItems='center' sx={{ height: chart_top_bar_height, px: 2 }}>
-          <Stack direction='row' alignItems='center'>
-            <Typography variant='subtitle1' fontWeight={600}>
-              {title}
-            </Typography>
-            <Tooltip title='Create'>
-              <IconButton size='small' color='primary' sx={{ ml: 1 }} onClick={() => setSprintDialogOpen(true)}>
-                <AddIcon />
-              </IconButton>
-            </Tooltip>
-          </Stack>
-          {!editMode ? (
-            <Button
-              onClick={() => toggleEditMode(true)}
-              variant='text'
-              size='small'
-              startIcon={<EditIcon />}
-            >
-              Edit
-            </Button>
-          ) : (
-            <Stack direction='row' spacing={1}>
-              <Button onClick={handleConfirmEdits} color='primary' variant='outlined' size='small' startIcon={<CheckIcon />}>
-                Confirm
-              </Button>
-              <Button onClick={handleCancelEdits} color='inherit' variant='outlined' size='small' startIcon={<CloseIcon />}>
-                Cancel
-              </Button>
+      {/* confirm edits popup */}
+      <GanttChartConfirmDialog
+        open={confirmDialogOpen}
+        onClose={() => setConfirmDialogOpen(false)}
+        onConfirm={handleConfirmEdits}
+        project={project}
+        ganttTasks={ganttTasks}
+      />
+
+      {/* main content */}
+      <Box sx={{ px: 2, pb: 2 }}>
+        <Box sx={{ border: `1px solid ${theme.palette.divider}`, borderRadius: 2 }}>
+
+          {/* top bar */}
+          <Stack direction='row' justifyContent='space-between' alignItems='center' sx={{ height: chart_top_bar_height, px: 2 }}>
+            <Stack direction='row' alignItems='center'>
+              <Typography variant='subtitle1' fontWeight={600}>
+                {title}
+              </Typography>
+              <Tooltip title='Create'>
+                <IconButton size='small' color='primary' sx={{ ml: 1 }} onClick={() => setSprintDialogOpen(true)}>
+                  <AddIcon />
+                </IconButton>
+              </Tooltip>
             </Stack>
-          )}
-        </Stack>
+            {!editMode ? (
+              <Button
+                onClick={() => toggleEditMode(true)}
+                variant='text'
+                size='small'
+                startIcon={<EditIcon />}
+              >
+                Edit
+              </Button>
+            ) : (
+              <Stack direction='row' spacing={1}>
+                <Button onClick={() => setConfirmDialogOpen(true)} color='primary' variant='outlined' size='small' startIcon={<CheckIcon />}>
+                  Confirm
+                </Button>
+                <Button onClick={handleCancelEdits} color='inherit' variant='outlined' size='small' startIcon={<CloseIcon />}>
+                  Cancel
+                </Button>
+              </Stack>
+            )}
+          </Stack>
 
-        <Divider />
+          <Divider />
 
-        {/* Gantt chart */}
-        <Box sx={{ px: 2, pb: 1 }}>
-          <div ref={ganttRef} />
+          {/* Gantt chart */}
+          <Box sx={{ px: 2, pb: 1 }}>
+            <div ref={ganttRef} />
+          </Box>
         </Box>
       </Box>
-    </Box>
     </>
   );
 }

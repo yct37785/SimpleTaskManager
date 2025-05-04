@@ -104,7 +104,66 @@ export function addNewSprint(
 }
 
 /******************************************************************************************************************
- * handle state manipulations
+ * returns list of sprint operations based on task diffs
+ ******************************************************************************************************************/
+export function getSprintOperations(
+  project: Project,
+  ganttTasks: GanttTask[]
+): {
+  created: Sprint[],
+  modified: { before: Sprint, after: Sprint }[],
+  all: ({ type: 'new', sprint: Sprint } | { type: 'edit', before: Sprint, after: Sprint })[]
+} {
+  const created: Sprint[] = [];
+  const modified: { before: Sprint; after: Sprint }[] = [];
+  const all: ({ type: 'new', sprint: Sprint } | { type: 'edit', before: Sprint, after: Sprint })[] = [];
+
+  ganttTasks.forEach(task => {
+    const isNew = task.id.startsWith('TEMP');
+    const startDate = formatISOToCalendarDate(task.start);
+    const dueDate = formatISOToCalendarDate(task.end);
+
+    // newly added
+    if (isNew) {
+      const newSprint: Sprint = {
+        id: task.id,
+        title: task.name,
+        desc: task.descTmp,
+        startDate,
+        dueDate,
+        tasks: []
+      };
+      created.push(newSprint);
+      all.push({ type: 'new', sprint: newSprint });
+    }
+    // modified
+    else {
+      const original = project.sprints.find(s => s.id === task.id);
+      if (original) {
+        const hasChanged =
+          original.title !== task.name ||
+          original.startDate.compare(startDate) !== 0 ||
+          original.dueDate.compare(dueDate) !== 0;
+
+        if (hasChanged) {
+          const updated = {
+            ...original,
+            title: task.name,
+            startDate,
+            dueDate,
+          };
+          modified.push({ before: original, after: updated });
+          all.push({ type: 'edit', before: original, after: updated });
+        }
+      }
+    }
+  });
+
+  return { created, modified, all };
+}
+
+/******************************************************************************************************************
+ * apply sprint edits to global state and update Gantt UI
  ******************************************************************************************************************/
 export function applyUpdatedSprints(
   ganttInstance: RefObject<any>,
@@ -116,26 +175,21 @@ export function applyUpdatedSprints(
 ) {
   if (!ganttInstance.current) return;
 
-  // update chart visuals
+  // update task visuals
   ganttTasks.forEach(task => {
     ganttInstance.current.update_task(task.id, task);
   });
 
-  // update sprints
-  ganttTasks.forEach(ganttTask => {
-    // existing
-    if (!ganttTask.id.startsWith('TEMP')) {
-      // TODO: improve efficiency
-      const originalSprint = project.sprints.find(s => s.id === ganttTask.id);
-      if (originalSprint) {
-        const updatedSprint = formatGanttTaskToSprint(ganttTask, originalSprint);
-        updateSprint(workspaceId, project.id, updatedSprint);
-      }
-    }
-    // new
-    else {
-      createSprint(workspaceId, project.id, ganttTask.name, ganttTask.descTmp, 
-        formatISOToCalendarDate(ganttTask.start), formatISOToCalendarDate(ganttTask.end));
-    }
+  // get planned operations
+  const { created, modified } = getSprintOperations(project, ganttTasks);
+
+  // apply new sprints
+  created.forEach(sprint => {
+    createSprint(workspaceId, project.id, sprint.title, sprint.desc, sprint.startDate, sprint.dueDate);
+  });
+
+  // apply updated sprints
+  modified.forEach(({ after }) => {
+    updateSprint(workspaceId, project.id, after);
   });
 }
