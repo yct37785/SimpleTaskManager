@@ -94,7 +94,7 @@ export function doCustomScroll(
         const daysBtw = getDaysBetween(ganttInstance.current.dates[0], formatISOToDate(ganttTasks[ganttTasks.length - 1].start));
         requestAnimationFrame(() => {
           container.scrollTo({
-            left: daysBtw * column_width,
+            left: Math.max((daysBtw - 4) * column_width, 0),
             top: container.scrollHeight,
             behavior: 'smooth',
           });
