@@ -15,6 +15,11 @@ type WorkspacesContextType = {
   createWorkspace: (title: string) => void;
   createProject: (workspaceId: string, title: string, desc: string, startDate: CalendarDate, dueDate: CalendarDate) => void;
   getProject: (workspaceId: string, projectId: string) => Project | null;
+  updateProjectFields: (
+    workspaceId: string,
+    projectId: string,
+    updates: Partial<Pick<Project, 'title' | 'desc' | 'dueDate'>>
+  ) => void;
   createSprint: (workspaceId: string, projectId: string, title: string, desc: string, startDate: CalendarDate, dueDate: CalendarDate) => boolean;
   updateSprint: (workspaceId: string, projectId: string, updatedSprint: Sprint) => void;
 };
@@ -110,6 +115,20 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
   };
 
   /******************************************************************************************************************
+   * update an existing project's title, desc or dueDate (selectively)
+   ******************************************************************************************************************/
+  const updateProjectFields = (
+    workspaceId: string,
+    projectId: string,
+    updates: Partial<Pick<Project, 'title' | 'desc' | 'dueDate'>>
+  ) => {
+    updateProject(workspaceId, projectId, (project) => ({
+      ...project,
+      ...updates,
+    }));
+  };
+
+  /******************************************************************************************************************
    * create a sprint under a project with default columns
    * - returns false if invalid date range or overlapping
    ******************************************************************************************************************/
@@ -168,6 +187,7 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
         createWorkspace,
         createProject,
         getProject,
+        updateProjectFields,
         createSprint,
         updateSprint
       }}
