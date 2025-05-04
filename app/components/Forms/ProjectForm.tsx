@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 // MUI
 import { Stack, TextField, Box } from '@mui/material';
-// date
+// utils
 import { CalendarDate } from '@internationalized/date';
 // our components
 import BaseDialog, { DialogTextInput } from '@UI/Dialog/Dialog';

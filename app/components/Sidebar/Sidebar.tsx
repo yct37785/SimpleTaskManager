@@ -14,14 +14,13 @@ import {
   Add as AddIcon, Folder as FolderIcon, FolderOpen as FolderOpenIcon, InsertDriveFile as InsertDriveFileIcon, Send as SendIcon,
   CalendarMonth as CalendarIcon, Home as HomeIcon, PieChart as PieCharIcon, ExpandLess, ExpandMore
 } from '@mui/icons-material';
-// date
-import { CalendarDate } from '@internationalized/date';
 // our components
 import { useWorkspacesManager } from '@globals/WorkspacesContext';
 import ProjectForm from '@components/Forms/ProjectForm';
 // schemas
 import { Workspace, Project } from '@schemas';
 // utils
+import { CalendarDate } from '@internationalized/date';
 import { dateToCalendarDate } from '@utils/datetime';
 // styles
 import { sidebar_width, appbar_height, scrollbar_allowance } from '@/app/styles/dimens';

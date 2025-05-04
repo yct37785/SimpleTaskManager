@@ -6,7 +6,7 @@ import { useRangeCalendar, useLocale } from 'react-aria';
 import { useRangeCalendarState } from 'react-stately';
 // MUI
 import { Box } from '@mui/material';
-// date
+// utils
 import { createCalendar, today, getLocalTimeZone, CalendarDate, toCalendarDate } from '@internationalized/date';
 // our components
 import CalendarHeader from './CalendarHeader';

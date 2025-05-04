@@ -3,7 +3,7 @@
 // react-aria
 import { useCalendarGrid, useLocale } from 'react-aria';
 import { CalendarState, RangeCalendarState } from 'react-stately';
-// date
+// utils
 import { getWeeksInMonth, CalendarDate, endOfMonth, isSameMonth } from '@internationalized/date';
 // our components
 import CalendarCell, { HighlightRange } from './CalendarCell';
