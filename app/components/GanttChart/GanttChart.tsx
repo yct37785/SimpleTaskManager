@@ -44,8 +44,11 @@ export default function GanttChart({
   title,
   workspaceId,
   project,
-  heightOffset = 0}: Props) {
+  heightOffset = 0 }: Props) {
+  // safeguards
+  if (!project) return;
 
+  // states
   const [initialInit, setInitialInit] = useState(true);
   const [editMode, setEditMode] = useState(false);
   const [sprintDialogOpen, setSprintDialogOpen] = useState(false);
@@ -54,9 +57,12 @@ export default function GanttChart({
   const [sprintAdded, setSprintAdded] = useState(false);
   const [changesCancelled, setChangesCancelled] = useState(false);
   
+  // refs
   const ganttRef = useRef<HTMLDivElement>(null);
   const ganttInstance = useRef<any>(null);
+  const currProjectDueDate = useRef<String>('');
 
+  // contexts
   const { createSprint, updateSprint } = useWorkspacesManager();
   const windowHeight = useWindowHeight();
   const theme = useTheme();
@@ -148,6 +154,16 @@ export default function GanttChart({
       setChangesCancelled(false);
     }
   }, [changesCancelled]);
+
+  // if deadline changes
+  useEffect(() => {
+    const currDueDateStr = project.dueDate.toString();
+    if (currProjectDueDate.current && currProjectDueDate.current !== currDueDateStr) {
+      console.log('Due date changed: ' + project.dueDate.toString());
+      injectStyles();
+    }
+    currProjectDueDate.current = currDueDateStr;
+  }, [project.dueDate]);
 
   /******************************************************************************************************************
    * handle task manipulations
