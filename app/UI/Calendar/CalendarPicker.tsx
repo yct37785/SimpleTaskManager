@@ -20,6 +20,7 @@ type Props = {
   cellSize?: number;
   dayOfWeekFontSize?: string;
   fontSize?: string;
+  defaultValue?: CalendarDate;
   highlightRanges?: HighlightRange[];
   onSelect?: (date: CalendarDate) => void;
 };
@@ -31,6 +32,7 @@ export default function CalendarPicker({
   cellSize = 40,
   dayOfWeekFontSize = '1.2rem',
   fontSize = '1rem',
+  defaultValue,
   highlightRanges = [],
   onSelect = () => {}
 }: Props) {
@@ -40,8 +42,10 @@ export default function CalendarPicker({
     minValue: today(getLocalTimeZone()),
     visibleDuration: { months: 2 },
     pageBehavior: 'single',
+    defaultValue,
     locale,
     createCalendar,
+    onChange: valueSelected
   });
 
   const {
@@ -49,16 +53,14 @@ export default function CalendarPicker({
     prevButtonProps,
     nextButtonProps,
     title
-  } = useCalendar({ minValue: today(getLocalTimeZone()) }, state);
+  } = useCalendar({}, state);
 
   /******************************************************************************************************************
    * listener
    ******************************************************************************************************************/
-  useEffect(() => {
-    if (state.value) {
-      onSelect(state.value);
-    }
-  }, [state.value]);
+  function valueSelected(value: CalendarDate) {
+    onSelect(value);
+  }
 
   /******************************************************************************************************************
    * render

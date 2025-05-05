@@ -84,7 +84,10 @@ export default function ProjectForm({
       {/* calendar popover */}
       <Popover anchorEl={anchorEl} setAnchorEl={setAnchorEl}>
         <Box sx={{ height: calendar_picker_height }}>
-          <CalendarPicker onSelect={onDateSelected} />
+          <CalendarPicker
+            defaultValue={project?.dueDate}
+            onSelect={onDateSelected}
+          />
         </Box>
       </Popover>
 
