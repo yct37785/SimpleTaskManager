@@ -9,17 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.0",
     "@fontsource/roboto": "^5.2.5",
     "@hello-pangea/dnd": "^18.0.1",
     "@internationalized/date": "^3.8.0",
     "@mui/icons-material": "^7.0.2",
     "@mui/material": "^7.0.2",
     "@mui/material-nextjs": "^7.0.2",
-    "@mui/x-date-pickers": "^8.2.0",
-    "date-fns": "^4.1.0",
-    "dayjs": "^1.11.13",
     "frappe-gantt": "^1.0.3",
     "next": "^15.3.1",
     "react": "^19.1.0",
