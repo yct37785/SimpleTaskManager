@@ -17,9 +17,18 @@ export function getGanttContainerEL(ganttRef: RefObject<HTMLDivElement | null>) 
 /********************************************************************************************************************
  * injects a vertical deadline marker to Gantt chart
  ********************************************************************************************************************/
-export function markDeadline(ganttInstance: RefObject<any>, ganttRef: RefObject<HTMLDivElement | null>, deadline: CalendarDate, column_width: number) {
+export function markDeadline(
+  ganttInstance: RefObject<any>,
+  ganttRef: RefObject<HTMLDivElement | null>,
+  deadline: CalendarDate,
+  column_width: number
+) {
   requestAnimationFrame(() => {
     if (!ganttInstance.current || !ganttInstance.current.dates || !ganttRef.current) return;
+
+    // remove previous line
+    const existingLines = ganttRef.current.querySelectorAll('.gantt-deadline-line');
+    existingLines.forEach(line => line.remove());
 
     // find idx offset of the date to add line to
     const index = ganttInstance.current.dates.findIndex((d: Date) =>
