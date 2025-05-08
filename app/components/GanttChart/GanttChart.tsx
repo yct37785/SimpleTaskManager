@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState, memo } from 'react';
+// next
+import { useRouter } from 'next/navigation';
 // Frappe Gantt
 import Gantt from 'frappe-gantt';
 // MUI
@@ -35,7 +37,6 @@ type Props = {
   workspaceId: string;
   project: Project;
   heightOffset?: number;
-  onSprintSelected: (id: string) => void;
 };
 
 /********************************************************************************************************************
@@ -45,8 +46,7 @@ function GanttChart({
   title = 'Gantt Chart',
   workspaceId,
   project,
-  heightOffset = 0,
-  onSprintSelected }: Props) {
+  heightOffset = 0 }: Props) {
   // safeguards
   if (!project) return;
 
@@ -68,6 +68,7 @@ function GanttChart({
   const { createSprint, updateSprint } = useWorkspacesManager();
   const windowHeight = useWindowHeight();
   const theme = useTheme();
+  const router = useRouter();
 
   /******************************************************************************************************************
    * Gantt instance
@@ -186,7 +187,7 @@ function GanttChart({
   function assignSprintClickHandler(editMode: boolean) {
     return editMode
       ? () => { }
-      : (task: GanttTask) => onSprintSelected(task.id);
+      : (task: GanttTask) => router.push(`/${workspaceId}/${project.id}/${task.id}`);
   }
 
   function handleConfirmEdits() {

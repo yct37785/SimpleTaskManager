@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, memo } from 'react';
+import { useState, useEffect } from 'react';
 // next
-import { useRouter, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 // MUI
 import { Box, Typography, Tooltip, IconButton, Stack } from '@mui/material';
 import { Edit as EditIcon, CalendarMonth as CalendarMonthIcon } from '@mui/icons-material';
@@ -24,7 +24,6 @@ const fallbackDesc = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, s
  * project dashboard
  ********************************************************************************************************************/
 export default function ProjectPage() {
-  const router = useRouter();
   const { workspaceId, projectId, sprintId } = useParams() as {
     workspaceId: string;
     projectId: string;
@@ -155,9 +154,6 @@ export default function ProjectPage() {
         workspaceId={workspaceId}
         project={project}
         heightOffset={project_details_bar_height + appbar_height}
-        onSprintSelected={(sprintId) => {
-          router.push(`/${workspaceId}/${projectId}/${sprintId}`);
-        }}
       />
     </Box>
   );
