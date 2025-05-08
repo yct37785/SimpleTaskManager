@@ -8,14 +8,12 @@ import { Box, Typography, Tooltip, IconButton, Stack } from '@mui/material';
 import { Edit as EditIcon, CalendarMonth as CalendarMonthIcon } from '@mui/icons-material';
 // utils
 import { getLocalTimeZone, today, CalendarDate } from '@internationalized/date';
-import { getRelativeTime, formatISOToDate, dateToCalendarDate } from '@utils/datetime';
-import { v4 as uuidv4 } from 'uuid';
+import { getRelativeTime } from '@utils/datetime';
 // our components
 import GanttChart from '@components/GanttChart/GanttChart';
 import { useWorkspacesManager } from '@globals/WorkspacesContext';
 import ProjectForm from '@components/Forms/ProjectForm';
-// schemas
-import { Project } from '@schemas';
+import Drawer from '@UI/Drawer/Drawer';
 // styles
 import { project_details_bar_height, appbar_height } from '@styles/dimens';
 import styles from './ProjectPage.module.css';
@@ -34,6 +32,7 @@ export default function ProjectPage() {
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [showFullDesc, setShowFullDesc] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   if (!project) return;
 
@@ -112,7 +111,7 @@ export default function ProjectPage() {
         </Box>
 
         <Tooltip title='Edit Project'>
-          <IconButton onClick={() => setEditDialogOpen(true)} sx={{ mt: 0.5 }}>
+          <IconButton onClick={() => setDrawerOpen(true)} sx={{ mt: 0.5 }}>
             <EditIcon />
           </IconButton>
         </Tooltip>
@@ -125,6 +124,9 @@ export default function ProjectPage() {
    ******************************************************************************************************************/
   return (
     <Box>
+      {/* sprint dashboard */}
+      <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+
       {/* edit project form */}
       {project ? <ProjectForm
         workspace={workspaces[workspaceId]}
@@ -133,7 +135,10 @@ export default function ProjectPage() {
         onSubmitProject={handleEditProject}
         closeProjectDialog={() => setEditDialogOpen(false)} /> : null}
 
+      {/* project details top bar */}
       {projectDetailsBar()}
+
+      {/* project Gantt chart */}
       <GanttChart
         title='Sprints'
         workspaceId={workspaceId}
