@@ -120,6 +120,13 @@ export default function ProjectPage() {
   };
 
   /******************************************************************************************************************
+   * sprint
+   ******************************************************************************************************************/
+  function onSprintSelected(id: string) {
+    console.log('Sprint id: ' + id);
+  }
+
+  /******************************************************************************************************************
    * render
    ******************************************************************************************************************/
   return (
@@ -144,6 +151,7 @@ export default function ProjectPage() {
         workspaceId={workspaceId}
         project={project}
         heightOffset={project_details_bar_height + appbar_height}
+        onSprintSelected={onSprintSelected}
       />
     </Box>
   );
