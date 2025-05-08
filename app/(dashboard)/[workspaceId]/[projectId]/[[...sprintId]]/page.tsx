@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, memo } from 'react';
 // next
-import { useParams } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 // MUI
 import { Box, Typography, Tooltip, IconButton, Stack } from '@mui/material';
 import { Edit as EditIcon, CalendarMonth as CalendarMonthIcon } from '@mui/icons-material';
@@ -24,7 +24,13 @@ const fallbackDesc = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, s
  * project dashboard
  ********************************************************************************************************************/
 export default function ProjectPage() {
-  const { workspaceId, projectId } = useParams() as { workspaceId: string; projectId: string };
+  const router = useRouter();
+  const { workspaceId, projectId, sprintId } = useParams() as {
+    workspaceId: string;
+    projectId: string;
+    sprintId?: string[];
+  };
+  const selectedSprintId = sprintId?.[0];
   const { workspaces, getProject, updateProjectFields } = useWorkspacesManager();
 
   const workspace = workspaces[workspaceId];
@@ -34,7 +40,16 @@ export default function ProjectPage() {
   const [showFullDesc, setShowFullDesc] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  if (!project) return;
+  if (!workspace || !project) {
+    return <div>Invalid workspace or project</div>;
+  }
+
+  /******************************************************************************************************************
+   * URL state management
+   ******************************************************************************************************************/
+  useEffect(() => {
+    setDrawerOpen(!!selectedSprintId);
+  }, [selectedSprintId]);
 
   /******************************************************************************************************************
    * inject demo sprints into local state
@@ -42,10 +57,6 @@ export default function ProjectPage() {
   useEffect(() => {
     document.title = project ? `${workspace.title} - ${project.title} | Task Manager` : 'Task Manager';
   }, [workspace, project]);
-
-  if (!workspace || !project) {
-    return <div>Invalid workspace or project</div>;
-  }
 
   /******************************************************************************************************************
    * edit project
@@ -120,13 +131,6 @@ export default function ProjectPage() {
   };
 
   /******************************************************************************************************************
-   * sprint
-   ******************************************************************************************************************/
-  function onSprintSelected(id: string) {
-    console.log('Sprint id: ' + id);
-  }
-
-  /******************************************************************************************************************
    * render
    ******************************************************************************************************************/
   return (
@@ -151,7 +155,9 @@ export default function ProjectPage() {
         workspaceId={workspaceId}
         project={project}
         heightOffset={project_details_bar_height + appbar_height}
-        onSprintSelected={onSprintSelected}
+        onSprintSelected={(sprintId) => {
+          router.push(`/${workspaceId}/${projectId}/${sprintId}`);
+        }}
       />
     </Box>
   );
