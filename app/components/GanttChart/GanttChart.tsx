@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, memo } from 'react';
 // Frappe Gantt
 import Gantt from 'frappe-gantt';
 // MUI
@@ -41,7 +41,7 @@ type Props = {
 /********************************************************************************************************************
  * reusable Frappe Gantt chart component
  ********************************************************************************************************************/
-export default function GanttChart({
+function GanttChart({
   title = 'Gantt Chart',
   workspaceId,
   project,
@@ -288,3 +288,5 @@ export default function GanttChart({
     </>
   );
 }
+
+export default memo(GanttChart);
