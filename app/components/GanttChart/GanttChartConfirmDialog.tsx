@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 // MUI
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Divider } from '@mui/material';
 // schemas
@@ -22,12 +23,14 @@ type Props = {
  * confirmation dialog
  ********************************************************************************************************************/
 export default function GanttChartConfirmDialog({ open, onClose, onConfirm, project, ganttTasks }: Props) {
-  const { created, modified } = getSprintOperations(project, ganttTasks);
+  const { created, modified } = useMemo(() => {
+    return open ? getSprintOperations(project, ganttTasks) : { created: [], modified: [] };
+  }, [open, project, ganttTasks]);
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth='sm' fullWidth>
       <DialogTitle>Confirm Sprint Changes</DialogTitle>
-      <DialogContent dividers>
+      {open ? <DialogContent dividers>
         {created.length > 0 && (
           <>
             <Typography variant='subtitle1' gutterBottom>🆕 New Sprints:</Typography>
@@ -51,7 +54,7 @@ export default function GanttChartConfirmDialog({ open, onClose, onConfirm, proj
               return (
                 <Typography variant='body2' key={before.id}>
                   <strong>{before.title}</strong><br />
-                  {before.startDate.toString()} → {before.dueDate.toString()} ({beforeDur}d) → 
+                  {before.startDate.toString()} → {before.dueDate.toString()} ({beforeDur}d) →
                   <br />
                   {after.startDate.toString()} → {after.dueDate.toString()} ({afterDur}d)
                 </Typography>
@@ -62,7 +65,7 @@ export default function GanttChartConfirmDialog({ open, onClose, onConfirm, proj
         {created.length === 0 && modified.length === 0 && (
           <Typography variant='body2'>No changes detected.</Typography>
         )}
-      </DialogContent>
+      </DialogContent> : null}
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
         <Button onClick={onConfirm} color='primary' variant='contained'>
