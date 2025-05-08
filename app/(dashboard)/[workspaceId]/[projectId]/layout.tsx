@@ -39,7 +39,7 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
   const [showFullDesc, setShowFullDesc] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  if (!project || !workspace) return null;
+  if (!project || !workspace) return <div>workspace or project not found</div>;
 
   /******************************************************************************************************************
    * inject demo sprints into local state
@@ -116,7 +116,7 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
         </Box>
 
         <Tooltip title='Edit Project'>
-          <IconButton onClick={() => setDrawerOpen(true)} sx={{ mt: 0.5 }}>
+          <IconButton onClick={() => setEditDialogOpen(true)} sx={{ mt: 0.5 }}>
             <EditIcon />
           </IconButton>
         </Tooltip>
