@@ -11,12 +11,14 @@ import { Close as CloseIcon } from '@mui/icons-material';
 type Props = {
   open: boolean;
   onClose: () => void;
+  children: React.ReactNode;
+  title?: string;
 };
 
 /********************************************************************************************************************
  * generic drawer UI component
  ********************************************************************************************************************/
-export default function BottomDrawer({ open, onClose }: Props) {
+export default function BottomDrawer({  open, onClose, children, title = 'Drawer' }: Props) {
   return (
     <Drawer
       anchor='left'
@@ -35,13 +37,11 @@ export default function BottomDrawer({ open, onClose }: Props) {
     >
       <Box sx={{ p: 3, height: '100%', overflowY: 'auto' }}>
         <Stack direction='row' justifyContent='space-between' alignItems='center' mb={2}>
-          <Typography variant='h6' fontWeight={600}>Sprint Task Dashboard (Preview)</Typography>
+          <Typography variant='h6' fontWeight={600}>{title}</Typography>
           <IconButton onClick={onClose}><CloseIcon /></IconButton>
         </Stack>
         <Divider sx={{ mb: 2 }} />
-        {/* sample content */}
-        <Typography>This drawer slides in from the left.</Typography>
-        <Typography>Ideal for quick sprint views, task filters, or navigation panels.</Typography>
+        {children}
       </Box>
     </Drawer>
   );

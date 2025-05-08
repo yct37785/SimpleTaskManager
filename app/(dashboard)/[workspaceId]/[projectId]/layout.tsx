@@ -13,6 +13,7 @@ import { getRelativeTime } from '@utils/datetime';
 import GanttChart from '@components/GanttChart/GanttChart';
 import { useWorkspacesManager } from '@globals/WorkspacesContext';
 import ProjectForm from '@components/Forms/ProjectForm';
+import SprintDashboard from '@components/Sprint/Dashboard';
 import Drawer from '@UI/Drawer/Drawer';
 // styles
 import { project_details_bar_height, appbar_height } from '@styles/dimens';
@@ -149,7 +150,13 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
   return (
     <Box>
       {/* sprint dashboard */}
-      <Drawer open={drawerOpen} onClose={onDrawerClose} />
+      <Drawer open={drawerOpen} onClose={onDrawerClose} title={`${project.title}`}>
+        <SprintDashboard
+          workspaceId={workspaceId}
+          project={project}
+          sprintId={sprintId}
+        />
+      </Drawer>
 
       {/* edit project form */}
       {project ? <ProjectForm
