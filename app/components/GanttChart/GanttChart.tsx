@@ -108,9 +108,7 @@ export default function GanttChart({
         date_format: 'DD-MM-YYYY',
         snap_at: '1d',
         on_date_change: (task: GanttTask, start: Date, end: Date) => handleDateChange(task, start, end, setGanttTasks),
-        on_click: (task: GanttTask) => {
-          onSprintSelected(task.id);
-        }
+        on_click: assignSprintClickHandler(editMode)
       });
 
       if (initialInit) {
@@ -185,6 +183,12 @@ export default function GanttChart({
   /******************************************************************************************************************
    * handle state manipulations
    ******************************************************************************************************************/
+  function assignSprintClickHandler(editMode: boolean) {
+    return editMode
+      ? () => { }
+      : (task: GanttTask) => onSprintSelected(task.id);
+  }
+
   function handleConfirmEdits() {
     // apply changes to global state as well as Gantt chart programatically
     applyUpdatedSprints(ganttInstance, workspaceId, project, ganttTasks, createSprint, updateSprint);
@@ -207,7 +211,8 @@ export default function GanttChart({
     if (ganttInstance.current) {
       ganttInstance.current.update_options({
         readonly_dates: !editMode,
-        readonly_progress: !editMode
+        readonly_progress: !editMode,
+        on_click: assignSprintClickHandler(editMode),
       });
       setEditMode(editMode);
       injectStyles();
