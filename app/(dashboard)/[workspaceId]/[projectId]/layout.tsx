@@ -135,13 +135,21 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
     router.push(`/${workspaceId}/${projectId}/${id}`);
   }
 
+  function onDrawerClose() {
+    if (window.history.length <= 1 || !sprintId) {
+      router.push(`/${workspaceId}/${projectId}`);
+    } else {
+      router.back();
+    }
+  }
+
   /******************************************************************************************************************
    * render
    ******************************************************************************************************************/
   return (
     <Box>
       {/* sprint dashboard */}
-      <Drawer open={drawerOpen} onClose={() => router.back() } />
+      <Drawer open={drawerOpen} onClose={onDrawerClose} />
 
       {/* edit project form */}
       {project ? <ProjectForm
