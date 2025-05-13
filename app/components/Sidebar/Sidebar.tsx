@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 // next
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
@@ -8,7 +8,7 @@ const NextLink = Link;
 // MUI
 import {
   Box, List, ListItemButton, ListItemIcon, ListItemText,
-  IconButton, Collapse, Typography, TextField, Divider
+  IconButton, Collapse, Skeleton, TextField, Divider
 } from '@mui/material';
 import {
   Add as AddIcon, Folder as FolderIcon, FolderOpen as FolderOpenIcon, InsertDriveFile as InsertDriveFileIcon, Send as SendIcon,
@@ -118,8 +118,17 @@ export default function Sidebar() {
   // create project
   const [activeWorkspaceID, setActiveWorkspaceID] = useState<string | null>(null);
   const [projectDialogOpen, setProjectDialogOpen] = useState(false);
-  // workspace open/close tracking
+  // UI
   const [openWorkspaces, setOpenWorkspaces] = useState<Record<string, boolean>>({});
+  const [loading, setLoading] = useState(true);
+
+  /******************************************************************************************************************
+   * data
+   ******************************************************************************************************************/
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
   /******************************************************************************************************************
    * handle workspaces
@@ -155,6 +164,19 @@ export default function Sidebar() {
   const toggleOpen = (id: string) => {
     setOpenWorkspaces((prev) => ({ ...prev, [id]: !prev[id] }));
   };
+
+  const renderSkeleton = () => {
+    return (
+      [...Array(3)].map((_, i) => (
+        <Box key={i} sx={{ px: 2, py: 1 }}>
+          <Skeleton variant='rectangular' width={240} height={32} sx={{ mb: 1 }} />
+          {[...Array(2)].map((_, j) => (
+            <Skeleton key={j} variant='text' width={200} sx={{ ml: 4, mb: 0.5 }} />
+          ))}
+        </Box>
+      ))
+    );
+  }
 
   /******************************************************************************************************************
    * render
@@ -198,20 +220,21 @@ export default function Sidebar() {
           )}
 
           {/* each workspace */}
-          {Object.values(workspaces).map((ws) => (
-            <div key={ws.id}>
-              <WorkspaceListItem
-                workspace={ws}
-                isOpen={openWorkspaces[ws.id] || false}
-                onClickCreateProject={onClickCreateProject}
-                toggleOpen={() => toggleOpen(ws.id)}
-              />
-              <ProjectsList
-                workspace={ws}
-                isOpen={openWorkspaces[ws.id] || false}
-              />
-            </div>
-          ))}
+          {loading ? renderSkeleton() :
+            Object.values(workspaces).map((ws) => (
+              <div key={ws.id}>
+                <WorkspaceListItem
+                  workspace={ws}
+                  isOpen={openWorkspaces[ws.id] || false}
+                  onClickCreateProject={onClickCreateProject}
+                  toggleOpen={() => toggleOpen(ws.id)}
+                />
+                <ProjectsList
+                  workspace={ws}
+                  isOpen={openWorkspaces[ws.id] || false}
+                />
+              </div>
+            ))}
         </Box>
       </List>
 
