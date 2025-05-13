@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, memo } from 'react';
 // Frappe Gantt
 import Gantt from 'frappe-gantt';
 // MUI
@@ -35,16 +35,18 @@ type Props = {
   workspaceId: string;
   project: Project;
   heightOffset?: number;
+  onSprintSelected: (id: string) => void;
 };
 
 /********************************************************************************************************************
  * reusable Frappe Gantt chart component
  ********************************************************************************************************************/
-export default function GanttChart({
-  title,
+function GanttChart({
+  title = 'Gantt Chart',
   workspaceId,
   project,
-  heightOffset = 0 }: Props) {
+  heightOffset = 0,
+  onSprintSelected }: Props) {
   // safeguards
   if (!project) return;
 
@@ -88,7 +90,9 @@ export default function GanttChart({
 
       // create Gantt chart
       ganttInstance.current = new Gantt(ganttRef.current, ganttTasks, {
-        readonly: !editMode,
+        readonly: false,
+        readonly_dates: !editMode,
+        readonly_progress: !editMode,
         column_width,
         infinite_padding: true,
         move_dependencies: false,
@@ -104,6 +108,7 @@ export default function GanttChart({
         date_format: 'DD-MM-YYYY',
         snap_at: '1d',
         on_date_change: (task: GanttTask, start: Date, end: Date) => handleDateChange(task, start, end, setGanttTasks),
+        on_click: assignSprintClickHandler(editMode)
       });
 
       if (initialInit) {
@@ -178,6 +183,12 @@ export default function GanttChart({
   /******************************************************************************************************************
    * handle state manipulations
    ******************************************************************************************************************/
+  function assignSprintClickHandler(editMode: boolean) {
+    return editMode
+      ? () => { }
+      : (task: GanttTask) => onSprintSelected(task.id);
+  }
+
   function handleConfirmEdits() {
     // apply changes to global state as well as Gantt chart programatically
     applyUpdatedSprints(ganttInstance, workspaceId, project, ganttTasks, createSprint, updateSprint);
@@ -198,7 +209,11 @@ export default function GanttChart({
    ******************************************************************************************************************/
   function toggleEditMode(editMode: boolean) {
     if (ganttInstance.current) {
-      ganttInstance.current.update_options({ readonly: !editMode });
+      ganttInstance.current.update_options({
+        readonly_dates: !editMode,
+        readonly_progress: !editMode,
+        on_click: assignSprintClickHandler(editMode),
+      });
       setEditMode(editMode);
       injectStyles();
     }
@@ -273,3 +288,5 @@ export default function GanttChart({
     </>
   );
 }
+
+export default memo(GanttChart);
