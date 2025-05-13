@@ -7,7 +7,7 @@ import Link from 'next/link';
 const NextLink = Link;
 // MUI
 import {
-  Box, List, ListItemButton, ListItemIcon, ListItemText,
+  Box, List, ListItemButton, ListItemIcon, ListItemText, CircularProgress,
   IconButton, Collapse, Skeleton, TextField, Divider
 } from '@mui/material';
 import {
@@ -121,6 +121,7 @@ export default function Sidebar() {
   // UI
   const [openWorkspaces, setOpenWorkspaces] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
+  const [isCreatingWorkspace, setIsCreatingWorkspace] = useState(false);
 
   /******************************************************************************************************************
    * data
@@ -133,13 +134,19 @@ export default function Sidebar() {
   /******************************************************************************************************************
    * handle workspaces
    ******************************************************************************************************************/
-  const handleCreateWorkspace = () => {
+  const handleCreateWorkspace = async () => {
     const title = workspaceTitle.trim();
-    if (title) {
+    if (!title) return;
+
+    setIsCreatingWorkspace(true);
+
+    // simulate backend processing delay
+    setTimeout(() => {
       createWorkspace(title);
-    }
-    setWorkspaceTitle('');
-    setWorkspaceInputVisible(false);
+      setWorkspaceTitle('');
+      setWorkspaceInputVisible(false);
+      setIsCreatingWorkspace(false);
+    }, 1000);
   };
   
   /******************************************************************************************************************
@@ -209,13 +216,14 @@ export default function Sidebar() {
 
           {/* workspace input */}
           {workspaceInputVisible && (
-            <Box sx={{ ml: 2 }}>
+            <Box sx={{ ml: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
               <InlineTextInput
                 placeholder='Workspace title'
                 value={workspaceTitle}
                 setValue={setWorkspaceTitle}
                 onSubmit={handleCreateWorkspace}
               />
+              {isCreatingWorkspace && <CircularProgress size={20} />}
             </Box>
           )}
 
