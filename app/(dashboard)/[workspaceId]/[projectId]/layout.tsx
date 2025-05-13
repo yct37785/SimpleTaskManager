@@ -131,8 +131,8 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
             <Box sx={{ mt: 2, mr: 6 }}>
               {projectDesc(description)}
             </Box> :
-            <Box sx={{ mt: 2 }}>
-              <Skeleton variant='rectangular' width='100%' />
+            <Box sx={{ mt: 1 }}>
+              <Skeleton width='100%' height={32} />
             </Box>}
         </Box>
 
