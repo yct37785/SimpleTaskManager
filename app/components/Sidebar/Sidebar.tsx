@@ -109,7 +109,7 @@ function ProjectsList({ workspace, isOpen }: {
  * sidebar component
  ********************************************************************************************************************/
 export default function Sidebar() {
-  // context
+  // contexts
   const { workspaces, createWorkspace, createProject } = useWorkspacesManager();
 
   // creat workspace
@@ -124,7 +124,7 @@ export default function Sidebar() {
   const [isCreatingWorkspace, setIsCreatingWorkspace] = useState(false);
 
   /******************************************************************************************************************
-   * data
+   * load data
    ******************************************************************************************************************/
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1500);
