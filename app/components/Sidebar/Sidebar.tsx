@@ -136,7 +136,11 @@ export default function Sidebar() {
    ******************************************************************************************************************/
   const handleCreateWorkspace = async () => {
     const title = workspaceTitle.trim();
-    if (!title) return;
+    if (!title) {
+      setWorkspaceInputVisible(false);
+      setIsCreatingWorkspace(false);
+      return;
+    }
 
     setIsCreatingWorkspace(true);
 
