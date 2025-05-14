@@ -2,7 +2,7 @@
 
 import React, { ReactNode } from 'react';
 // MUI
-import { Dialog, DialogTitle, DialogActions, DialogContent, Button, Stack, TextField, TextFieldProps } from '@mui/material';
+import { Dialog, DialogTitle, DialogActions, DialogContent, Button, Stack, TextField, TextFieldProps, CircularProgress } from '@mui/material';
 
 /********************************************************************************************************************
  * types
@@ -14,6 +14,7 @@ type Props = {
   title: string;
   submitLabel?: string;
   disabled?: boolean;
+  loading?: boolean;
   children: ReactNode;
 };
 
@@ -38,6 +39,7 @@ export default function BaseDialog({
   title,
   submitLabel = 'Create',
   disabled = false,
+  loading = false,
   children,
 }: Props) {
   return (
@@ -48,7 +50,7 @@ export default function BaseDialog({
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={onSubmit} variant='contained' disabled={disabled}>
+        <Button onClick={onSubmit} loading={loading} variant='contained' disabled={disabled}>
           {submitLabel}
         </Button>
       </DialogActions>

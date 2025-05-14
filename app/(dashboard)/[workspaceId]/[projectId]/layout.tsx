@@ -66,8 +66,9 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
   /******************************************************************************************************************
    * edit project
    ******************************************************************************************************************/
-  const handleEditProject = (title: string, desc: string, dueDate: CalendarDate) => {
+  const handleEditProject = async (title: string, desc: string, dueDate: CalendarDate) => {
     if (workspaceId && projectId) {
+      await new Promise(res => setTimeout(res, 1500));
       updateProjectFields(workspaceId, projectId, { title, desc, dueDate });
     }
   };

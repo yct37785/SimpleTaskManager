@@ -162,8 +162,9 @@ export default function Sidebar() {
     setActiveWorkspaceID(workspaceId);
   };
 
-  const handleCreateProject = (title: string, desc: string, dueDate: CalendarDate) => {
+  const handleCreateProject = async (title: string, desc: string, dueDate: CalendarDate) => {
     if (activeWorkspaceID && title) {
+      await new Promise(res => setTimeout(res, 1500));
       setOpenWorkspaces((prev) => ({ ...prev, [activeWorkspaceID]: true }));
       createProject(activeWorkspaceID, title, desc, dateToCalendarDate(new Date()), dueDate);
     }
