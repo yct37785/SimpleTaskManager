@@ -189,7 +189,8 @@ function GanttChart({
       : (task: GanttTask) => onSprintSelected(task.id);
   }
 
-  function handleConfirmEdits() {
+  async function handleConfirmEdits() {
+    await new Promise(res => setTimeout(res, 1500));
     // apply changes to global state as well as Gantt chart programatically
     applyUpdatedSprints(ganttInstance, workspaceId, project, ganttTasks, createSprint, updateSprint);
     toggleEditMode(false);
