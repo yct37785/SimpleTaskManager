@@ -4,9 +4,9 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, 
 // schemas
 import { Sprint, Project } from '@schemas';
 // Gantt chart utils
-import { GanttTask, getSprintOperations } from './GanttChartLogic';
+import { GanttTask } from './GanttChartLogic';
 // utils
-import { getDaysBetween } from '@utils/datetime';
+import { getDaysBetween, formatISOToCalendarDate } from '@utils/datetime';
 // our components
 import BaseDialog, { DialogTextInput } from '@UI/Dialog/Dialog';
 
@@ -18,20 +18,18 @@ type Props = {
   onClose: () => void;
   onConfirm: () => Promise<void>;
   project: Project;
-  ganttTasks: GanttTask[];
+  draftTasks: Record<string, GanttTask>;
 };
 
 /********************************************************************************************************************
  * confirmation dialog
  ********************************************************************************************************************/
-export default function GanttChartConfirmDialog({ open, onClose, onConfirm, project, ganttTasks }: Props) {
-  // contexts
-  const { created, modified } = useMemo(() => {
-    return open ? getSprintOperations(project, ganttTasks) : { created: [], modified: [] };
-  }, [open, project, ganttTasks]);
-
+export default function GanttChartConfirmDialog({ open, onClose, onConfirm, project, draftTasks }: Props) {
   // state
   const [loading, setLoading] = useState(false);
+
+  const created = Object.values(draftTasks).filter(t => t.edit_type === 'new');
+  const modified = Object.values(draftTasks).filter(t => t.edit_type === 'modified');
 
   /******************************************************************************************************************
    * submit
@@ -57,34 +55,40 @@ export default function GanttChartConfirmDialog({ open, onClose, onConfirm, proj
       {created.length > 0 && (
         <>
           <Typography variant='subtitle1' gutterBottom>🆕 New Sprints:</Typography>
-          {created.map(s => {
-            const duration = getDaysBetween(s.startDate, s.dueDate);
+          {created.map(task => {
+            const duration = getDaysBetween(formatISOToCalendarDate(task.start), formatISOToCalendarDate(task.end));
             return (
-              <Typography variant='body2' key={s.id}>
-                <strong>{s.title}</strong> ({s.startDate.toString()} → {s.dueDate.toString()}, {duration} days)
+              <Typography variant='body2' key={task.id}>
+                <strong>{task.name}</strong> ({task.start} → {task.end}, {duration} days)
               </Typography>
             );
           })}
           <Divider sx={{ my: 2 }} />
         </>
       )}
+
       {modified.length > 0 && (
         <>
           <Typography variant='subtitle1' gutterBottom>✏️ Modified Sprints:</Typography>
-          {modified.map(({ before, after }) => {
-            const beforeDur = getDaysBetween(before.startDate, before.dueDate);
-            const afterDur = getDaysBetween(after.startDate, after.dueDate);
+          {modified.map(task => {
+            const original = project.sprints.find(s => s.id === task.id);
+            if (!original) return null;
+
+            const beforeDur = getDaysBetween(original.startDate, original.dueDate);
+            const afterDur = getDaysBetween(formatISOToCalendarDate(task.start), formatISOToCalendarDate(task.end));
+
             return (
-              <Typography variant='body2' key={before.id}>
-                <strong>{before.title}</strong><br />
-                {before.startDate.toString()} → {before.dueDate.toString()} ({beforeDur}d) →
+              <Typography variant='body2' key={task.id}>
+                <strong>{original.title}</strong><br />
+                {original.startDate.toString()} → {original.dueDate.toString()} ({beforeDur}d) →
                 <br />
-                {after.startDate.toString()} → {after.dueDate.toString()} ({afterDur}d)
+                {task.start} → {task.end} ({afterDur}d)
               </Typography>
             );
           })}
         </>
       )}
+
       {created.length === 0 && modified.length === 0 && (
         <Typography variant='body2'>No changes detected.</Typography>
       )}
