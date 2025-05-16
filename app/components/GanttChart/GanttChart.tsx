@@ -177,7 +177,7 @@ function GanttChart({
    * handle task manipulations
    ******************************************************************************************************************/
   function handleCreateSprint(title: string, desc: string) {
-    addNewSprint(title, desc, setDraftTasks);
+    addNewSprint(title, desc, project.sprints, draftTasks, setDraftTasks);
     // toggle edit mode immediately when new sprint added
     toggleEditMode(true);
     setSprintAdded(true);

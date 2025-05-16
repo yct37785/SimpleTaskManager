@@ -94,23 +94,45 @@ export function handleDateChange(
 /******************************************************************************************************************
  * new sprint added
  ******************************************************************************************************************/
+function findLatestEndDate(existingSprints: Sprint[], draftTasks: Record<string, GanttTask>): CalendarDate {
+  let latestEnd: CalendarDate = today(getLocalTimeZone());
+
+  // collect all potential end dates
+  const existingDates = existingSprints.map(s => s.dueDate);
+  const draftDates = Object.values(draftTasks)
+    .filter(task => task.edit_type !== 'deleted') // deleted sprints not taken into account
+    .map(task => formatISOToCalendarDate(task.end));
+
+  const allDates = [...existingDates, ...draftDates];
+
+  // find the latest end date
+  if (allDates.length > 0) {
+    latestEnd = allDates.reduce((a, b) => (a.compare(b) > 0 ? a : b));
+  }
+  return latestEnd;
+}
+
 export function addNewSprint(
   title: string,
   desc: string,
+  existingSprints: Sprint [],
+  draftTasks: Record<string, GanttTask>,
   setDraftTasks: (value: SetStateAction<Record<string, GanttTask>>) => void
 ) {
-  let startDate = today(getLocalTimeZone());
+  // move start date to right after latest end date
+  const latestEnd = findLatestEndDate(existingSprints, draftTasks);
+
   // create new sprint
   const newSprint: Sprint = {
     id: `TEMP-${uuidv4()}`, // TEMP prepend for safeguard
     title,
     desc,
-    startDate: startDate,
-    dueDate: startDate.add({ days: 7 }),
+    startDate: latestEnd.add({ days: 1 }),
+    dueDate: latestEnd.add({ days: 8 }),
     tasks: []
   };
 
-   // add to draftTasks
+  // add to draftTasks
   setDraftTasks(prev => ({
     ...prev,
     [newSprint.id]: formatSprintToGanttTask(newSprint, 'new')
