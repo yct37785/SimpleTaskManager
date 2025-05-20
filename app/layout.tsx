@@ -1,5 +1,6 @@
 'use client';
 
+import 'dotenv/config';
 import { useState, useCallback } from 'react';
 // next
 import Link from 'next/link';
