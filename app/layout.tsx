@@ -10,6 +10,7 @@ import { Search as SearchIcon } from '@mui/icons-material';
 // MUI providers
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 // our components
+import { CognitoAuthProvider } from './auth-provider';
 import Sidebar from '@components/Sidebar/Sidebar';
 import { WorkspacesProvider } from '@globals/WorkspacesContext';
 // tyles
@@ -80,37 +81,39 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <CssBaseline />
-        <WorkspacesProvider>
-          <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-            <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <CognitoAuthProvider>
+          <WorkspacesProvider>
+            <AppRouterCacheProvider options={{ enableCssLayer: true }}>
+              <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
 
-              {/* app bar */}
-              {renderAppBar()}
+                {/* app bar */}
+                {renderAppBar()}
 
-              {/* main layout */}
-              <Stack direction='row' sx={{ height: '100vh' }}>
+                {/* main layout */}
+                <Stack direction='row' sx={{ height: '100vh' }}>
 
-                {/* sidebar */}
-                <Box sx={{
-                  position: 'sticky',
-                  top: appbar_height,
-                  height: `calc(100vh - ${appbar_height}px)`,
-                  zIndex: (theme) => theme.zIndex.drawer,
-                }}>
-                  <Sidebar />
-                </Box>
+                  {/* sidebar */}
+                  <Box sx={{
+                    position: 'sticky',
+                    top: appbar_height,
+                    height: `calc(100vh - ${appbar_height}px)`,
+                    zIndex: (theme) => theme.zIndex.drawer,
+                  }}>
+                    <Sidebar />
+                  </Box>
 
-                <Divider orientation='vertical' flexItem />
+                  <Divider orientation='vertical' flexItem />
 
-                {/* page content */}
-                <Box sx={{ overflow: 'auto', flex: 1 }}>
-                  {children}
-                </Box>
+                  {/* page content */}
+                  <Box sx={{ overflow: 'auto', flex: 1 }}>
+                    {children}
+                  </Box>
 
-              </Stack>
-            </Box>
-          </AppRouterCacheProvider>
-        </WorkspacesProvider>
+                </Stack>
+              </Box>
+            </AppRouterCacheProvider>
+          </WorkspacesProvider>
+        </CognitoAuthProvider>
       </body>
     </html>
   );
