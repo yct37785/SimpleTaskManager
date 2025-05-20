@@ -22,7 +22,7 @@ type Props = {
   workspace: Workspace;
   project?: Project;  // optional: passed when editing
   projectDialogOpen: boolean;
-  onSubmitProject: (title: string, desc: string, dueDate: CalendarDate) => void;
+  onSubmitProject: (title: string, desc: string, dueDate: CalendarDate) => Promise<void>;
   closeProjectDialog: () => void;
 };
 
@@ -36,10 +36,14 @@ export default function ProjectForm({
   onSubmitProject,
   closeProjectDialog,
 }: Props) {
+  // inputs
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState<CalendarDate | null>(null);
+  // UI
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  // state
+  const [loading, setLoading] = useState(false);
 
   /******************************************************************************************************************
    * prefill/reset
@@ -60,12 +64,17 @@ export default function ProjectForm({
     setAnchorEl(null);
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!title.trim() || !description.trim() || !dueDate) return;
 
-    onSubmitProject(title.trim(), description.trim(), dueDate);
-    closeProjectDialog();
-  }
+    setLoading(true);
+    try {
+      await onSubmitProject(title.trim(), description.trim(), dueDate);
+    } finally {
+      closeProjectDialog();
+      setLoading(false);
+    }
+  };
 
   /******************************************************************************************************************
    * utils
@@ -99,11 +108,13 @@ export default function ProjectForm({
         title={`${workspace.title} - ${project ? 'Edit Project' : 'New Project'}`}
         submitLabel={project ? 'Confirm' : 'Create'}
         disabled={!title || !description || !dueDate || !hasChanges}
+        loading={loading}
       >
         <Stack spacing={2}>
           <DialogTextInput
             label='Project Title'
             required
+            disabled={loading}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
@@ -111,6 +122,7 @@ export default function ProjectForm({
             label='Project Description'
             rows={4}
             required
+            disabled={loading}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
@@ -118,6 +130,7 @@ export default function ProjectForm({
             label='Deadline'
             fullWidth
             required
+            disabled={loading}
             value={dueDate ? formatDate(dueDate) : '--/--/----'}
             onClick={(e) => setAnchorEl(e.currentTarget)}
             slotProps={{

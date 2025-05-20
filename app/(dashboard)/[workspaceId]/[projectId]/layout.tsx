@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 // next
 import { useParams, useRouter } from 'next/navigation';
 // MUI
-import { Box, Typography, Tooltip, IconButton, Stack } from '@mui/material';
+import { Box, Typography, Tooltip, IconButton, Stack, Skeleton } from '@mui/material';
 import { Edit as EditIcon, CalendarMonth as CalendarMonthIcon } from '@mui/icons-material';
 // utils
 import { getLocalTimeZone, today, CalendarDate } from '@internationalized/date';
@@ -30,17 +30,27 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
     projectId: string;
     sprintId?: string;
   };
-
+  // contexts
   const { workspaces, getProject, updateProjectFields } = useWorkspacesManager();
   const workspace = workspaces[workspaceId];
   const project = getProject(workspaceId, projectId);
   const router = useRouter();
 
+  // UI
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [showFullDesc, setShowFullDesc] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   if (!project || !workspace) return <div>workspace or project not found</div>;
+
+  /******************************************************************************************************************
+   * load data
+   ******************************************************************************************************************/
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
   /******************************************************************************************************************
    * inject demo sprints into local state
@@ -56,9 +66,10 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
   /******************************************************************************************************************
    * edit project
    ******************************************************************************************************************/
-  const handleEditProject = (title: string, desc: string, dueDate: CalendarDate) => {
+  const handleEditProject = async (title: string, desc: string, dueDate: CalendarDate) => {
     if (workspaceId && projectId) {
-      updateProjectFields(workspaceId, projectId, { title, desc, dueDate } );
+      await new Promise(res => setTimeout(res, 1500));
+      updateProjectFields(workspaceId, projectId, { title, desc, dueDate });
     }
   };
 
@@ -100,20 +111,30 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
     return (
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', p: 2, minHeight: project_details_bar_height }}>
         <Box sx={{ flex: 1 }}>
-          <Typography variant='h5' fontWeight={600}>
-            {`${workspace.title} - ${project.title}`}
-          </Typography>
+          {!loading ?
+            <Box sx={{ height: 32 }}>
+              <Typography variant='h5' fontWeight={600}>
+                {`${workspace.title} - ${project.title}`}
+              </Typography>
+            </Box> :
+            <Skeleton width='50%' height={32} />}
 
-          <Stack direction='row' alignItems='center' spacing={0.5} mt={1}>
+          <Stack sx={{ height: 22 }} direction='row' alignItems='center' spacing={0.5} mt={1}>
             <CalendarMonthIcon fontSize='small' color='action' />
-            <Typography variant='subtitle2' color='text.secondary'>
-              {`Complete by: ${formattedDue} (${relativeDue})`}
-            </Typography>
+            {!loading ?
+              <Typography variant='subtitle2' color='text.secondary'>
+                {`Complete by: ${formattedDue} (${relativeDue})`}
+              </Typography> :
+              <Skeleton width='30%' height={22} />}
           </Stack>
 
-          <Box sx={{ mt: 2, mr: 6 }}>
-            {projectDesc(description)}
-          </Box>
+          {!loading ?
+            <Box sx={{ mt: 2, mr: 6 }}>
+              {projectDesc(description)}
+            </Box> :
+            <Box sx={{ mt: 1 }}>
+              <Skeleton width='100%' height={32} />
+            </Box>}
         </Box>
 
         <Tooltip title='Edit Project'>
@@ -170,13 +191,19 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
       {projectDetailsBar()}
 
       {/* project Gantt chart */}
-      <GanttChart
-        title='Sprints'
-        workspaceId={workspaceId}
-        project={project}
-        heightOffset={project_details_bar_height + appbar_height}
-        onSprintSelected={onSprintSelected}
-      />
+      {!loading ?
+        <GanttChart
+          title='Sprints'
+          workspaceId={workspaceId}
+          project={project}
+          heightOffset={project_details_bar_height + appbar_height}
+          onSprintSelected={onSprintSelected}
+        /> :
+        <Box sx={{ px: 2, py: 2 }}>
+          <Skeleton variant='rectangular' width='100%' sx={{
+            height: `calc(85vh - ${project_details_bar_height + appbar_height}px)`
+          }} />
+        </Box>}
     </Box>
   );
 }

@@ -11,6 +11,7 @@ import { Project, Sprint } from '@schemas';
 /********************************************************************************************************************
  * types
  ********************************************************************************************************************/
+export type EditType = 'new' | 'deleted' | 'modified' | 'none';
 export type GanttTask = {
   id: string;
   name: string;     // title
@@ -18,13 +19,14 @@ export type GanttTask = {
   start: string;    // yyy-mm-dd
   end: string;      // yyy-mm-dd
   progress: number;
+  edit_type: EditType;
   custom_class?: string;
 };
 
 /********************************************************************************************************************
  * format sprints into Frappe Gantt-compatible structure
  ********************************************************************************************************************/
-export function formatSprintToGanttTask(sprint: Sprint): GanttTask {
+export function formatSprintToGanttTask(sprint: Sprint, edit_type: EditType): GanttTask {
   return {
     id: sprint.id,
     name: sprint.title,
@@ -33,133 +35,108 @@ export function formatSprintToGanttTask(sprint: Sprint): GanttTask {
     end: sprint.dueDate.toString(),
     progress: 70, // placeholder
     custom_class: 'gantt-task-bar',
+    edit_type: edit_type
   }
 }
 
-export function formatSprintsToGanttTasks(sprints: Project['sprints']): GanttTask[] {
-  return sprints.map((sprint) => formatSprintToGanttTask(sprint));
-}
+export function formatToGanttTasks(
+  sprints: Project['sprints'],
+  draftTasks: Record<string, GanttTask>
+): GanttTask[] {
+  const taskList: GanttTask[] = [];
 
-/********************************************************************************************************************
- * format a GanttTask back into Sprint
- ********************************************************************************************************************/
-export function formatGanttTaskToSprint(task: GanttTask, originalSprint: Sprint): Sprint {
-  const startParts = task.start.split('-').map(Number);
-  const endParts = task.end.split('-').map(Number);
+  const sprintIds = new Set(sprints.map(s => s.id));
 
-  return {
-    ...originalSprint,
-    // fields modified: title, startDate, endDate
-    title: task.name,
-    startDate: new CalendarDate(startParts[0], startParts[1], startParts[2]),
-    dueDate: new CalendarDate(endParts[0], endParts[1], endParts[2]),
-  };
+  // include all existing sprints, overridden by draftTasks if applicable
+  for (const sprint of sprints) {
+    const draft = draftTasks[sprint.id];
+    taskList.push(draft ?? formatSprintToGanttTask(sprint, 'none'));
+  }
+
+  // append new draft tasks (not in sprints)
+  for (const task of Object.values(draftTasks)) {
+    if (!sprintIds.has(task.id)) {
+      taskList.push(task);
+    }
+  }
+
+  return taskList;
 }
 
 /******************************************************************************************************************
- * handle task manipulations
+ * sprint date modified
  ******************************************************************************************************************/
 export function handleDateChange(
   ganttTask: GanttTask,
   start: Date,
   end: Date,
-  setGanttTasks: (value: SetStateAction<GanttTask[]>) => void
+  draftTasks: Record<string, GanttTask>,
+  setDraftTasks: (value: SetStateAction<Record<string, GanttTask>>) => void
 ) {
+  const isExistingDraft = ganttTask.id in draftTasks;
+  const editType = isExistingDraft ? draftTasks[ganttTask.id].edit_type : 'modified';
+
   // build new updated task
   const updatedTask: GanttTask = {
     ...ganttTask,
     start: formatDateToISO(start),
     end: formatDateToISO(addDays(end, 1)), // +1 day as end is exclusive
+    edit_type: editType,
   };
 
-  // add to tasks
-  setGanttTasks(prevTasks =>
-    prevTasks.map(t => t.id === ganttTask.id ? updatedTask : t)
-  );
+  // add to draftTasks
+  setDraftTasks(prev => ({
+    ...prev,
+    [updatedTask.id]: updatedTask
+  }));
+}
+
+/******************************************************************************************************************
+ * new sprint added
+ ******************************************************************************************************************/
+function findLatestEndDate(existingSprints: Sprint[], draftTasks: Record<string, GanttTask>): CalendarDate {
+  let latestEnd: CalendarDate = today(getLocalTimeZone());
+
+  // collect all potential end dates
+  const existingDates = existingSprints.map(s => s.dueDate);
+  const draftDates = Object.values(draftTasks)
+    .filter(task => task.edit_type !== 'deleted') // deleted sprints not taken into account
+    .map(task => formatISOToCalendarDate(task.end));
+
+  const allDates = [...existingDates, ...draftDates];
+
+  // find the latest end date
+  if (allDates.length > 0) {
+    latestEnd = allDates.reduce((a, b) => (a.compare(b) > 0 ? a : b));
+  }
+  return latestEnd;
 }
 
 export function addNewSprint(
   title: string,
   desc: string,
-  sprints: Sprint[],
-  setGanttTasks: (value: SetStateAction<GanttTask[]>) => void
+  existingSprints: Sprint [],
+  draftTasks: Record<string, GanttTask>,
+  setDraftTasks: (value: SetStateAction<Record<string, GanttTask>>) => void
 ) {
-  let startDate = today(getLocalTimeZone());
-  // retrieve last date
-  if (sprints && sprints.length > 0) {
-    startDate = sprints[sprints.length - 1].dueDate.copy()
-  }
-  // Sprint
+  // move start date to right after latest end date
+  const latestEnd = findLatestEndDate(existingSprints, draftTasks);
+
+  // create new sprint
   const newSprint: Sprint = {
-    id: `TEMP-${uuidv4()}`,
+    id: `TEMP-${uuidv4()}`, // TEMP prepend for safeguard
     title,
     desc,
-    startDate: startDate,
-    dueDate: startDate.add({ days: 7 }),
+    startDate: latestEnd.add({ days: 1 }),
+    dueDate: latestEnd.add({ days: 8 }),
     tasks: []
   };
 
-  // GanttTask
-  setGanttTasks(prev => [...prev, formatSprintToGanttTask(newSprint)]);
-}
-
-/******************************************************************************************************************
- * returns list of sprint operations based on task diffs
- ******************************************************************************************************************/
-export function getSprintOperations(
-  project: Project,
-  ganttTasks: GanttTask[]
-): {
-  created: Sprint[],
-  modified: { before: Sprint, after: Sprint }[],
-  all: ({ type: 'new', sprint: Sprint } | { type: 'edit', before: Sprint, after: Sprint })[]
-} {
-  const created: Sprint[] = [];
-  const modified: { before: Sprint; after: Sprint }[] = [];
-  const all: ({ type: 'new', sprint: Sprint } | { type: 'edit', before: Sprint, after: Sprint })[] = [];
-
-  ganttTasks.forEach(task => {
-    const isNew = task.id.startsWith('TEMP');
-    const startDate = formatISOToCalendarDate(task.start);
-    const dueDate = formatISOToCalendarDate(task.end);
-
-    // newly added
-    if (isNew) {
-      const newSprint: Sprint = {
-        id: task.id,
-        title: task.name,
-        desc: task.descTmp,
-        startDate,
-        dueDate,
-        tasks: []
-      };
-      created.push(newSprint);
-      all.push({ type: 'new', sprint: newSprint });
-    }
-    // modified
-    else {
-      const original = project.sprints.find(s => s.id === task.id);
-      if (original) {
-        const hasChanged =
-          original.title !== task.name ||
-          original.startDate.compare(startDate) !== 0 ||
-          original.dueDate.compare(dueDate) !== 0;
-
-        if (hasChanged) {
-          const updated = {
-            ...original,
-            title: task.name,
-            startDate,
-            dueDate,
-          };
-          modified.push({ before: original, after: updated });
-          all.push({ type: 'edit', before: original, after: updated });
-        }
-      }
-    }
-  });
-
-  return { created, modified, all };
+  // add to draftTasks
+  setDraftTasks(prev => ({
+    ...prev,
+    [newSprint.id]: formatSprintToGanttTask(newSprint, 'new')
+  }));
 }
 
 /******************************************************************************************************************
@@ -169,27 +146,38 @@ export function applyUpdatedSprints(
   ganttInstance: RefObject<any>,
   workspaceId: string,
   project: Project,
-  ganttTasks: GanttTask[],
+  draftTasks: Record<string, GanttTask>,
+  setDraftTasks: (value: SetStateAction<Record<string, GanttTask>>) => void,
   createSprint: (workspaceId: string, projectId: string, title: string, desc: string, startDate: CalendarDate, dueDate: CalendarDate) => boolean,
   updateSprint: (workspaceId: string, projectId: string, updatedSprint: Sprint) => void
 ) {
   if (!ganttInstance.current) return;
 
   // update task visuals
-  ganttTasks.forEach(task => {
+  Object.values(draftTasks).forEach(task => {
     ganttInstance.current.update_task(task.id, task);
   });
 
-  // get planned operations
-  const { created, modified } = getSprintOperations(project, ganttTasks);
+  // apply draft changes
+  Object.values(draftTasks).forEach(task => {
+    const startDate = formatISOToCalendarDate(task.start);
+    const dueDate = formatISOToCalendarDate(task.end);
 
-  // apply new sprints
-  created.forEach(sprint => {
-    createSprint(workspaceId, project.id, sprint.title, sprint.desc, sprint.startDate, sprint.dueDate);
+    if (task.edit_type === 'new') {
+      createSprint(workspaceId, project.id, task.name, task.descTmp, startDate, dueDate);
+    } else if (task.edit_type === 'modified') {
+      const original = project.sprints.find(s => s.id === task.id);
+      if (original) {
+        updateSprint(workspaceId, project.id, {
+          ...original,
+          title: task.name,
+          startDate,
+          dueDate
+        });
+      }
+    }
   });
 
-  // apply updated sprints
-  modified.forEach(({ after }) => {
-    updateSprint(workspaceId, project.id, after);
-  });
+  // reset local draft state
+  setDraftTasks({});
 }

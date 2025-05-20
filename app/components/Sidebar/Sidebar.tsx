@@ -1,14 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 // next
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 const NextLink = Link;
 // MUI
 import {
-  Box, List, ListItemButton, ListItemIcon, ListItemText,
-  IconButton, Collapse, Typography, TextField, Divider
+  Box, List, ListItemButton, ListItemIcon, ListItemText, CircularProgress,
+  IconButton, Collapse, Skeleton, TextField, Divider
 } from '@mui/material';
 import {
   Add as AddIcon, Folder as FolderIcon, FolderOpen as FolderOpenIcon, InsertDriveFile as InsertDriveFileIcon, Send as SendIcon,
@@ -23,7 +23,7 @@ import { Workspace, Project } from '@schemas';
 import { CalendarDate } from '@internationalized/date';
 import { dateToCalendarDate } from '@utils/datetime';
 // styles
-import { sidebar_width, appbar_height, scrollbar_allowance } from '@/app/styles/dimens';
+import { sidebar_width, scrollbar_allowance } from '@/app/styles/dimens';
 import styles from './sidebar.module.css';
 
 /********************************************************************************************************************
@@ -109,7 +109,7 @@ function ProjectsList({ workspace, isOpen }: {
  * sidebar component
  ********************************************************************************************************************/
 export default function Sidebar() {
-  // context
+  // contexts
   const { workspaces, createWorkspace, createProject } = useWorkspacesManager();
 
   // creat workspace
@@ -118,19 +118,39 @@ export default function Sidebar() {
   // create project
   const [activeWorkspaceID, setActiveWorkspaceID] = useState<string | null>(null);
   const [projectDialogOpen, setProjectDialogOpen] = useState(false);
-  // workspace open/close tracking
+  // UI
   const [openWorkspaces, setOpenWorkspaces] = useState<Record<string, boolean>>({});
+  const [loading, setLoading] = useState(true);
+  const [isCreatingWorkspace, setIsCreatingWorkspace] = useState(false);
+
+  /******************************************************************************************************************
+   * load data
+   ******************************************************************************************************************/
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
   /******************************************************************************************************************
    * handle workspaces
    ******************************************************************************************************************/
-  const handleCreateWorkspace = () => {
+  const handleCreateWorkspace = async () => {
     const title = workspaceTitle.trim();
-    if (title) {
-      createWorkspace(title);
+    if (!title) {
+      setWorkspaceInputVisible(false);
+      setIsCreatingWorkspace(false);
+      return;
     }
-    setWorkspaceTitle('');
-    setWorkspaceInputVisible(false);
+
+    setIsCreatingWorkspace(true);
+
+    // simulate backend processing delay
+    setTimeout(() => {
+      createWorkspace(title);
+      setWorkspaceTitle('');
+      setWorkspaceInputVisible(false);
+      setIsCreatingWorkspace(false);
+    }, 1000);
   };
   
   /******************************************************************************************************************
@@ -142,8 +162,9 @@ export default function Sidebar() {
     setActiveWorkspaceID(workspaceId);
   };
 
-  const handleCreateProject = (title: string, desc: string, dueDate: CalendarDate) => {
+  const handleCreateProject = async (title: string, desc: string, dueDate: CalendarDate) => {
     if (activeWorkspaceID && title) {
+      await new Promise(res => setTimeout(res, 1500));
       setOpenWorkspaces((prev) => ({ ...prev, [activeWorkspaceID]: true }));
       createProject(activeWorkspaceID, title, desc, dateToCalendarDate(new Date()), dueDate);
     }
@@ -155,6 +176,19 @@ export default function Sidebar() {
   const toggleOpen = (id: string) => {
     setOpenWorkspaces((prev) => ({ ...prev, [id]: !prev[id] }));
   };
+
+  const renderSkeleton = () => {
+    return (
+      [...Array(3)].map((_, i) => (
+        <Box key={i} sx={{ px: 2, py: 1 }}>
+          <Skeleton variant='rectangular' width={240} height={32} sx={{ mb: 1 }} />
+          {[...Array(2)].map((_, j) => (
+            <Skeleton key={j} variant='text' width={200} sx={{ ml: 4, mb: 0.5 }} />
+          ))}
+        </Box>
+      ))
+    );
+  }
 
   /******************************************************************************************************************
    * render
@@ -187,31 +221,33 @@ export default function Sidebar() {
 
           {/* workspace input */}
           {workspaceInputVisible && (
-            <Box sx={{ ml: 2 }}>
+            <Box sx={{ ml: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
               <InlineTextInput
                 placeholder='Workspace title'
                 value={workspaceTitle}
                 setValue={setWorkspaceTitle}
                 onSubmit={handleCreateWorkspace}
               />
+              {isCreatingWorkspace && <CircularProgress size={20} />}
             </Box>
           )}
 
           {/* each workspace */}
-          {Object.values(workspaces).map((ws) => (
-            <div key={ws.id}>
-              <WorkspaceListItem
-                workspace={ws}
-                isOpen={openWorkspaces[ws.id] || false}
-                onClickCreateProject={onClickCreateProject}
-                toggleOpen={() => toggleOpen(ws.id)}
-              />
-              <ProjectsList
-                workspace={ws}
-                isOpen={openWorkspaces[ws.id] || false}
-              />
-            </div>
-          ))}
+          {loading ? renderSkeleton() :
+            Object.values(workspaces).map((ws) => (
+              <div key={ws.id}>
+                <WorkspaceListItem
+                  workspace={ws}
+                  isOpen={openWorkspaces[ws.id] || false}
+                  onClickCreateProject={onClickCreateProject}
+                  toggleOpen={() => toggleOpen(ws.id)}
+                />
+                <ProjectsList
+                  workspace={ws}
+                  isOpen={openWorkspaces[ws.id] || false}
+                />
+              </div>
+            ))}
         </Box>
       </List>
 

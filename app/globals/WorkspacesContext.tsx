@@ -98,7 +98,22 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
       dueDate,
       sprints: [],
     };
-    updateProject(workspaceId, projectId, () => newProject);
+
+    setWorkspaces(prev => {
+      const workspace = prev[workspaceId];
+      if (!workspace) return prev;
+
+      return {
+        ...prev,
+        [workspaceId]: {
+          ...workspace,
+          projects: {
+            ...workspace.projects,
+            [projectId]: newProject,
+          },
+        },
+      };
+    });
   };
 
   /******************************************************************************************************************

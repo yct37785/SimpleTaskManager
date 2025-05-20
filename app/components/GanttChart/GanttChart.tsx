@@ -16,7 +16,7 @@ import SprintForm from '@components/Forms/SprintForm';
 import GanttChartConfirmDialog from './GanttChartConfirmDialog';
 // Gantt chart utils
 import { getGanttContainerEL, markDeadline, doCustomScroll, enableGanttDragScroll } from './GanttChartBehavior';
-import { GanttTask, formatSprintsToGanttTasks, handleDateChange, addNewSprint, applyUpdatedSprints } from './GanttChartLogic';
+import { GanttTask, formatToGanttTasks, handleDateChange, addNewSprint, applyUpdatedSprints } from './GanttChartLogic';
 // schemas
 import { Project } from '@schemas';
 // styles
@@ -55,7 +55,7 @@ function GanttChart({
   const [editMode, setEditMode] = useState(false);
   const [sprintDialogOpen, setSprintDialogOpen] = useState(false);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
-  const [ganttTasks, setGanttTasks] = useState<GanttTask[]>(formatSprintsToGanttTasks(project.sprints));
+  const [draftTasks, setDraftTasks] = useState<Record<string, GanttTask>>({});
   const [sprintAdded, setSprintAdded] = useState(false);
   const [changesCancelled, setChangesCancelled] = useState(false);
   
@@ -88,8 +88,11 @@ function GanttChart({
       ganttRef.current.innerHTML = '';
       console.log('Gantt init');
 
+      // curr tasks
+      const currTasks = formatToGanttTasks(project.sprints, draftTasks);
+
       // create Gantt chart
-      ganttInstance.current = new Gantt(ganttRef.current, ganttTasks, {
+      ganttInstance.current = new Gantt(ganttRef.current, currTasks, {
         readonly: false,
         readonly_dates: !editMode,
         readonly_progress: !editMode,
@@ -107,7 +110,7 @@ function GanttChart({
         view_mode: 'Day',
         date_format: 'DD-MM-YYYY',
         snap_at: '1d',
-        on_date_change: (task: GanttTask, start: Date, end: Date) => handleDateChange(task, start, end, setGanttTasks),
+        on_date_change: (task: GanttTask, start: Date, end: Date) => handleDateChange(task, start, end, draftTasks, setDraftTasks),
         on_click: assignSprintClickHandler(editMode)
       });
 
@@ -117,7 +120,7 @@ function GanttChart({
 
       // DOM manipulation
       if (!initialInit) {
-        doCustomScroll(ganttInstance, ganttRef, scrollToX, scrollToY, highlightLastTask, ganttTasks, column_width);
+        doCustomScroll(ganttInstance, ganttRef, scrollToX, scrollToY, highlightLastTask, currTasks, column_width);
       }
       injectStyles();
 
@@ -174,7 +177,7 @@ function GanttChart({
    * handle task manipulations
    ******************************************************************************************************************/
   function handleCreateSprint(title: string, desc: string) {
-    addNewSprint(title, desc, project.sprints, setGanttTasks);
+    addNewSprint(title, desc, project.sprints, draftTasks, setDraftTasks);
     // toggle edit mode immediately when new sprint added
     toggleEditMode(true);
     setSprintAdded(true);
@@ -189,16 +192,17 @@ function GanttChart({
       : (task: GanttTask) => onSprintSelected(task.id);
   }
 
-  function handleConfirmEdits() {
+  async function handleConfirmEdits() {
+    await new Promise(res => setTimeout(res, 1500));
     // apply changes to global state as well as Gantt chart programatically
-    applyUpdatedSprints(ganttInstance, workspaceId, project, ganttTasks, createSprint, updateSprint);
+    applyUpdatedSprints(ganttInstance, workspaceId, project, draftTasks, setDraftTasks, createSprint, updateSprint);
     toggleEditMode(false);
     setConfirmDialogOpen(false);
   }
 
   function handleCancelEdits() {
     // reset back to prev state
-    setGanttTasks(formatSprintsToGanttTasks(project.sprints));
+    setDraftTasks({});
     // refresh Gantt chart
     setChangesCancelled(true);
     toggleEditMode(false);
@@ -237,7 +241,7 @@ function GanttChart({
         onClose={() => setConfirmDialogOpen(false)}
         onConfirm={handleConfirmEdits}
         project={project}
-        ganttTasks={ganttTasks}
+        draftTasks={draftTasks}
       />
 
       {/* main content */}
