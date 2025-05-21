@@ -10,7 +10,7 @@ import { Dialog, DialogTitle, DialogActions, DialogContent, Button, Stack, TextF
 type Props = {
   open: boolean;
   onClose: () => void;
-  onSubmit: () => void;
+  onSubmit?: () => void;
   title: string;
   submitLabel?: string;
   disabled?: boolean;
@@ -36,7 +36,7 @@ export function DialogTextInput(props: TextFieldProps) {
 export default function BaseDialog({
   open,
   onClose,
-  onSubmit,
+  onSubmit = () => {},
   title,
   submitLabel = 'Create',
   disabled = false,
