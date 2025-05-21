@@ -10,6 +10,9 @@ const oidcConfig: AuthProviderProps = {
     : 'http://localhost:3000/callback',
   response_type: 'code',
   scope: 'openid email profile',
+  onSigninCallback: () => {
+    window.history.replaceState({}, document.title, window.location.pathname);
+  },
 };
 
 export function CognitoAuthProvider({ children }: { children: React.ReactNode }) {
