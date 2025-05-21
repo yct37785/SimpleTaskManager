@@ -11,12 +11,12 @@ import { getLocalTimeZone, today, CalendarDate } from '@internationalized/date';
 import { getRelativeTime } from '@utils/datetime';
 // our components
 import GanttChart from '@components/GanttChart/GanttChart';
-import { useWorkspacesManager } from '@globals/WorkspacesContext';
+import { useWorkspacesManager } from '@hooks/WorkspacesContext';
 import ProjectForm from '@components/Forms/ProjectForm';
 import SprintDashboard from '@components/Sprint/Dashboard';
 import Drawer from '@UI/Drawer/Drawer';
 // styles
-import { project_details_bar_height, appbar_height } from '@styles/dimens';
+import { project_details_bar_height, appbar_height } from '@const';
 import styles from './ProjectDashboard.module.css';
 
 const fallbackDesc = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';

@@ -12,7 +12,7 @@ import { getRelativeTime } from '@utils/datetime';
 // schemas
 import { Project, Sprint, Task } from '@schemas';
 // our components
-import { useWorkspacesManager } from '@globals/WorkspacesContext';
+import { useWorkspacesManager } from '@hooks/WorkspacesContext';
 
 /********************************************************************************************************************
  * types

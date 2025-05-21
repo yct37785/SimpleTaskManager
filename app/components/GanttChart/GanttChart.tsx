@@ -10,7 +10,7 @@ import {
 import { Add as AddIcon, Edit as EditIcon, Check as CheckIcon, Close as CloseIcon } from '@mui/icons-material';
 // hooks
 import { useWindowHeight } from '@hooks/useWindowHeight';
-import { useWorkspacesManager } from '@globals/WorkspacesContext';
+import { useWorkspacesManager } from '@hooks/WorkspacesContext';
 // our components
 import SprintForm from '@components/Forms/SprintForm';
 import GanttChartConfirmDialog from './GanttChartConfirmDialog';

@@ -15,7 +15,7 @@ import {
   CalendarMonth as CalendarIcon, Home as HomeIcon, PieChart as PieCharIcon, ExpandLess, ExpandMore
 } from '@mui/icons-material';
 // our components
-import { useWorkspacesManager } from '@globals/WorkspacesContext';
+import { useWorkspacesManager } from '@hooks/WorkspacesContext';
 import ProjectForm from '@components/Forms/ProjectForm';
 // schemas
 import { Workspace, Project } from '@schemas';
@@ -23,7 +23,7 @@ import { Workspace, Project } from '@schemas';
 import { CalendarDate } from '@internationalized/date';
 import { dateToCalendarDate } from '@utils/datetime';
 // styles
-import { sidebar_width, scrollbar_allowance } from '@/app/styles/dimens';
+import { sidebar_width, scrollbar_allowance } from '@const';
 import styles from './sidebar.module.css';
 
 /********************************************************************************************************************

@@ -13,7 +13,7 @@ import CalendarPicker from '@UI/Calendar/CalendarPicker';
 // schemas
 import { Project, Workspace } from '@schemas';
 // styles
-import { calendar_picker_height } from '@styles/dimens';
+import { calendar_picker_height } from '@const';
 
 /********************************************************************************************************************
  * types
