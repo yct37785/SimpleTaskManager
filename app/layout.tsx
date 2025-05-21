@@ -1,6 +1,5 @@
 'use client';
 
-import 'dotenv/config';
 // MUI
 import { Stack, Box, Divider, CssBaseline } from '@mui/material';
 // MUI providers
