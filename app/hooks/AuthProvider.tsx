@@ -1,10 +1,14 @@
 'use client';
 
+// auth
 import { AuthProvider, AuthProviderProps } from 'react-oidc-context';
 
+/********************************************************************************************************************
+ * Cognito config obj
+ ********************************************************************************************************************/
 const oidcConfig: AuthProviderProps = {
-  authority: `https://cognito-idp.${process.env.COGNITO_REGION}.amazonaws.com/${process.env.COGNITO_USER_POOL_ID}`,
-  client_id: process.env.COGNITO_CLIENT_ID!,
+  authority: `https://${process.env.NEXT_PUBLIC_COGNITO_DOMAIN}.auth.${process.env.NEXT_PUBLIC_COGNITO_REGION}.amazoncognito.com/`,
+  client_id: process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID!,
   redirect_uri: typeof window !== 'undefined'
     ? `${window.location.origin}/callback`
     : 'http://localhost:3000/callback',
@@ -15,6 +19,9 @@ const oidcConfig: AuthProviderProps = {
   },
 };
 
+/********************************************************************************************************************
+ * Cognito auth provider
+ ********************************************************************************************************************/
 export function CognitoAuthProvider({ children }: { children: React.ReactNode }) {
   return <AuthProvider {...oidcConfig}>{children}</AuthProvider>;
 }

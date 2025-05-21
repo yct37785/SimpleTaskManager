@@ -2,10 +2,12 @@
 
 // next
 import Link from 'next/link';
+// auth
+import { useAuth } from 'react-oidc-context';
 // MUI
-import { Box, Divider, AppBar, Avatar, Toolbar, Typography } from '@mui/material';
+import { Box, Divider, AppBar, Avatar, Toolbar, Typography, Button } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
-// tyles
+// styles
 import { appbar_height } from '@const';
 import appBarStyles from './AppBar.module.css';
 
@@ -13,6 +15,8 @@ import appBarStyles from './AppBar.module.css';
  * app bar component
  ********************************************************************************************************************/
 export default function AppBarComponent() {
+  const auth = useAuth();
+  
   return (
     <>
       <AppBar position='sticky' color='default'
@@ -50,9 +54,39 @@ export default function AppBarComponent() {
           </Box>
 
           {/* user */}
-          <Avatar sx={{ width: 32, height: 32, fontSize: '0.875rem' }} alt='User'>
-            U
-          </Avatar>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            {auth.isAuthenticated ? (
+              <>
+                <Typography
+                  variant='body2'
+                  color='text.primary'
+                  sx={{ fontWeight: 500 }}
+                >
+                  {auth.user?.profile?.email}
+                </Typography>
+                <Button
+                  variant='outlined'
+                  size='small'
+                  color='primary'
+                  onClick={() => auth.removeUser()}
+                  sx={{ textTransform: 'none' }}
+                >
+                  Sign out
+                </Button>
+              </>
+            ) : (
+              <Button
+                variant='contained'
+                size='small'
+                color='primary'
+                onClick={() => auth.signinRedirect()}
+                sx={{ textTransform: 'none' }}
+              >
+                Sign in
+              </Button>
+            )}
+          </Box>
+
         </Toolbar>
         <Divider />
       </AppBar>
