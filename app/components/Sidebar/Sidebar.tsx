@@ -22,8 +22,9 @@ import { Workspace, Project } from '@schemas';
 // utils
 import { CalendarDate } from '@internationalized/date';
 import { dateToCalendarDate } from '@utils/datetime';
+// const
+import { sidebar_width, scrollbar_allowance, mock_elapse } from '@const';
 // styles
-import { sidebar_width, scrollbar_allowance } from '@const';
 import styles from './sidebar.module.css';
 
 /********************************************************************************************************************
@@ -127,7 +128,7 @@ export default function Sidebar() {
    * load data
    ******************************************************************************************************************/
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1500);
+    const timer = setTimeout(() => setLoading(false), mock_elapse);
     return () => clearTimeout(timer);
   }, []);
 
@@ -164,7 +165,7 @@ export default function Sidebar() {
 
   const handleCreateProject = async (title: string, desc: string, dueDate: CalendarDate) => {
     if (activeWorkspaceID && title) {
-      await new Promise(res => setTimeout(res, 1500));
+      await new Promise(res => setTimeout(res, mock_elapse));
       setOpenWorkspaces((prev) => ({ ...prev, [activeWorkspaceID]: true }));
       createProject(activeWorkspaceID, title, desc, dateToCalendarDate(new Date()), dueDate);
     }

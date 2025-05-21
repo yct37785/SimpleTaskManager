@@ -19,6 +19,8 @@ import { getGanttContainerEL, markDeadline, doCustomScroll, enableGanttDragScrol
 import { GanttTask, formatToGanttTasks, handleDateChange, addNewSprint, applyUpdatedSprints } from './GanttChartLogic';
 // schemas
 import { Project } from '@schemas';
+// const
+import { mock_elapse } from '@const';
 // styles
 import './frappe-gantt.css';
 import './frappe-gantt-custom.css';
@@ -193,7 +195,7 @@ function GanttChart({
   }
 
   async function handleConfirmEdits() {
-    await new Promise(res => setTimeout(res, 1500));
+    await new Promise(res => setTimeout(res, mock_elapse));
     // apply changes to global state as well as Gantt chart programatically
     applyUpdatedSprints(ganttInstance, workspaceId, project, draftTasks, setDraftTasks, createSprint, updateSprint);
     toggleEditMode(false);

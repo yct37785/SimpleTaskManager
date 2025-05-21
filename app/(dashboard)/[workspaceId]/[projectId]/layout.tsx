@@ -15,8 +15,9 @@ import { useWorkspacesManager } from '@hooks/WorkspacesContext';
 import ProjectForm from '@components/Forms/ProjectForm';
 import SprintDashboard from '@components/Sprint/Dashboard';
 import Drawer from '@UI/Drawer/Drawer';
+// const
+import { project_details_bar_height, appbar_height, mock_elapse } from '@const';
 // styles
-import { project_details_bar_height, appbar_height } from '@const';
 import styles from './ProjectDashboard.module.css';
 
 const fallbackDesc = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
@@ -48,7 +49,7 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
    * load data
    ******************************************************************************************************************/
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1500);
+    const timer = setTimeout(() => setLoading(false), mock_elapse);
     return () => clearTimeout(timer);
   }, []);
 
@@ -68,7 +69,7 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
    ******************************************************************************************************************/
   const handleEditProject = async (title: string, desc: string, dueDate: CalendarDate) => {
     if (workspaceId && projectId) {
-      await new Promise(res => setTimeout(res, 1500));
+      await new Promise(res => setTimeout(res, mock_elapse));
       updateProjectFields(workspaceId, projectId, { title, desc, dueDate });
     }
   };
