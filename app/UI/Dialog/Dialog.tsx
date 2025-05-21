@@ -11,7 +11,7 @@ type Props = {
   open: boolean;
   onClose: () => void;
   onSubmit?: () => void;
-  title: string;
+  title?: string;
   submitLabel?: string;
   disabled?: boolean;
   loading?: boolean;
@@ -37,7 +37,7 @@ export default function BaseDialog({
   open,
   onClose,
   onSubmit = () => {},
-  title,
+  title = '',
   submitLabel = 'Create',
   disabled = false,
   loading = false,
