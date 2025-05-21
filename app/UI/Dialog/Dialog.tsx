@@ -15,6 +15,7 @@ type Props = {
   submitLabel?: string;
   disabled?: boolean;
   loading?: boolean;
+  hideActions?: boolean;
   children: ReactNode;
 };
 
@@ -40,6 +41,7 @@ export default function BaseDialog({
   submitLabel = 'Create',
   disabled = false,
   loading = false,
+  hideActions = false,
   children,
 }: Props) {
   return (
@@ -48,12 +50,12 @@ export default function BaseDialog({
       <DialogContent dividers>
         <Stack spacing={2}>{children}</Stack>
       </DialogContent>
-      <DialogActions>
+      {!hideActions ? <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
         <Button onClick={onSubmit} loading={loading} variant='contained' disabled={disabled}>
           {submitLabel}
         </Button>
-      </DialogActions>
+      </DialogActions> : null}
     </Dialog>
   );
 };
