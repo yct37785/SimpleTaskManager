@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect } from 'react';
+// Next
 import { usePathname } from 'next/navigation';
+// auth
 import { useAuth } from 'react-oidc-context';
 
 /********************************************************************************************************************
