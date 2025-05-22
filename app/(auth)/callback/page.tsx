@@ -1,8 +1,10 @@
 'use client';
 
-import { useAuth } from 'react-oidc-context';
 import { useEffect, useState } from 'react';
+// Next
 import { useRouter } from 'next/navigation';
+// auth
+import { useAuth } from 'react-oidc-context';
 // MUI
 import {
   Box,

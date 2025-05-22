@@ -1,13 +1,14 @@
 'use client';
 
+import { useEffect } from 'react';
 // MUI
 import { Stack, Box, Divider, CssBaseline } from '@mui/material';
-// MUI providers
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 // our components
 import { CognitoAuthProvider } from '@hooks/AuthProvider';
 import Sidebar from '@components/Sidebar/Sidebar';
 import AppBar from '@components/AppBar/AppBar';
+import AuthDebug from '@components/Debug/AuthDebug';
 import { WorkspacesProvider } from '@hooks/WorkspacesContext';
 // styles
 import { appbar_height } from '@const';
@@ -17,6 +18,10 @@ import './globals.css';
  * root layout
  ********************************************************************************************************************/
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+
+  /******************************************************************************************************************
+   * render
+   ******************************************************************************************************************/
   return (
     <html lang='en'>
       <head>
@@ -26,6 +31,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <CssBaseline />
         <CognitoAuthProvider>
+          <AuthDebug />
+          
           <WorkspacesProvider>
             <AppRouterCacheProvider options={{ enableCssLayer: true }}>
               <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
