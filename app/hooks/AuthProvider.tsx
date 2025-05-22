@@ -7,7 +7,7 @@ import { AuthProvider, AuthProviderProps } from 'react-oidc-context';
  * Cognito config obj
  ********************************************************************************************************************/
 const oidcConfig: AuthProviderProps = {
-  authority: `https://cognito-idp.us-east-2.amazonaws.com/${process.env.NEXT_PUBLIC_COGNITO_USER_POOL_ID}/`,
+  authority: `https://cognito-idp.${process.env.NEXT_PUBLIC_COGNITO_REGION}.amazonaws.com/${process.env.NEXT_PUBLIC_COGNITO_USER_POOL_ID}/`,
   client_id: process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID!,
   redirect_uri: typeof window !== 'undefined'
     ? `${window.location.origin}/callback`
