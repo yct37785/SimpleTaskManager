@@ -76,6 +76,7 @@ export default function AppBarComponent() {
               </>
             ) : (
               <Button
+                disabled={auth.isLoading}
                 variant='contained'
                 size='small'
                 color='primary'
