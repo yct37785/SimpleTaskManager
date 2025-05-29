@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { Stack, Box, Divider, CssBaseline } from '@mui/material';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 // our components
-// import { CognitoAuthProvider } from '@hooks/AuthProvider';
+import { AuthProvider } from '@hooks/AuthContext';
 import Sidebar from '@components/Sidebar/Sidebar';
 import AppBar from '@components/AppBar/AppBar';
 // import AuthDebug from '@components/Auth/AuthDebug';
@@ -31,11 +31,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <CssBaseline />
-        {/* <CognitoAuthProvider> */}
+        <AuthProvider>
           {/* auth */}
           {/* <AuthDebug />
           <SessionMonitor /> */}
-          
+
           <WorkspacesProvider>
             <AppRouterCacheProvider options={{ enableCssLayer: true }}>
               <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -67,7 +67,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </Box>
             </AppRouterCacheProvider>
           </WorkspacesProvider>
-        {/* </CognitoAuthProvider> */}
+        </AuthProvider>
       </body>
     </html>
   );
