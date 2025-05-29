@@ -5,11 +5,11 @@ import { useEffect } from 'react';
 import { Stack, Box, Divider, CssBaseline } from '@mui/material';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 // our components
-import { CognitoAuthProvider } from '@hooks/AuthProvider';
+// import { CognitoAuthProvider } from '@hooks/AuthProvider';
 import Sidebar from '@components/Sidebar/Sidebar';
 import AppBar from '@components/AppBar/AppBar';
-import AuthDebug from '@components/Auth/AuthDebug';
-import SessionMonitor from '@components/Auth/SessionMonitor';
+// import AuthDebug from '@components/Auth/AuthDebug';
+// import SessionMonitor from '@components/Auth/SessionMonitor';
 import { WorkspacesProvider } from '@hooks/WorkspacesContext';
 // styles
 import { appbar_height } from '@const';
@@ -31,10 +31,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <CssBaseline />
-        <CognitoAuthProvider>
+        {/* <CognitoAuthProvider> */}
           {/* auth */}
-          <AuthDebug />
-          <SessionMonitor />
+          {/* <AuthDebug />
+          <SessionMonitor /> */}
           
           <WorkspacesProvider>
             <AppRouterCacheProvider options={{ enableCssLayer: true }}>
@@ -67,7 +67,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </Box>
             </AppRouterCacheProvider>
           </WorkspacesProvider>
-        </CognitoAuthProvider>
+        {/* </CognitoAuthProvider> */}
       </body>
     </html>
   );

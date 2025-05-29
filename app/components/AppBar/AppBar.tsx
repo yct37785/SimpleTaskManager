@@ -2,8 +2,6 @@
 
 // next
 import Link from 'next/link';
-// auth
-import { useAuth } from 'react-oidc-context';
 // MUI
 import { Box, Divider, AppBar, Avatar, Toolbar, Typography, Button } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
@@ -15,7 +13,6 @@ import appBarStyles from './AppBar.module.css';
  * app bar component
  ********************************************************************************************************************/
 export default function AppBarComponent() {
-  const auth = useAuth();
   
   return (
     <>
@@ -54,7 +51,7 @@ export default function AppBarComponent() {
           </Box>
 
           {/* user */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          {/* <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             {auth.isAuthenticated ? (
               <>
                 <Typography
@@ -86,7 +83,7 @@ export default function AppBarComponent() {
                 Sign in
               </Button>
             )}
-          </Box>
+          </Box> */}
 
         </Toolbar>
         <Divider />

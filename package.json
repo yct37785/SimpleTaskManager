@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3001",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3001",
     "lint": "next lint"
   },
   "dependencies": {
@@ -21,7 +21,6 @@
     "react": "^19.1.0",
     "react-aria-components": "^1.9.0",
     "react-dom": "^19.1.0",
-    "react-oidc-context": "^3.3.0",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
