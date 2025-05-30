@@ -5,8 +5,9 @@ import Link from 'next/link';
 // MUI
 import { Box, Divider, AppBar, Avatar, Toolbar, Typography, Button } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
-// styles
+// const
 import { appbar_height } from '@const';
+// styles
 import appBarStyles from './AppBar.module.css';
 
 /********************************************************************************************************************

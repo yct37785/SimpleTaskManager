@@ -8,7 +8,7 @@ import { useRangeCalendarState } from 'react-stately';
 import { Box } from '@mui/material';
 // utils
 import { createCalendar, today, getLocalTimeZone, CalendarDate, toCalendarDate } from '@internationalized/date';
-// our components
+// comp
 import CalendarHeader from './CalendarHeader';
 import CalendarGrid from './CalendarGrid';
 import { HighlightRange } from './CalendarCell';

@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import Image from 'next/image';
 // MUI
 import { Box, Typography } from '@mui/material';
-// our components
+// contexts
 import { useWorkspacesManager } from '@hooks/WorkspacesContext';
 
 /********************************************************************************************************************

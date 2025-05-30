@@ -6,13 +6,13 @@ import { Stack, TextField, Box } from '@mui/material';
 // utils
 import { CalendarDate } from '@internationalized/date';
 import { formatDate } from '@utils/datetime';
-// our components
+// comps
 import BaseDialog, { DialogTextInput } from '@UI/Dialog/Dialog';
 import Popover from '@UI/Dialog/Popover';
 import CalendarPicker from '@UI/Calendar/CalendarPicker';
 // schemas
 import { Project } from '@schemas';
-// styles
+// const
 import { calendar_picker_height } from '@const';
 
 /********************************************************************************************************************

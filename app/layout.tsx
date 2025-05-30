@@ -4,15 +4,17 @@ import { useEffect } from 'react';
 // MUI
 import { Stack, Box, Divider, CssBaseline } from '@mui/material';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
-// our components
-import { AuthProvider } from '@hooks/AuthContext';
+// comps
 import Sidebar from '@components/Sidebar/Sidebar';
 import AppBar from '@components/AppBar/AppBar';
 // import AuthDebug from '@components/Auth/AuthDebug';
 // import SessionMonitor from '@components/Auth/SessionMonitor';
+// contexts
+import { AuthProvider } from '@hooks/AuthContext';
 import { WorkspacesProvider } from '@hooks/WorkspacesContext';
-// styles
+// const
 import { appbar_height } from '@const';
+// styles
 import './globals.css';
 
 /********************************************************************************************************************

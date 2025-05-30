@@ -5,11 +5,11 @@ import { Droppable } from '@hello-pangea/dnd';
 // MUI
 import { Button, Box, Typography } from '@mui/material';
 import {  Add as AddIcon } from '@mui/icons-material';
-// our components
+// comps
 import TaskCard from './TaskCard';
 // schemas
 import { Column } from '@schemas';
-// styles
+// const
 import { task_column_width } from '@const';
 
 /********************************************************************************************************************

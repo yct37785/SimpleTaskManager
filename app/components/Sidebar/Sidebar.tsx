@@ -14,14 +14,14 @@ import {
   Add as AddIcon, Folder as FolderIcon, FolderOpen as FolderOpenIcon, InsertDriveFile as InsertDriveFileIcon, Send as SendIcon,
   CalendarMonth as CalendarIcon, Home as HomeIcon, PieChart as PieCharIcon, ExpandLess, ExpandMore
 } from '@mui/icons-material';
-// our components
+// utils
+import { CalendarDate } from '@internationalized/date';
+import { dateToCalendarDate } from '@utils/datetime';
+// comps
 import { useWorkspacesManager } from '@hooks/WorkspacesContext';
 import ProjectForm from '@components/Project/ProjectForm';
 // schemas
 import { Workspace, Project } from '@schemas';
-// utils
-import { CalendarDate } from '@internationalized/date';
-import { dateToCalendarDate } from '@utils/datetime';
 // const
 import { sidebar_width, scrollbar_allowance, mock_elapse } from '@const';
 // styles
@@ -254,7 +254,7 @@ export default function Sidebar() {
 
       {/* create project form */}
       {activeWorkspaceID ? <ProjectForm
-        workspace={workspaces[activeWorkspaceID]}
+        workspaceTitle={workspaces[activeWorkspaceID].title}
         projectDialogOpen={projectDialogOpen}
         onSubmitProject={handleCreateProject}
         closeProjectDialog={() => setProjectDialogOpen(false)} /> : null}
