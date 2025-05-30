@@ -11,7 +11,7 @@ import BaseDialog, { DialogTextInput } from '@UI/Dialog/Dialog';
 import Popover from '@UI/Dialog/Popover';
 import CalendarPicker from '@UI/Calendar/CalendarPicker';
 // schemas
-import { Project, Workspace } from '@schemas';
+import { Project } from '@schemas';
 // styles
 import { calendar_picker_height } from '@const';
 
@@ -19,7 +19,7 @@ import { calendar_picker_height } from '@const';
  * types
  ********************************************************************************************************************/
 type Props = {
-  workspace: Workspace;
+  workspaceTitle: string;
   project?: Project;  // optional: passed when editing
   projectDialogOpen: boolean;
   onSubmitProject: (title: string, desc: string, dueDate: CalendarDate) => Promise<void>;
@@ -30,7 +30,7 @@ type Props = {
  * project creation form
  ********************************************************************************************************************/
 export default function ProjectForm({
-  workspace,
+  workspaceTitle,
   project,
   projectDialogOpen,
   onSubmitProject,
@@ -105,7 +105,7 @@ export default function ProjectForm({
         open={projectDialogOpen}
         onClose={closeProjectDialog}
         onSubmit={handleSubmit}
-        title={`${workspace.title} - ${project ? 'Edit Project' : 'New Project'}`}
+        title={`${workspaceTitle} - ${project ? 'Edit Project' : 'New Project'}`}
         submitLabel={project ? 'Confirm' : 'Create'}
         disabled={!title || !description || !dueDate || !hasChanges}
         loading={loading}

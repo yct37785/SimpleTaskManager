@@ -16,7 +16,7 @@ import {
 } from '@mui/icons-material';
 // our components
 import { useWorkspacesManager } from '@hooks/WorkspacesContext';
-import ProjectForm from '@components/Forms/ProjectForm';
+import ProjectForm from '@components/Project/ProjectForm';
 // schemas
 import { Workspace, Project } from '@schemas';
 // utils
