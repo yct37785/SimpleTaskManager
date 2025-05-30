@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 // MUI
 import { Stack, Box } from '@mui/material';
-// our components
+// comps
 import BaseDialog, { DialogTextInput } from '@UI/Dialog/Dialog';
 // schemas
 import { Project } from '@schemas';

@@ -8,15 +8,15 @@ import {
   Box, Typography, IconButton, Stack, Divider, Tooltip, useTheme, Button
 } from '@mui/material';
 import { Add as AddIcon, Edit as EditIcon, Check as CheckIcon, Close as CloseIcon } from '@mui/icons-material';
-// hooks
-import { useWindowHeight } from '@hooks/useWindowHeight';
-import { useWorkspacesManager } from '@hooks/WorkspacesContext';
-// our components
-import SprintForm from '@components/Forms/SprintForm';
+// comps
+import SprintForm from '@components/Sprint/SprintForm';
 import GanttChartConfirmDialog from './GanttChartConfirmDialog';
 // Gantt chart utils
 import { getGanttContainerEL, markDeadline, doCustomScroll, enableGanttDragScroll } from './GanttChartBehavior';
 import { GanttTask, formatToGanttTasks, handleDateChange, addNewSprint, applyUpdatedSprints } from './GanttChartLogic';
+// contexts
+import { useWindowHeight } from '@contexts/useWindowHeight';
+import { useWorkspacesManager } from '@contexts/WorkspacesContext';
 // schemas
 import { Project } from '@schemas';
 // const

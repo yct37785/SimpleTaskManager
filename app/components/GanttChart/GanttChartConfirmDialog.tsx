@@ -1,14 +1,14 @@
 import { useMemo, useState } from 'react';
 // MUI
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Divider } from '@mui/material';
-// schemas
-import { Sprint, Project } from '@schemas';
-// Gantt chart utils
-import { GanttTask } from './GanttChartLogic';
+import { Typography, Divider } from '@mui/material';
 // utils
 import { getDaysBetween, formatISOToCalendarDate } from '@utils/datetime';
-// our components
-import BaseDialog, { DialogTextInput } from '@UI/Dialog/Dialog';
+// comps
+import BaseDialog from '@UI/Dialog/Dialog';
+// Gantt chart utils
+import { GanttTask } from './GanttChartLogic';
+// schemas
+import { Project } from '@schemas';
 
 /********************************************************************************************************************
  * types

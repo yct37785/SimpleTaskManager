@@ -1,9 +1,12 @@
 'use client';
 
 import { createContext, useContext, useState, ReactNode } from 'react';
+// utils
 import { v4 as uuidv4 } from 'uuid';
 import { CalendarDate } from '@internationalized/date';
+// schemas
 import { Workspace, Project, Sprint, Task } from '@schemas';
+// data
 import sampleWorkspaces from '@utils/sampleData';
 
 /********************************************************************************************************************

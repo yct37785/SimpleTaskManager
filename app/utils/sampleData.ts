@@ -1,5 +1,6 @@
-import { genWorkspace } from './sampleDataHelper';
+// utils
 import { v4 as uuidv4 } from 'uuid';
+import { genWorkspace } from './sampleDataHelper';
 // schemas
 import { Workspace } from '@schemas';
 
