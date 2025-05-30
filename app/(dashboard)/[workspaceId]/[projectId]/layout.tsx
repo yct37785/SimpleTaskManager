@@ -12,7 +12,7 @@ import { getRelativeTime } from '@utils/datetime';
 // our components
 import GanttChart from '@components/GanttChart/GanttChart';
 import { useWorkspacesManager } from '@hooks/WorkspacesContext';
-import ProjectForm from '@components/Forms/ProjectForm';
+import ProjectForm from '@components/Project/ProjectForm';
 import SprintDashboard from '@components/Sprint/Dashboard';
 import Drawer from '@UI/Drawer/Drawer';
 // const

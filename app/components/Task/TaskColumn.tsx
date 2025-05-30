@@ -6,7 +6,7 @@ import { Droppable } from '@hello-pangea/dnd';
 import { Button, Box, Typography } from '@mui/material';
 import {  Add as AddIcon } from '@mui/icons-material';
 // our components
-import TaskCard from '@components/Cards/TaskCard';
+import TaskCard from './TaskCard';
 // schemas
 import { Column } from '@schemas';
 // styles

@@ -12,7 +12,7 @@ import { Add as AddIcon, Edit as EditIcon, Check as CheckIcon, Close as CloseIco
 import { useWindowHeight } from '@hooks/useWindowHeight';
 import { useWorkspacesManager } from '@hooks/WorkspacesContext';
 // our components
-import SprintForm from '@components/Forms/SprintForm';
+import SprintForm from '@components/Sprint/SprintForm';
 import GanttChartConfirmDialog from './GanttChartConfirmDialog';
 // Gantt chart utils
 import { getGanttContainerEL, markDeadline, doCustomScroll, enableGanttDragScroll } from './GanttChartBehavior';
