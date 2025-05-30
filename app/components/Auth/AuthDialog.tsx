@@ -21,8 +21,10 @@ interface Props {
  * auth dialog
  ********************************************************************************************************************/
 export default function AuthDialog({ open, onClose }: Props) {
-  const { login, isLoading } = useAuth();
+  const { login } = useAuth();
   const [tab, setTab] = useState<'login' | 'signup'>('login');
+  // states
+  const [formLoading, setFormLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -32,9 +34,11 @@ export default function AuthDialog({ open, onClose }: Props) {
    ******************************************************************************************************************/
   const handleSubmit = async () => {
     setErrorMsg('');
+    setFormLoading(true);
 
     if (!email || !password) {
       setErrorMsg('Please enter both email and password.');
+      setFormLoading(false);
       return;
     }
 
@@ -57,6 +61,8 @@ export default function AuthDialog({ open, onClose }: Props) {
       } else {
         setErrorMsg(err.message || 'Authentication failed');
       }
+    } finally {
+      setFormLoading(false);
     }
   };
 
@@ -77,8 +83,8 @@ export default function AuthDialog({ open, onClose }: Props) {
       onSubmit={handleSubmit}
       title='Welcome to Task Manager'
       submitLabel={tab === 'login' ? 'Sign In' : 'Sign Up'}
-      disabled={isLoading}
-      loading={isLoading}
+      loading={formLoading}
+      disabled={formLoading}
     >
       <Tabs value={tab} onChange={(_, val) => setTab(val)} variant='fullWidth'>
         <Tab label='Sign In' value='login' />
@@ -91,7 +97,7 @@ export default function AuthDialog({ open, onClose }: Props) {
         label='Email'
         type='email'
         required
-        disabled={isLoading}
+        disabled={formLoading}
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         autoFocus
@@ -101,7 +107,7 @@ export default function AuthDialog({ open, onClose }: Props) {
         label='Password'
         type='password'
         required
-        disabled={isLoading}
+        disabled={formLoading}
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
