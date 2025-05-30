@@ -10,7 +10,7 @@ import { getRelativeTime } from '@utils/datetime';
 // comps
 import ProjectForm from './ProjectForm';
 // contexts
-import { useWorkspacesManager } from '@hooks/WorkspacesContext';
+import { useWorkspacesManager } from '@contexts/WorkspacesContext';
 // schemas
 import { Project } from '@schemas';
 // const

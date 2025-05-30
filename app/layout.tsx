@@ -10,8 +10,8 @@ import AppBar from '@components/AppBar/AppBar';
 // import AuthDebug from '@components/Auth/AuthDebug';
 // import SessionMonitor from '@components/Auth/SessionMonitor';
 // contexts
-import { AuthProvider } from '@hooks/AuthContext';
-import { WorkspacesProvider } from '@hooks/WorkspacesContext';
+import { AuthProvider } from '@contexts/AuthContext';
+import { WorkspacesProvider } from '@contexts/WorkspacesContext';
 // const
 import { appbar_height } from '@const';
 // styles

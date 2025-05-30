@@ -10,7 +10,7 @@ import { Edit as EditIcon, CalendarMonth as CalendarMonthIcon } from '@mui/icons
 import { getLocalTimeZone, today, CalendarDate } from '@internationalized/date';
 import { getRelativeTime } from '@utils/datetime';
 // contexts
-import { useWorkspacesManager } from '@hooks/WorkspacesContext';
+import { useWorkspacesManager } from '@contexts/WorkspacesContext';
 // schemas
 import { Project, Sprint, Task } from '@schemas';
 

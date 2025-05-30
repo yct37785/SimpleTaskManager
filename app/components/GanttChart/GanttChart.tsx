@@ -15,8 +15,8 @@ import GanttChartConfirmDialog from './GanttChartConfirmDialog';
 import { getGanttContainerEL, markDeadline, doCustomScroll, enableGanttDragScroll } from './GanttChartBehavior';
 import { GanttTask, formatToGanttTasks, handleDateChange, addNewSprint, applyUpdatedSprints } from './GanttChartLogic';
 // contexts
-import { useWindowHeight } from '@hooks/useWindowHeight';
-import { useWorkspacesManager } from '@hooks/WorkspacesContext';
+import { useWindowHeight } from '@contexts/useWindowHeight';
+import { useWorkspacesManager } from '@contexts/WorkspacesContext';
 // schemas
 import { Project } from '@schemas';
 // const

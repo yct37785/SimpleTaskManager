@@ -25,7 +25,7 @@
       "@components/*": ["app/components/*"],
       "@globals/*": ["app/globals/*"],
       "@utils/*": ["app/utils/*"],
-      "@hooks/*": ["app/hooks/*"],
+      "@contexts/*": ["app/contexts/*"],
       "@UI/*": ["app/UI/*"],
       "@schemas": ["app/schemas.ts"],
       "@const": ["app/const.ts"]

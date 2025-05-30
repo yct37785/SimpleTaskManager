@@ -11,7 +11,7 @@ import SprintDashboard from '@components/Sprint/Dashboard';
 import Drawer from '@UI/Drawer/Drawer';
 import ProjectDetailsBar from '@/app/components/Project/ProjectDetailsBar';
 // contexts
-import { useWorkspacesManager } from '@hooks/WorkspacesContext';
+import { useWorkspacesManager } from '@contexts/WorkspacesContext';
 // const
 import { project_details_bar_height, appbar_height, mock_elapse } from '@const';
 

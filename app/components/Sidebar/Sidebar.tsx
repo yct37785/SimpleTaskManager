@@ -18,7 +18,7 @@ import {
 import { CalendarDate } from '@internationalized/date';
 import { dateToCalendarDate } from '@utils/datetime';
 // comps
-import { useWorkspacesManager } from '@hooks/WorkspacesContext';
+import { useWorkspacesManager } from '@contexts/WorkspacesContext';
 import ProjectForm from '@components/Project/ProjectForm';
 // schemas
 import { Workspace, Project } from '@schemas';
