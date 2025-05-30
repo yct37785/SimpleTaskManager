@@ -1,10 +1,15 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 // next
 import Link from 'next/link';
 // MUI
 import { Box, Divider, AppBar, Avatar, Toolbar, Typography, Button } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
+// comps
+
+// contexts
+import { useAuth } from '@contexts/AuthContext';
 // const
 import { appbar_height } from '@const';
 // styles
@@ -14,7 +19,12 @@ import appBarStyles from './AppBar.module.css';
  * app bar component
  ********************************************************************************************************************/
 export default function AppBarComponent() {
+  const { user, isAuthenticated, logout, isLoading } = useAuth();
+  const [dialogOpen, setDialogOpen] = useState(false);
   
+  /******************************************************************************************************************
+   * render
+   ******************************************************************************************************************/
   return (
     <>
       <AppBar position='sticky' color='default'
@@ -51,22 +61,18 @@ export default function AppBarComponent() {
             Search…
           </Box>
 
-          {/* user */}
-          {/* <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            {auth.isAuthenticated ? (
+          {/* user actions */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            {isAuthenticated ? (
               <>
-                <Typography
-                  variant='body2'
-                  color='text.primary'
-                  sx={{ fontWeight: 500 }}
-                >
-                  {auth.user?.profile?.email}
+                <Typography variant='body2' color='text.primary' sx={{ fontWeight: 500 }}>
+                  {user?.email}
                 </Typography>
                 <Button
                   variant='outlined'
                   size='small'
                   color='primary'
-                  onClick={() => auth.removeUser()}
+                  onClick={logout}
                   sx={{ textTransform: 'none' }}
                 >
                   Sign out
@@ -74,21 +80,23 @@ export default function AppBarComponent() {
               </>
             ) : (
               <Button
-                disabled={auth.isLoading}
+                disabled={isLoading}
                 variant='contained'
                 size='small'
                 color='primary'
-                onClick={() => auth.signinRedirect()}
+                onClick={() => setDialogOpen(true)}
                 sx={{ textTransform: 'none' }}
               >
                 Sign in
               </Button>
             )}
-          </Box> */}
-
+          </Box>
         </Toolbar>
         <Divider />
       </AppBar>
+
+      {/* Auth modal */}
+      {/* <AuthDialog open={dialogOpen} onClose={() => setDialogOpen(false)} /> */}
     </>
   );
 }

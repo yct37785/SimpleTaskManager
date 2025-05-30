@@ -20,7 +20,7 @@
 //       const timeLeft = payload.exp - now;
 
 //       console.log(
-//         `🕒 ID token for ${auth.user?.profile?.email || 'user'} expires in ${timeLeft}s at ${new Date(
+//         `[AuthDebug] ID token for ${auth.user?.profile?.email || 'user'} expires in ${timeLeft}s at ${new Date(
 //           payload.exp * 1000
 //         ).toLocaleTimeString()}`
 //       );

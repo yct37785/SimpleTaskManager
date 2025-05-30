@@ -16,7 +16,7 @@
 //    ********************************************************************************************************************/
 //   useEffect(() => {
 //     if (auth.error?.message?.includes('invalid_grant') || auth.error?.message?.includes('expired') || auth.error?.message?.includes('token')) {
-//       console.log('🧯 Token error or refresh expired — logging out');
+//       console.log('[SessionMonitor] Token error or refresh expired — logging out');
 //       auth.removeUser();
 //     }
 //   }, [auth.error]);

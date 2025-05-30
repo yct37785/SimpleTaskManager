@@ -32,6 +32,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
    * Store and restore tokens from localStorage (or just memory)
    ******************************************************************************************************************/
   useEffect(() => {
+    console.log('[AuthContext] Loading tokens from storage...');
     const storedAccess = localStorage.getItem('accessToken');
     const storedRefresh = localStorage.getItem('refreshToken');
     const storedEmail = localStorage.getItem('userEmail');
@@ -40,6 +41,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setAccessToken(storedAccess);
       setRefreshToken(storedRefresh);
       setUser({ email: storedEmail });
+      console.log('[AuthContext] Access token, refresh token and user email loaded');
+    } else {
+    console.log('[AuthContext] No tokens to load');
     }
 
     setIsLoading(false);

@@ -88,7 +88,7 @@ function GanttChart({
 
       // clear existing chart
       ganttRef.current.innerHTML = '';
-      console.log('Gantt init');
+      console.log('[GanttChart] new Gantt instance');
 
       // curr tasks
       const currTasks = formatToGanttTasks(project.sprints, draftTasks);
@@ -169,7 +169,7 @@ function GanttChart({
   useEffect(() => {
     const currDueDateStr = project.dueDate.toString();
     if (currProjectDueDate.current && currProjectDueDate.current !== currDueDateStr) {
-      console.log('Due date changed: ' + project.dueDate.toString());
+      console.log('[GanttChart] Project due date changed: ' + project.dueDate.toString());
       injectStyles();
     }
     currProjectDueDate.current = currDueDateStr;
