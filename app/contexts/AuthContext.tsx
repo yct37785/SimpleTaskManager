@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import axios from 'axios';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
 
 /********************************************************************************************************************
  * types
@@ -17,8 +18,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
-
 /********************************************************************************************************************
  * provider
  ********************************************************************************************************************/
@@ -29,7 +28,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   /******************************************************************************************************************
-   * Store and restore tokens from localStorage (or just memory)
+   * store and restore tokens from localStorage (or just memory)
    ******************************************************************************************************************/
   useEffect(() => {
     console.log('[AuthContext] Loading tokens from storage...');
@@ -50,7 +49,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   /******************************************************************************************************************
-   * Login: get tokens and set user
+   * login: get tokens and set user
    ******************************************************************************************************************/
   const login = async (email: string, password: string) => {
     const res = await axios.post(`${API_BASE}/auth/login`, { email, password });
@@ -66,7 +65,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   /******************************************************************************************************************
-   * Logout: clear session and tell backend to revoke refresh token
+   * logout: clear session and tell backend to revoke refresh token
    ******************************************************************************************************************/
   const logout = async () => {
     try {
@@ -84,7 +83,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   /******************************************************************************************************************
-   * Refresh token: rotate and update tokens
+   * refresh token: rotate and update tokens
    ******************************************************************************************************************/
   const refresh = async () => {
     if (!refreshToken) throw new Error('Missing refresh token');
@@ -112,7 +111,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 
 /********************************************************************************************************************
- * Hook to access auth context
+ * hook to access auth context
  ********************************************************************************************************************/
 export function useAuth() {
   const context = useContext(AuthContext);

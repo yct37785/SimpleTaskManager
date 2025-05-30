@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { Box, Divider, AppBar, Avatar, Toolbar, Typography, Button } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
 // comps
-
+import AuthDialog from '@components/Auth/AuthDialog';
 // contexts
 import { useAuth } from '@contexts/AuthContext';
 // const
@@ -96,7 +96,7 @@ export default function AppBarComponent() {
       </AppBar>
 
       {/* Auth modal */}
-      {/* <AuthDialog open={dialogOpen} onClose={() => setDialogOpen(false)} /> */}
+      <AuthDialog open={dialogOpen} onClose={() => setDialogOpen(false)} />
     </>
   );
 }
