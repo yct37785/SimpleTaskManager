@@ -69,6 +69,7 @@ export default function AppBarComponent() {
                   {user?.email}
                 </Typography>
                 <Button
+                  loading={isLoading}
                   variant='outlined'
                   size='small'
                   color='primary'

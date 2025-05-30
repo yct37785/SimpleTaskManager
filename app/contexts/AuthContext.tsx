@@ -52,34 +52,41 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
    * login: get tokens and set user
    ******************************************************************************************************************/
   const login = async (email: string, password: string) => {
-    const res = await axios.post(`${API_BASE}/auth/login`, { email, password });
+    setIsLoading(true);
+    try {
+      const res = await axios.post(`${API_BASE}/auth/login`, { email, password });
 
-    const { accessToken, refreshToken } = res.data;
-    setAccessToken(accessToken);
-    setRefreshToken(refreshToken);
-    setUser({ email });
+      const { accessToken, refreshToken } = res.data;
+      setAccessToken(accessToken);
+      setRefreshToken(refreshToken);
+      setUser({ email });
 
-    localStorage.setItem('accessToken', accessToken);
-    localStorage.setItem('refreshToken', refreshToken);
-    localStorage.setItem('userEmail', email);
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+      localStorage.setItem('userEmail', email);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   /******************************************************************************************************************
    * logout: clear session and tell backend to revoke refresh token
    ******************************************************************************************************************/
   const logout = async () => {
+    setIsLoading(true);
     try {
       if (refreshToken) {
         await axios.post(`${API_BASE}/auth/logout`, { refreshToken });
       }
     } catch (err) {
       console.warn('Logout failed:', err);
+    } finally {
+      setAccessToken(null);
+      setRefreshToken(null);
+      setUser(null);
+      localStorage.clear();
+      setIsLoading(false);
     }
-
-    setAccessToken(null);
-    setRefreshToken(null);
-    setUser(null);
-    localStorage.clear();
   };
 
   /******************************************************************************************************************
@@ -108,7 +115,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
-
 
 /********************************************************************************************************************
  * hook to access auth context
