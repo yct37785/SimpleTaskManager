@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 import axios from 'axios';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
@@ -29,6 +29,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [accessTokenExpiresAt, setAccessTokenExpiresAt] = useState<number | null>(null);
   const [refreshTokenExpiresAt, setRefreshTokenExpiresAt] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const isRefreshingRef = useRef(false);
 
   /******************************************************************************************************************
    * store and restore tokens from localStorage (or just memory)
@@ -139,24 +140,43 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
    * background refresh: refresh access token ~1 minute before expiry
    ******************************************************************************************************************/
   useEffect(() => {
+    // do nothing if required values are not ready
     if (!refreshToken || !accessTokenExpiresAt) return;
 
-    const bufferMs = 60 * 1000; // refresh 1 minute before expiration
+    const bufferMs = 60 * 1000; // refresh 1 minute before expiry
     const delay = accessTokenExpiresAt - Date.now() - bufferMs;
 
+    // if already expired or too close, refresh immediately (once)
     if (delay <= 0) {
-      // if already expired or about to, refresh immediately
-      refresh().catch(err => console.log('[AuthContext] Silent refresh failed:', err));
+      if (!isRefreshingRef.current) {
+        isRefreshingRef.current = true;
+        refresh()
+          .catch(err => console.log('[AuthContext] Silent refresh failed:', err))
+          .finally(() => {
+            isRefreshingRef.current = false;
+          });
+      }
       return;
     }
 
+    // otherwise, schedule a one-time refresh before expiry
     const timeout = setTimeout(() => {
-      refresh().catch(err => console.log('[AuthContext] Silent refresh failed:', err));
+      if (!isRefreshingRef.current) {
+        isRefreshingRef.current = true;
+        refresh()
+          .catch(err => console.log('[AuthContext] Silent refresh failed:', err))
+          .finally(() => {
+            isRefreshingRef.current = false;
+          });
+      }
     }, delay);
 
-    return () => clearTimeout(timeout);
+    return () => clearTimeout(timeout); // cleanup
   }, [accessTokenExpiresAt, refreshToken]);
 
+  /******************************************************************************************************************
+   * context props
+   ******************************************************************************************************************/
   const value = {
     user,
     isAuthenticated: !!user,
