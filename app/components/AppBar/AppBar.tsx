@@ -1,11 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 // next
 import Link from 'next/link';
 // MUI
-import { Box, Divider, AppBar, Avatar, Toolbar, Typography, Button } from '@mui/material';
-import { Search as SearchIcon } from '@mui/icons-material';
+import {
+  Box, Divider, AppBar, Avatar, Toolbar, Typography,
+  IconButton, Menu, MenuItem, ListItemIcon
+} from '@mui/material';
+import { Search as SearchIcon, Person as PersonIcon, Logout as LogoutIcon,
+  Login as LoginIcon, Settings as SettingsIcon
+} from '@mui/icons-material';
 // comps
 import AuthDialog from '@components/Auth/AuthDialog';
 // contexts
@@ -16,18 +21,43 @@ import { appbar_height } from '@const';
 import appBarStyles from './AppBar.module.css';
 
 /********************************************************************************************************************
- * app bar component
+ * AppBar with avatar menu for auth actions
  ********************************************************************************************************************/
 export default function AppBarComponent() {
   const { user, isAuthenticated, logout, isLoading } = useAuth();
   const [dialogOpen, setDialogOpen] = useState(false);
-  
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  // open avatar dropdown
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  // close dropdown
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  // sign out action
+  const handleLogout = async () => {
+    handleMenuClose();
+    await logout();
+  };
+
+  // sign in action
+  const handleOpenDialog = () => {
+    handleMenuClose();
+    setDialogOpen(true);
+  };
+
   /******************************************************************************************************************
    * render
    ******************************************************************************************************************/
   return (
     <>
-      <AppBar position='sticky' color='default'
+      <AppBar
+        position='sticky'
+        color='default'
         sx={{
           height: appbar_height,
           justifyContent: 'center',
@@ -38,7 +68,7 @@ export default function AppBarComponent() {
       >
         <Toolbar variant='dense' sx={{ display: 'flex', justifyContent: 'space-between', px: 2 }}>
 
-          {/* title */}
+          {/* left: logo/title */}
           <Link href='/' style={{ textDecoration: 'none' }}>
             <Typography
               variant='h6'
@@ -50,7 +80,7 @@ export default function AppBarComponent() {
             </Typography>
           </Link>
 
-          {/* input search bar button */}
+          {/* center: search button */}
           <Box
             onClick={() => { }}
             role='button'
@@ -61,42 +91,67 @@ export default function AppBarComponent() {
             Search…
           </Box>
 
-          {/* user actions */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            {isAuthenticated ? (
-              <>
-                <Typography variant='body2' color='text.primary' sx={{ fontWeight: 500 }}>
-                  {user?.email}
-                </Typography>
-                <Button
-                  loading={isLoading}
-                  variant='outlined'
-                  size='small'
-                  color='primary'
-                  onClick={logout}
-                  sx={{ textTransform: 'none' }}
-                >
+          {/* right: avatar + dropdown */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <IconButton onClick={handleMenuOpen} disabled={isLoading}>
+              <Avatar sx={{ width: 32, height: 32 }}>
+                {isAuthenticated && user?.email
+                  ? user.email.charAt(0).toUpperCase()
+                  : <PersonIcon fontSize='small' />
+                }
+              </Avatar>
+            </IconButton>
+
+            {/* menu when avatar is clicked */}
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            >
+              {/* show email as disabled label if signed in */}
+              {isAuthenticated && (
+                <MenuItem disabled>
+                  <Typography variant="body2" color="text.secondary">
+                    {user?.email}
+                  </Typography>
+                </MenuItem>
+              )}
+
+              {isAuthenticated && <Divider />}
+
+              {/* dummy settings option */}
+              <MenuItem onClick={() => { handleMenuClose(); }}>
+                <ListItemIcon>
+                  <SettingsIcon fontSize="small" />
+                </ListItemIcon>
+                Settings
+              </MenuItem>
+
+              {/* auth action */}
+              {isAuthenticated ? (
+                <MenuItem onClick={handleLogout}>
+                  <ListItemIcon>
+                    <LogoutIcon fontSize="small" />
+                  </ListItemIcon>
                   Sign out
-                </Button>
-              </>
-            ) : (
-              <Button
-                disabled={isLoading}
-                variant='contained'
-                size='small'
-                color='primary'
-                onClick={() => setDialogOpen(true)}
-                sx={{ textTransform: 'none' }}
-              >
-                Sign in
-              </Button>
-            )}
+                </MenuItem>
+              ) : (
+                <MenuItem onClick={handleOpenDialog}>
+                  <ListItemIcon>
+                    <LoginIcon fontSize="small" />
+                  </ListItemIcon>
+                  Sign in
+                </MenuItem>
+              )}
+            </Menu>
           </Box>
         </Toolbar>
         <Divider />
       </AppBar>
 
-      {/* Auth modal */}
+      {/* auth dialog modal */}
       <AuthDialog open={dialogOpen} onClose={() => setDialogOpen(false)} />
     </>
   );
