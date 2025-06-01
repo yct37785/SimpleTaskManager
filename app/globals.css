@@ -10,3 +10,18 @@
   --transition-speed: 0.4;
   --disabled-opacity: 0.4;
 }
+
+@keyframes pulse-scale {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.4;
+  }
+  60% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

@@ -14,16 +14,17 @@ import {
   Add as AddIcon, Folder as FolderIcon, FolderOpen as FolderOpenIcon, InsertDriveFile as InsertDriveFileIcon, Send as SendIcon,
   CalendarMonth as CalendarIcon, Home as HomeIcon, PieChart as PieCharIcon, ExpandLess, ExpandMore
 } from '@mui/icons-material';
-// our components
-import { useWorkspacesManager } from '@globals/WorkspacesContext';
-import ProjectForm from '@components/Forms/ProjectForm';
-// schemas
-import { Workspace, Project } from '@schemas';
 // utils
 import { CalendarDate } from '@internationalized/date';
 import { dateToCalendarDate } from '@utils/datetime';
+// comps
+import { useWorkspacesManager } from '@contexts/WorkspacesContext';
+import ProjectForm from '@components/Project/ProjectForm';
+// schemas
+import { Workspace, Project } from '@schemas';
+// const
+import { sidebar_width, scrollbar_allowance, mock_elapse } from '@const';
 // styles
-import { sidebar_width, scrollbar_allowance } from '@/app/styles/dimens';
 import styles from './sidebar.module.css';
 
 /********************************************************************************************************************
@@ -127,7 +128,7 @@ export default function Sidebar() {
    * load data
    ******************************************************************************************************************/
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1500);
+    const timer = setTimeout(() => setLoading(false), mock_elapse);
     return () => clearTimeout(timer);
   }, []);
 
@@ -164,7 +165,7 @@ export default function Sidebar() {
 
   const handleCreateProject = async (title: string, desc: string, dueDate: CalendarDate) => {
     if (activeWorkspaceID && title) {
-      await new Promise(res => setTimeout(res, 1500));
+      await new Promise(res => setTimeout(res, mock_elapse));
       setOpenWorkspaces((prev) => ({ ...prev, [activeWorkspaceID]: true }));
       createProject(activeWorkspaceID, title, desc, dateToCalendarDate(new Date()), dueDate);
     }
@@ -253,7 +254,7 @@ export default function Sidebar() {
 
       {/* create project form */}
       {activeWorkspaceID ? <ProjectForm
-        workspace={workspaces[activeWorkspaceID]}
+        workspaceTitle={workspaces[activeWorkspaceID].title}
         projectDialogOpen={projectDialogOpen}
         onSubmitProject={handleCreateProject}
         closeProjectDialog={() => setProjectDialogOpen(false)} /> : null}

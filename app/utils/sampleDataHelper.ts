@@ -1,6 +1,5 @@
-// others
-import { v4 as uuidv4 } from 'uuid';
 // utils
+import { v4 as uuidv4 } from 'uuid';
 import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date';
 // schemas
 import { Workspace, Project, Sprint } from '@schemas';

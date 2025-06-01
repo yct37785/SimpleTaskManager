@@ -4,8 +4,8 @@
 import { useCalendarGrid, useLocale } from 'react-aria';
 import { CalendarState, RangeCalendarState } from 'react-stately';
 // utils
-import { getWeeksInMonth, CalendarDate, endOfMonth, isSameMonth } from '@internationalized/date';
-// our components
+import { getWeeksInMonth, CalendarDate, endOfMonth } from '@internationalized/date';
+// comps
 import CalendarCell, { HighlightRange } from './CalendarCell';
 // styles
 import styles from './calendar.module.css';

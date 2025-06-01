@@ -8,17 +8,19 @@ import {
   Box, Typography, IconButton, Stack, Divider, Tooltip, useTheme, Button
 } from '@mui/material';
 import { Add as AddIcon, Edit as EditIcon, Check as CheckIcon, Close as CloseIcon } from '@mui/icons-material';
-// hooks
-import { useWindowHeight } from '@hooks/useWindowHeight';
-import { useWorkspacesManager } from '@globals/WorkspacesContext';
-// our components
-import SprintForm from '@components/Forms/SprintForm';
+// comps
+import SprintForm from '@components/Sprint/SprintForm';
 import GanttChartConfirmDialog from './GanttChartConfirmDialog';
 // Gantt chart utils
 import { getGanttContainerEL, markDeadline, doCustomScroll, enableGanttDragScroll } from './GanttChartBehavior';
 import { GanttTask, formatToGanttTasks, handleDateChange, addNewSprint, applyUpdatedSprints } from './GanttChartLogic';
+// contexts
+import { useWindowHeight } from '@contexts/useWindowHeight';
+import { useWorkspacesManager } from '@contexts/WorkspacesContext';
 // schemas
 import { Project } from '@schemas';
+// const
+import { mock_elapse } from '@const';
 // styles
 import './frappe-gantt.css';
 import './frappe-gantt-custom.css';
@@ -86,7 +88,7 @@ function GanttChart({
 
       // clear existing chart
       ganttRef.current.innerHTML = '';
-      console.log('Gantt init');
+      console.log('[GanttChart] new Gantt instance');
 
       // curr tasks
       const currTasks = formatToGanttTasks(project.sprints, draftTasks);
@@ -167,7 +169,7 @@ function GanttChart({
   useEffect(() => {
     const currDueDateStr = project.dueDate.toString();
     if (currProjectDueDate.current && currProjectDueDate.current !== currDueDateStr) {
-      console.log('Due date changed: ' + project.dueDate.toString());
+      console.log('[GanttChart] Project due date changed: ' + project.dueDate.toString());
       injectStyles();
     }
     currProjectDueDate.current = currDueDateStr;
@@ -193,7 +195,7 @@ function GanttChart({
   }
 
   async function handleConfirmEdits() {
-    await new Promise(res => setTimeout(res, 1500));
+    await new Promise(res => setTimeout(res, mock_elapse));
     // apply changes to global state as well as Gantt chart programatically
     applyUpdatedSprints(ganttInstance, workspaceId, project, draftTasks, setDraftTasks, createSprint, updateSprint);
     toggleEditMode(false);

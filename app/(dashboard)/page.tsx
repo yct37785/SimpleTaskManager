@@ -5,8 +5,8 @@ import { useEffect } from 'react';
 import Image from 'next/image';
 // MUI
 import { Box, Typography } from '@mui/material';
-// our components
-import { useWorkspacesManager } from '@globals/WorkspacesContext';
+// contexts
+import { useWorkspacesManager } from '@contexts/WorkspacesContext';
 
 /********************************************************************************************************************
  * home dashboard

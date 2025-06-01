@@ -10,11 +10,12 @@ import { Dialog, DialogTitle, DialogActions, DialogContent, Button, Stack, TextF
 type Props = {
   open: boolean;
   onClose: () => void;
-  onSubmit: () => void;
-  title: string;
+  onSubmit?: () => void;
+  title?: string;
   submitLabel?: string;
   disabled?: boolean;
   loading?: boolean;
+  hideActions?: boolean;
   children: ReactNode;
 };
 
@@ -35,11 +36,12 @@ export function DialogTextInput(props: TextFieldProps) {
 export default function BaseDialog({
   open,
   onClose,
-  onSubmit,
-  title,
+  onSubmit = () => {},
+  title = '',
   submitLabel = 'Create',
   disabled = false,
   loading = false,
+  hideActions = false,
   children,
 }: Props) {
   return (
@@ -48,12 +50,12 @@ export default function BaseDialog({
       <DialogContent dividers>
         <Stack spacing={2}>{children}</Stack>
       </DialogContent>
-      <DialogActions>
+      {!hideActions ? <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
         <Button onClick={onSubmit} loading={loading} variant='contained' disabled={disabled}>
           {submitLabel}
         </Button>
-      </DialogActions>
+      </DialogActions> : null}
     </Dialog>
   );
 };
