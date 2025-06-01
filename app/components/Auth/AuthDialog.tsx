@@ -56,10 +56,10 @@ export default function AuthDialog({ open, onClose }: Props) {
     } catch (err: any) {
       if (axios.isAxiosError(err)) {
         const data = err.response?.data;
-        const message = data?.error || data?.message || 'An unknown error occurred.';
+        const message = data?.err || data?.msg || 'An unknown error occurred.';
         setErrorMsg(message);
       } else {
-        setErrorMsg(err.message || 'Authentication failed');
+        setErrorMsg(err.msg || 'Authentication failed');
       }
     } finally {
       setFormLoading(false);
