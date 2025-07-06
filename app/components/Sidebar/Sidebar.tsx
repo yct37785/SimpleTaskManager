@@ -91,7 +91,7 @@ function ProjectsList({ workspace, isOpen }: {
             <ListItemButton
               key={proj.id}
               component={NextLink}
-              href={`/${workspace.id}/${proj.id}`}
+              href={`/main/${workspace.id}/${proj.id}`}
               selected={projectId === proj.id}
             >
               <ListItemIcon>

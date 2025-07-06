@@ -63,12 +63,12 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
   }, [sprintId]);
 
   function onSprintSelected(id: string) {
-    router.push(`/${workspaceId}/${projectId}/${id}`);
+    router.push(`/main/${workspaceId}/${projectId}/${id}`);
   }
 
   function onDrawerClose() {
     if (window.history.length <= 1 || !sprintId) {
-      router.push(`/${workspaceId}/${projectId}`);
+      router.push(`/main/${workspaceId}/${projectId}`);
     } else {
       router.back();
     }
